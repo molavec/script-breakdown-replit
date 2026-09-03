@@ -37,6 +37,16 @@ export function safeReturnPath(value: unknown): string {
 }
 
 export async function getUser(event: any): Promise<ReplitUser | null> {
+  if (process.env.MOCK_AUTH === 'true') {
+    return {
+      id: 'local-mock-user-123',
+      username: 'usuario_local',
+      email: 'local@example.com',
+      firstName: 'Desarrollador',
+      lastName: 'Local',
+      profileImageUrl: null,
+    };
+  }
   return (await getAuthSession(event)).data.user || null;
 }
 
