@@ -2,6 +2,7 @@ modules = ["vue-node-20", "web", "nodejs-22", "postgresql-16"]
 
 [nix]
 channel = "stable-25_05"
+packages = ["glib", "gtk3", "nss", "nspr", "atk", "at-spi2-atk", "cups", "dbus", "libdrm", "expat", "xorg.libxcb", "xorg.libX11", "xorg.libXcomposite", "xorg.libXdamage", "xorg.libXext", "xorg.libXfixes", "xorg.libXrandr", "mesa", "pango", "cairo", "alsa-lib", "libgbm", "libxkbcommon"]
 
 [agent]
 expertMode = true
