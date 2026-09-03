@@ -6,14 +6,17 @@ import {
   shots, 
   breakdownCells 
 } from '../../utils/schema';
+import { requireUser } from '../../utils/auth';
 
 export default defineEventHandler(async (event) => {
+  const user = await requireUser(event);
   const body = await readBody(event);
   const { title, type, genre, description } = body;
 
   try {
     // 1. Create Project
     const newProject = await db.insert(projects).values({
+      ownerUserId: user.id,
       name: title || 'Untitled Project',
       title: title || 'Untitled Project',
       type: type || 'feature',
@@ -99,6 +102,7 @@ export default defineEventHandler(async (event) => {
     return newProject[0];
   } catch (error: any) {
     console.error('Error creating project:', error);
+    if (error?.statusCode) throw error;
     throw createError({
       statusCode: 500,
       statusMessage: 'Failed to create project',

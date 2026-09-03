@@ -1,6 +1,7 @@
 import { eq } from 'drizzle-orm';
 import { db } from '../../../utils/db';
 import { scenes } from '../../../utils/schema';
+import { requireSceneOwner } from '../../../utils/auth';
 
 export default defineEventHandler(async (event) => {
   const sceneId = getRouterParam(event, 'sceneId');
@@ -11,6 +12,7 @@ export default defineEventHandler(async (event) => {
       statusMessage: 'Scene ID is required',
     });
   }
+  await requireSceneOwner(event, sceneId);
 
   try {
     const deletedScene = await db.delete(scenes)
@@ -27,6 +29,7 @@ export default defineEventHandler(async (event) => {
     return { success: true, message: 'Scene deleted successfully' };
   } catch (error: any) {
     console.error('Error deleting scene:', error);
+    if (error?.statusCode) throw error;
     throw createError({
       statusCode: 500,
       statusMessage: 'Failed to delete scene',

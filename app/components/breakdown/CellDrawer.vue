@@ -5,6 +5,7 @@ import type { BreakdownChatMessage } from '~~/shared/types/chat';
 import type { CellBlock } from '~~/shared/types/cell';
 
 const { rows, getColumn } = useSceneTable();
+const { project } = useProjectBreakdown();
 const { 
   activeCellId, 
   activeCellColId, 
@@ -103,6 +104,7 @@ const handleSendMessage = async () => {
     const response = await $fetch('/api/chat', {
       method: 'POST',
       body: {
+        projectId: project.value?.id,
         prompt: userText,
         generationType: selectedGenerationType.value
       }

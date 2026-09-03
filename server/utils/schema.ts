@@ -20,6 +20,9 @@ import type {
 
 export const projects = pgTable('projects', {
   id: uuid('id').defaultRandom().primaryKey(),
+  // Null keeps pre-authentication projects inaccessible rather than assigning them
+  // to whichever user happens to sign in first.
+  ownerUserId: varchar('owner_user_id', { length: 255 }),
   name: varchar('name', { length: 255 }).notNull(),
   title: varchar('title', { length: 255 }),
   description: text('description'),

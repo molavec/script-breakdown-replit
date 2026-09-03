@@ -1,11 +1,10 @@
 import { eq } from 'drizzle-orm';
 import { db } from '../../../utils/db';
 import { scenes } from '../../../utils/schema';
+import { requireSceneOwner } from '../../../utils/auth';
 
 export default defineEventHandler(async (event) => {
   const sceneId = getRouterParam(event, 'sceneId');
-  const body = await readBody(event);
-  const { order, synopsis } = body;
 
   if (!sceneId) {
     throw createError({
@@ -13,6 +12,9 @@ export default defineEventHandler(async (event) => {
       statusMessage: 'Scene ID is required',
     });
   }
+  await requireSceneOwner(event, sceneId);
+  const body = await readBody(event);
+  const { order, synopsis } = body;
 
   try {
     const updatedScene = await db.update(scenes)
@@ -33,6 +35,7 @@ export default defineEventHandler(async (event) => {
     return updatedScene[0];
   } catch (error: any) {
     console.error('Error updating scene:', error);
+    if (error?.statusCode) throw error;
     throw createError({
       statusCode: 500,
       statusMessage: 'Failed to update scene',

@@ -2,12 +2,14 @@ import { db } from '~~/server/utils/db';
 import { shots, breakdownCells, breakdownColumns, scenes } from '~~/server/utils/schema';
 import { eq } from 'drizzle-orm';
 import crypto from 'crypto';
+import { requireSceneOwner } from '../../../utils/auth';
 
 export default defineEventHandler(async (event) => {
   const sceneId = getRouterParam(event, 'sceneId');
   if (!sceneId) {
     throw createError({ statusCode: 400, statusMessage: 'sceneId is required' });
   }
+  await requireSceneOwner(event, sceneId);
 
   const body = await readBody(event);
   

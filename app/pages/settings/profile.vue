@@ -1,102 +1,49 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+const { user } = useAuth()
 
-const profile = ref({
-  fullName: 'Alex Vance',
-  email: 'alex.vance@scriptvisual.pro',
-  role: 'Director',
-  language: 'English (US)',
-  biography: "Award-winning director focused on high-concept sci-fi and gripping thrillers. Currently in pre-production for 'Project Echo'."
-})
+const avatarInitial = computed(() => user.value?.name.charAt(0).toUpperCase() || 'R')
 </script>
 
 <template>
   <div class="p-8 md:p-10 max-w-4xl">
     <div class="mb-8">
       <h1 class="text-2xl font-semibold text-gray-50 mb-2">Profile Settings</h1>
-      <p class="text-gray-400 text-sm font-mono tracking-tight">Manage your personal information and professional identity.</p>
+      <p class="text-gray-400 text-sm font-mono tracking-tight">Your identity is securely provided by your Replit account.</p>
     </div>
 
-    <div class="bg-[#2a2b31] rounded-lg p-6 border border-white/5 shadow-xl">
-      <!-- Profile Picture -->
-      <div class="flex items-center gap-6 mb-10">
-        <div class="w-20 h-20 rounded-xl overflow-hidden bg-gray-800 shadow-inner shrink-0">
-          <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&auto=format&fit=crop" alt="Profile" class="w-full h-full object-cover" />
-        </div>
-        <div>
-          <button class="bg-[#383941] hover:bg-[#464750] text-gray-200 px-4 py-2 rounded-md text-xs font-semibold transition-colors mb-2 shadow-sm border border-white/5">
-            Change Picture
-          </button>
-          <p class="text-xs text-gray-500">JPG, GIF or PNG. Max size of 800K</p>
-        </div>
-      </div>
-
-      <!-- Form Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 mb-8">
-        <div class="form-control">
-          <label class="label px-0 pt-0 pb-2">
-            <span class="text-[11px] font-bold text-gray-400 tracking-wider uppercase">Full Name</span>
-          </label>
-          <input type="text" v-model="profile.fullName" class="input input-bordered w-full bg-[#141414] border-black/50 text-gray-200 focus:border-white/20 focus:outline-none rounded-md" />
-        </div>
-        
-        <div class="form-control">
-          <label class="label px-0 pt-0 pb-2">
-            <span class="text-[11px] font-bold text-gray-400 tracking-wider uppercase">Email Address</span>
-          </label>
-          <input type="email" v-model="profile.email" class="input input-bordered w-full bg-[#141414] border-black/50 text-gray-200 focus:border-white/20 focus:outline-none rounded-md" />
+    <div class="card bg-[#2a2b31] border border-white/5 shadow-xl">
+      <div class="card-body p-6">
+        <div class="flex flex-col gap-6 sm:flex-row sm:items-center">
+          <div class="avatar placeholder shrink-0">
+            <div class="w-20 rounded-xl bg-gray-800 shadow-inner">
+              <img v-if="user?.avatarUrl" :src="user.avatarUrl" :alt="`${user.name}'s Replit avatar`" class="object-cover" />
+              <span v-else class="text-2xl text-gray-300">{{ avatarInitial }}</span>
+            </div>
+          </div>
+          <div>
+            <h2 class="text-lg font-semibold text-gray-100">Replit-managed identity</h2>
+            <p class="mt-1 text-sm leading-6 text-gray-400">Your name, email address, and profile photo are synced from Replit and cannot be changed here.</p>
+            <a href="https://replit.com/account" target="_blank" rel="noopener noreferrer" class="btn btn-sm mt-4 border-white/10 bg-[#383941] text-gray-200 hover:bg-[#464750]">Manage your Replit account</a>
+          </div>
         </div>
 
-        <div class="form-control">
-          <label class="label px-0 pt-0 pb-2">
-            <span class="text-[11px] font-bold text-gray-400 tracking-wider uppercase">Professional Role</span>
-          </label>
-          <select v-model="profile.role" class="select select-bordered w-full bg-[#141414] border-black/50 text-gray-200 focus:border-white/20 focus:outline-none rounded-md appearance-none">
-            <option>Director</option>
-            <option>Producer</option>
-            <option>Writer</option>
-            <option>Actor</option>
-          </select>
-        </div>
+        <div class="divider my-2 border-white/10"></div>
 
-        <div class="form-control">
-          <label class="label px-0 pt-0 pb-2">
-            <span class="text-[11px] font-bold text-gray-400 tracking-wider uppercase">Preferred Language</span>
-          </label>
-          <select v-model="profile.language" class="select select-bordered w-full bg-[#141414] border-black/50 text-gray-200 focus:border-white/20 focus:outline-none rounded-md appearance-none">
-            <option>English (US)</option>
-            <option>Spanish (ES)</option>
-            <option>French (FR)</option>
-          </select>
-        </div>
+        <dl class="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div>
+            <dt class="text-[11px] font-bold text-gray-400 tracking-wider uppercase">Full name</dt>
+            <dd data-testid="user-name-display" class="mt-2 rounded-md border border-black/50 bg-[#141414] px-4 py-3 text-sm text-gray-200">{{ user?.name }}</dd>
+          </div>
+          <div>
+            <dt class="text-[11px] font-bold text-gray-400 tracking-wider uppercase">Email address</dt>
+            <dd data-testid="user-email-display" class="mt-2 rounded-md border border-black/50 bg-[#141414] px-4 py-3 text-sm text-gray-200">{{ user?.email || 'No email shared by Replit' }}</dd>
+          </div>
+          <div v-if="user?.username">
+            <dt class="text-[11px] font-bold text-gray-400 tracking-wider uppercase">Replit username</dt>
+            <dd class="mt-2 rounded-md border border-black/50 bg-[#141414] px-4 py-3 text-sm text-gray-200">{{ user.username }}</dd>
+          </div>
+        </dl>
       </div>
-
-      <!-- Biography -->
-      <div class="form-control mb-1">
-        <label class="label px-0 pt-0 pb-2">
-          <span class="text-[11px] font-bold text-gray-400 tracking-wider uppercase">Biography</span>
-        </label>
-        <textarea v-model="profile.biography" class="textarea textarea-bordered w-full bg-[#141414] border-black/50 text-gray-300 focus:border-white/20 focus:outline-none rounded-md h-28 resize-none leading-relaxed"></textarea>
-      </div>
-      <div class="text-right text-[11px] text-gray-500 mt-2">
-        {{ profile.biography.length }} / 500 characters
-      </div>
-    </div>
-  </div>
-  
-  <!-- Fixed Footer Actions -->
-  <div class="max-w-4xl mx-8 md:mx-10 mt-6 flex items-center justify-between border-t border-white/5 pt-6 pb-12">
-    <button class="text-xs font-semibold text-rose-500/80 hover:text-rose-400 transition-colors">
-      Deactivate Account
-    </button>
-    
-    <div class="flex items-center gap-3">
-      <button class="px-5 py-2 rounded-md text-sm font-medium border border-white/10 text-gray-300 hover:bg-white/5 hover:text-white transition-colors">
-        Cancel
-      </button>
-      <button class="bg-[#ff0033] hover:bg-[#e6002e] text-white px-5 py-2 rounded-md text-sm font-medium transition-colors shadow-lg shadow-red-500/20">
-        Save Changes
-      </button>
     </div>
   </div>
 </template>

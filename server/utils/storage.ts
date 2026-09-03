@@ -112,13 +112,18 @@ export const getMimeTypeForObjectName = (objectName: string): string => {
   return MIME_TYPES[extension] || 'application/octet-stream';
 };
 
-export const isStoredObjectName = (objectName: string): boolean =>
-  /^uploads\/[a-f0-9-]{36}\.(?:png|jpe?g|gif|webp)$/i.test(objectName);
+const userObjectPrefix = (userId: string) =>
+  `uploads/${Buffer.from(userId, 'utf8').toString('base64url')}/`;
+
+export const isStoredObjectName = (objectName: string, userId: string): boolean =>
+  objectName.startsWith(userObjectPrefix(userId))
+  && /^uploads\/[^/]+\/[a-f0-9-]{36}\.(?:png|jpe?g|gif|webp)$/i.test(objectName);
 
 export async function uploadFile(
   fileBuffer: Buffer,
   originalName: string,
   _mimeType: string,
+  userId: string,
 ): Promise<string> {
   if (fileBuffer.byteLength > MAX_UPLOAD_FILE_SIZE_BYTES) {
     throw new StorageError(
@@ -136,7 +141,7 @@ export async function uploadFile(
   }
 
   const extension = getSafeExtension(originalName, imageType);
-  const objectName = `uploads/${randomUUID()}.${extension}`;
+  const objectName = `${userObjectPrefix(userId)}${randomUUID()}.${extension}`;
 
   try {
     const result = await createStorageClient().uploadFromBytes(objectName, fileBuffer);

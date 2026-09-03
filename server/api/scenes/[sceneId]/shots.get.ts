@@ -1,6 +1,7 @@
 import { db } from '../../../utils/db';
 import { shots, breakdownCells } from '../../../utils/schema';
 import { eq, asc } from 'drizzle-orm';
+import { requireSceneOwner } from '../../../utils/auth';
 
 export default defineEventHandler(async (event) => {
   const sceneId = getRouterParam(event, 'sceneId');
@@ -11,6 +12,7 @@ export default defineEventHandler(async (event) => {
       statusMessage: 'Scene ID is required',
     });
   }
+  await requireSceneOwner(event, sceneId);
 
   try {
     const sceneShots = await db.select().from(shots).where(eq(shots.sceneId, sceneId)).orderBy(asc(shots.order));
@@ -42,6 +44,7 @@ export default defineEventHandler(async (event) => {
 
     return formattedShots;
   } catch (error: any) {
+    if (error?.statusCode) throw error;
     throw createError({
       statusCode: 500,
       statusMessage: `Failed to fetch shots: ${error.message}`,

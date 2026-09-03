@@ -1,5 +1,8 @@
 <script setup lang="ts">
-const { isOpen, toggle } = useSidebar();
+const { isOpen, toggle } = useSidebar()
+const { user } = useAuth()
+
+const avatarInitial = computed(() => user.value?.name.charAt(0).toUpperCase() || 'R')
 </script>
 
 <template>
@@ -46,10 +49,15 @@ const { isOpen, toggle } = useSidebar();
           <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
         </svg>
       </NuxtLink>
-      <!-- Avatar -->
-      <div class="w-8 h-8 rounded-full bg-gray-800 overflow-hidden ring-1 ring-white/10">
-        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix&backgroundColor=242424" alt="User Avatar" class="w-full h-full object-cover" />
-      </div>
+      <NuxtLink to="/settings/profile" class="flex items-center gap-2 rounded-full text-gray-300 hover:text-white transition-colors" title="Profile settings">
+        <span data-testid="user-name-display" class="hidden max-w-32 truncate text-sm font-medium sm:block">{{ user?.name }}</span>
+        <div class="avatar placeholder">
+          <div class="w-8 rounded-full bg-gray-800 ring-1 ring-white/10">
+            <img v-if="user?.avatarUrl" :src="user.avatarUrl" :alt="`${user.name}'s Replit avatar`" class="object-cover" />
+            <span v-else class="text-xs text-gray-300">{{ avatarInitial }}</span>
+          </div>
+        </div>
+      </NuxtLink>
     </div>
   </header>
 </template>

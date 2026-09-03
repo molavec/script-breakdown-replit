@@ -1,6 +1,7 @@
 import { db } from '../../utils/db';
 import { scenes } from '../../utils/schema';
 import { eq } from 'drizzle-orm';
+import { requireSceneOwner } from '../../utils/auth';
 
 export default defineEventHandler(async (event) => {
   const sceneId = getRouterParam(event, 'sceneId');
@@ -11,20 +12,12 @@ export default defineEventHandler(async (event) => {
       statusMessage: 'Scene ID is required',
     });
   }
+  const scene = await requireSceneOwner(event, sceneId);
 
   try {
-    const result = await db.select().from(scenes).where(eq(scenes.id, sceneId));
-    const scene = result[0];
-
-    if (!scene) {
-      throw createError({
-        statusCode: 404,
-        statusMessage: 'Scene not found',
-      });
-    }
-
     return scene;
   } catch (error: any) {
+    if (error?.statusCode) throw error;
     throw createError({
       statusCode: 500,
       statusMessage: `Failed to fetch scene: ${error.message}`,

@@ -5,8 +5,10 @@ import {
   StorageError,
   uploadFile,
 } from '../utils/storage';
+import { requireUser } from '../utils/auth';
 
 export default defineEventHandler(async (event) => {
+  const user = await requireUser(event);
   const formData = await readMultipartFormData(event);
 
   if (!formData || formData.length === 0) {
@@ -54,6 +56,7 @@ export default defineEventHandler(async (event) => {
         field.data,
         field.filename!,
         field.type || 'application/octet-stream',
+        user.id,
       );
       uploadedUrls.push(url);
     }

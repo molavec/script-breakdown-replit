@@ -2,6 +2,7 @@ import { db } from '../../utils/db';
 import { breakdownCells, breakdownColumns } from '../../utils/schema';
 import { eq } from 'drizzle-orm';
 import type { CellBlock } from '~~/shared/types';
+import { requireCellOwner } from '../../utils/auth';
 
 export default defineEventHandler(async (event) => {
   const cellId = getRouterParam(event, 'id');
@@ -9,6 +10,7 @@ export default defineEventHandler(async (event) => {
   if (!cellId) {
     throw createError({ statusCode: 400, statusMessage: 'Cell ID is required' });
   }
+  await requireCellOwner(event, cellId);
 
   const body = await readBody(event);
   const { blocks } = body;
@@ -65,6 +67,7 @@ export default defineEventHandler(async (event) => {
 
   } catch (error: any) {
     console.error('Error updating cell:', error);
+    if (error?.statusCode) throw error;
     throw createError({
       statusCode: error.statusCode || 500,
       statusMessage: error.statusMessage || 'Failed to update cell',

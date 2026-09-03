@@ -4,14 +4,16 @@ import {
   isStoredObjectName,
   StorageError,
 } from '../../utils/storage';
+import { requireUser } from '../../utils/auth';
 
 export default defineEventHandler(async (event) => {
+  const user = await requireUser(event);
   const objectName = getRouterParam(event, 'path');
 
-  if (!objectName || !isStoredObjectName(objectName)) {
+  if (!objectName || !isStoredObjectName(objectName, user.id)) {
     throw createError({
-      statusCode: 400,
-      statusMessage: 'Invalid storage object path',
+      statusCode: 404,
+      statusMessage: 'Storage object not found',
     });
   }
 
@@ -22,7 +24,7 @@ export default defineEventHandler(async (event) => {
     setHeader(event, 'Content-Length', fileBuffer.byteLength);
     setHeader(event, 'Content-Disposition', 'inline');
     setHeader(event, 'X-Content-Type-Options', 'nosniff');
-    setHeader(event, 'Cache-Control', 'public, max-age=31536000, immutable');
+    setHeader(event, 'Cache-Control', 'private, no-store');
 
     return fileBuffer;
   } catch (error: unknown) {

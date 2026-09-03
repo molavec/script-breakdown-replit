@@ -1,4 +1,5 @@
 import { eq, and } from 'drizzle-orm';
+import { requireProjectOwner } from '../../../../utils/auth';
 
 export default defineEventHandler(async (event) => {
   const projectId = getRouterParam(event, 'projectId');
@@ -10,6 +11,7 @@ export default defineEventHandler(async (event) => {
       statusMessage: 'Project ID and Column ID are required',
     });
   }
+  await requireProjectOwner(event, projectId);
 
   try {
     const deletedColumn = await db.delete(breakdownColumns)
@@ -30,6 +32,7 @@ export default defineEventHandler(async (event) => {
 
     return { message: 'Column deleted successfully' };
   } catch (error: any) {
+    if (error?.statusCode) throw error;
     throw createError({
       statusCode: 500,
       statusMessage: `Failed to delete column: ${error.message}`,
