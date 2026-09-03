@@ -1,0 +1,4 @@
+- [Nuxt Node runtime](nuxt-node-runtime.md) — dev may run on Node 20 while the locked production CSS optimizer requires Node 22.11+.
+- [Nuxt noninteractive builds](nuxt-noninteractive-builds.md) — production builds need CI and telemetry-disabled flags in this workspace to avoid TTY prompts.
+- [Publishing run command state](publishing-run-command-state.md) — Replit may retain a stale missing-run-command state; disconnect and re-add the command in Publish settings.
+- [Post-merge setup hook](post-merge-hook.md) — imported projects need an explicit `.replit` hook path and script for automatic merge setup.

@@ -1,0 +1,54 @@
+modules = ["vue-node-20", "web", "nodejs-22", "postgresql-16"]
+
+[nix]
+channel = "stable-25_05"
+
+[agent]
+expertMode = true
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Start application"
+
+[[workflows.workflow]]
+name = "Start application"
+author = "agent"
+
+[workflows.workflow.metadata]
+outputType = "webview"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "CI=1 NUXT_TELEMETRY_DISABLED=1 pnpm exec nuxt dev --host 0.0.0.0 --port 5000"
+waitForPort = 5000
+
+[postMerge]
+path = "scripts/post-merge.sh"
+timeoutMs = 180000
+
+[[ports]]
+localPort = 5000
+externalPort = 80
+
+[[ports]]
+localPort = 8085
+
+[[ports]]
+localPort = 24678
+externalPort = 3000
+
+[deployment]
+deploymentTarget = "autoscale"
+run = ["node", ".output/server/index.mjs"]
+build = ["bash", "-lc", "CI=1 NUXT_TELEMETRY_DISABLED=1 pnpm build"]
+
+[objectStorage]
+defaultBucketID = "replit-objstore-65aa8e4c-ae22-46e5-b626-ce33f7b76452"

@@ -1,0 +1,46 @@
+{
+  "name": "script-breakdown-replit",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "docker:up": "docker compose --env-file .env -f docker-compose.yml -p scriptbreakdown-dev up -d",
+    "docker:ps": "docker compose --env-file .env -f docker-compose.yml -p scriptbreakdown-dev ps --all",
+    "docker:sh": "docker compose --env-file .env -f docker-compose.yml -p scriptbreakdown-dev exec postgresql /bin/sh",
+    "docker:logs": "docker compose --env-file .env -f docker-compose.yml -p scriptbreakdown-dev logs",
+    "docker:stop": "docker compose --env-file .env -f docker-compose.yml -p scriptbreakdown-dev stop",
+    "docker:rm": "docker compose --env-file .env -f docker-compose.yml -p scriptbreakdown-dev rm",
+    "docker:down": "docker compose --env-file .env -f docker-compose.yml -p scriptbreakdown-dev down",
+    "db:generate": "drizzle-kit generate",
+    "db:push": "drizzle-kit push",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio"
+  },
+  "dependencies": {
+    "@google/genai": "^2.18.0",
+    "@pinia/nuxt": "1.0.2",
+    "@replit/object-storage": "^1.0.0",
+    "@tailwindcss/vite": "^4.3.3",
+    "dotenv": "^17.4.2",
+    "drizzle-orm": "1.0.0-rc.4",
+    "lucide-vue-next": "^1.0.0",
+    "nuxt": "^4.5.2",
+    "pg": "^8.23.0",
+    "tailwindcss": "^4.3.3",
+    "vue": "^3.5.41",
+    "vue-router": "^5.2.0",
+    "vuedraggable": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.23.1",
+    "daisyui": "^5.7.19",
+    "drizzle-kit": "1.0.0-rc.4",
+    "tsx": "^4.23.13",
+    "typescript": "5.9.3",
+    "vue-tsc": "^3.3.11"
+  }
+}

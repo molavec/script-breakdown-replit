@@ -1,0 +1,16 @@
+services:
+  postgresql:
+    image: postgres:17rc1
+    container_name: script-breakdown-dev-postgresql
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER_DEV}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_DEV}
+      POSTGRES_DB: ${POSTGRES_NAME_DEV}
+    ports:
+      - ${POSTGRES_PORT}:5432
+    volumes:
+      - ws-backend:/var/lib/postgresql/data
+
+volumes:
+  ws-backend:
