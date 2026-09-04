@@ -100,8 +100,8 @@ const getCellCurrency = (col: any, cell?: any): string => {
 
               <!-- Field Value -->
               <div 
-                class="min-h-[24px] max-h-[250px] overflow-y-auto p-2 rounded-lg transition-colors border"
-                :class="activeCellId === row.cells[col.id]?.id && col.cellType !== 'number' && col.cellType !== 'tags' ? 'bg-[#2a2a2e]/50 border-error/70 ring-1 ring-error/50' : 'bg-[#121214] border-neutral-800'"
+                class="min-h-[24px] max-h-[250px] overflow-y-auto py-1 transition-colors rounded-md"
+                :class="activeCellId === row.cells[col.id]?.id && col.cellType !== 'number' && col.cellType !== 'tags' ? 'bg-[#2a2a2e]/50 ring-1 ring-error/50 px-2' : ''"
               >
                 <div v-if="row.cells[col.id]">
                   
