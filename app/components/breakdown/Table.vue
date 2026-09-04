@@ -10,6 +10,12 @@ const editingCellId = ref<string | null>(null);
 const inlineEditValue = ref<string | number>('');
 const isSceneInfoExpanded = ref(false);
 
+onMounted(() => {
+  if (window.innerWidth >= 1024) { // Tailwind 'lg' breakpoint
+    isSceneInfoExpanded.value = true;
+  }
+});
+
 const tableRows = computed({
   get: () => rows.value,
   set: (newRows) => {
@@ -194,7 +200,7 @@ onUnmounted(() => {
             </svg>
           </NuxtLink>
         </div>
-        <div :class="['transition-all duration-300', isSceneInfoExpanded ? 'block' : 'hidden lg:block']">
+        <div :class="['transition-all duration-300', isSceneInfoExpanded ? 'block' : 'hidden']">
           <p class="text-xs font-bold text-neutral-300 font-mono tracking-wider">
             Shots: {{ sceneShotsCount }} - Budget: {{ budgetCurrencySymbol }}{{ sceneBudget }}
           </p>
@@ -208,7 +214,7 @@ onUnmounted(() => {
       <div class="flex items-center gap-3">
         <button 
           v-if="activeScene"
-          class="btn btn-sm btn-ghost btn-square lg:hidden text-neutral-400 hover:text-white" 
+          class="btn btn-sm btn-ghost btn-square text-neutral-400 hover:text-white" 
           @click="isSceneInfoExpanded = !isSceneInfoExpanded"
         >
           <svg v-if="!isSceneInfoExpanded" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
