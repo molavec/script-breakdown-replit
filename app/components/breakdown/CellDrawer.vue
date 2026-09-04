@@ -3,6 +3,7 @@ import { computed, ref, watch, nextTick } from 'vue';
 import { X as XIcon, Send as SendIcon, Loader2 as Loader2Icon } from 'lucide-vue-next';
 import type { BreakdownChatMessage } from '~~/shared/types/chat';
 import type { CellBlock } from '~~/shared/types/cell';
+import { parseMarkdown } from '~~/utils/markdown';
 
 const { rows, getColumn } = useSceneTable();
 const { project } = useProjectBreakdown();
@@ -45,7 +46,7 @@ watch([() => activeCell.value, () => isDrawerOpen.value], async ([newCell, isOpe
         if (b.type === 'image') {
           return `<div class="mb-4"><img src="${b.content}" class="max-w-full rounded-md border border-neutral-700" /></div>`;
         }
-        return b.content;
+        return parseMarkdown(b.content);
       }).join('');
     }
 
@@ -146,7 +147,7 @@ const handleAddToContent = (text: string, imageUrl?: string) => {
   let htmlToInsert = '<div class="mb-4">';
   
   if (text) {
-    htmlToInsert += `<p class="mb-2 italic text-neutral-300">${text}</p>`;
+    htmlToInsert += `<div class="mb-2 text-neutral-300">${parseMarkdown(text)}</div>`;
   }
   
   if (imageUrl) {
@@ -231,7 +232,7 @@ const saveAndClose = async () => {
             <h2 class="text-[10px] font-bold text-neutral-400 mb-2 uppercase tracking-wider">CELL CONTENT</h2>
             <div 
               ref="editorRef"
-              class="w-full h-[250px] overflow-y-auto border border-neutral-700 rounded-md p-3 bg-transparent text-sm focus:outline-none focus:border-red-600 transition-colors"
+              class="w-full h-[250px] overflow-y-auto border border-neutral-700 rounded-md p-3 bg-transparent text-sm focus:outline-none focus:border-red-600 transition-colors prose prose-sm prose-invert max-w-none"
               contenteditable="true"
               @input="onEditorInput"
               data-placeholder="Continue writing here..."
@@ -266,7 +267,7 @@ const saveAndClose = async () => {
                   </div>
                   
                   <template v-else>
-                    <p v-if="msg.text" class="italic mb-2">{{ msg.text }}</p>
+                    <div v-if="msg.text" class="mb-2 prose prose-sm prose-invert max-w-none" v-html="parseMarkdown(msg.text)"></div>
                     <img v-if="msg.imageUrl" :src="msg.imageUrl" alt="Generated" class="max-w-full rounded-md mt-2 border border-neutral-700" />
                   </template>
                 </div>

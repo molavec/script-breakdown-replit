@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import draggable from 'vuedraggable';
+import { parseMarkdown } from '~~/utils/markdown';
 
 const { activeScene, project } = useProjectBreakdown();
 const { columns, rows, updateRowsOrder, addRow, addColumn, updateColumnsOrder } = useSceneTable();
@@ -374,7 +375,7 @@ onUnmounted(() => {
                   <div v-else>
                     <div v-if="row.cells[col.id].blocks && row.cells[col.id].blocks.length > 0" class="flex flex-col gap-1 text-sm text-neutral-300 whitespace-pre-wrap leading-relaxed">
                       <template v-for="block in row.cells[col.id].blocks" :key="block.id">
-                         <div v-if="block.type === 'text'" v-html="block.content"></div>
+                         <div v-if="block.type === 'text'" class="prose prose-sm prose-invert max-w-none" v-html="parseMarkdown(block.content)"></div>
                          <img v-else-if="block.type === 'image'" :src="block.content" class="max-w-full rounded-md border border-neutral-700" />
                       </template>
                     </div>
