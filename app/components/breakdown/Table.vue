@@ -148,6 +148,23 @@ const onRowMouseUp = () => {
   document.removeEventListener('mouseup', onRowMouseUp);
 };
 
+const sceneShotsCount = computed(() => rows.value.length);
+
+const budgetColumn = computed(() => columns.value.find(c => c.name === 'Budget' || c.name === 'Presupuesto'));
+
+const sceneBudget = computed(() => {
+  if (!budgetColumn.value) return 0;
+  return rows.value.reduce((sum, row) => {
+    const cell = row.cells[budgetColumn.value!.id];
+    return sum + (Number(cell?.numericValue) || 0);
+  }, 0);
+});
+
+const budgetCurrencySymbol = computed(() => {
+  if (!budgetColumn.value) return '';
+  return getCurrencySymbol(budgetColumn.value.options?.currencyCode);
+});
+
 onUnmounted(() => {
   document.body.style.cursor = '';
   document.removeEventListener('mousemove', onMouseMove);
@@ -176,6 +193,9 @@ onUnmounted(() => {
             </svg>
           </NuxtLink>
         </div>
+        <p class="text-xs font-bold text-neutral-300 font-mono tracking-wider">
+          Shots: {{ sceneShotsCount }} - Budget: {{ budgetCurrencySymbol }}{{ sceneBudget }}
+        </p>
         <p v-if="activeScene.synopsis" class="text-xs text-neutral-400 font-mono tracking-wider">{{ activeScene.synopsis }}</p>
       </div>
       <div v-else>

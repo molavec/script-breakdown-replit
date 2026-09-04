@@ -72,7 +72,7 @@
         </div>
 
         <!-- Poster Upload -->
-        <div>
+        <!-- <div>
           <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Project Poster / Cover Concept</label>
           <div class="border-2 border-dashed border-white/10 rounded-lg p-10 bg-[#0a0a0a] flex flex-col items-center justify-center text-center cursor-pointer hover:border-white/30 transition-colors group">
             <div class="w-12 h-12 mb-4 text-gray-600 group-hover:text-gray-400 transition-colors">
@@ -83,7 +83,7 @@
             <p class="text-lg font-medium text-white mb-1">Drag & Drop visual reference</p>
             <p class="text-sm text-gray-500">or click to browse (16:9 or 2.39:1 recommended)</p>
           </div>
-        </div>
+        </div> -->
       </div>
 
       <!-- Footer Actions -->
