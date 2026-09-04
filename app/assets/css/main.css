@@ -9,3 +9,11 @@
 .prose :where(strong):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   color: white;
 }
+
+
+.prose-sm {
+  :where(p):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    margin-top: 0em;
+    margin-bottom: 0.5em;
+  }
+}
