@@ -92,7 +92,7 @@ export async function generateAiText(
     contents: prompt,
     config: {
       responseModalities: ["TEXT"],
-      systemInstruction: systemInstruction,
+      systemInstruction: `Devuelve únicamente el contenido solicitado, sin preámbulos, saludos, explicaciones ni comentarios finales. ${systemInstruction}`,
     },
   });
   return {
