@@ -8,6 +8,7 @@ const { activeCellId, lastSelectedRowIndex, selectCell } = useBreakdownCell();
 
 const editingCellId = ref<string | null>(null);
 const inlineEditValue = ref<string | number>('');
+const isSceneInfoExpanded = ref(false);
 
 const tableRows = computed({
   get: () => rows.value,
@@ -193,16 +194,30 @@ onUnmounted(() => {
             </svg>
           </NuxtLink>
         </div>
-        <p class="text-xs font-bold text-neutral-300 font-mono tracking-wider">
-          Shots: {{ sceneShotsCount }} - Budget: {{ budgetCurrencySymbol }}{{ sceneBudget }}
-        </p>
-        <p v-if="activeScene.synopsis" class="text-xs text-neutral-400 font-mono tracking-wider">{{ activeScene.synopsis }}</p>
+        <div :class="['transition-all duration-300', isSceneInfoExpanded ? 'block' : 'hidden lg:block']">
+          <p class="text-xs font-bold text-neutral-300 font-mono tracking-wider">
+            Shots: {{ sceneShotsCount }} - Budget: {{ budgetCurrencySymbol }}{{ sceneBudget }}
+          </p>
+          <p v-if="activeScene.synopsis" class="text-xs text-neutral-400 font-mono tracking-wider mt-1">{{ activeScene.synopsis }}</p>
+        </div>
       </div>
       <div v-else>
         <h1 class="text-2xl font-bold text-neutral-500">No scene selected</h1>
       </div>
       
       <div class="flex items-center gap-3">
+        <button 
+          v-if="activeScene"
+          class="btn btn-sm btn-ghost btn-square lg:hidden text-neutral-400 hover:text-white" 
+          @click="isSceneInfoExpanded = !isSceneInfoExpanded"
+        >
+          <svg v-if="!isSceneInfoExpanded" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+          </svg>
+          <svg v-else xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+          </svg>
+        </button>
         <button @click="addRow" class="btn btn-sm btn-outline border-neutral-700 text-neutral-300 hover:text-white">
           Add Shot
         </button>
