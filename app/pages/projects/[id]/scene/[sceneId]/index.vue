@@ -45,7 +45,7 @@ watch(sceneIdParam, async (newSceneId) => {
 
       <!-- Table Section -->
       <div class="flex-1 relative overflow-hidden flex flex-col">
-        <BreakdownTable class="flex-1" />
+        <BreakdownDataView class="flex-1" />
       </div>
 
       <!-- Edit Cell Drawer (Absolute overlay over main) -->
