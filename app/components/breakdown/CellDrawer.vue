@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { computed, ref, watch, nextTick } from 'vue';
-import { X as XIcon, Send as SendIcon, Loader2 as Loader2Icon } from 'lucide-vue-next';
+import { X as XIcon, Send as SendIcon, Loader2 as Loader2Icon, PlusCircle as PlusCircleIcon } from 'lucide-vue-next';
 import type { BreakdownChatMessage } from '~~/shared/types/chat';
 import type { CellBlock } from '~~/shared/types/cell';
 import { parseMarkdown } from '~~/utils/markdown';
 
-const { rows, getColumn } = useSceneTable();
+const { rows, getColumn, columns } = useSceneTable();
 const { project } = useProjectBreakdown();
 const { 
   activeCellId, 
@@ -26,6 +26,18 @@ const activeCell = computed(() => {
 
 const activeColumn = computed(() => {
   return activeCellColId.value ? getColumn(activeCellColId.value) : null;
+});
+
+const selectedContextColumns = ref<string[]>([]);
+
+const currentRow = computed(() => {
+  if (lastSelectedRowIndex.value === null) return null;
+  return rows.value[lastSelectedRowIndex.value];
+});
+
+const availableColumns = computed(() => {
+  if (!activeCellColId.value || !columns.value) return [];
+  return columns.value.filter(c => c.id !== activeCellColId.value);
 });
 
 const editorRef = ref<HTMLDivElement | null>(null);
@@ -53,6 +65,8 @@ watch([() => activeCell.value, () => isDrawerOpen.value], async ([newCell, isOpe
     editContent.value = initialContent;
     messages.value = []; // Reset chat history when opening a new cell
     inputValue.value = '';
+    selectedContextColumns.value = []; // Reset context selection
+    
     
     await nextTick();
     if (editorRef.value) {
@@ -86,6 +100,41 @@ const handleSendMessage = async () => {
   const userText = inputValue.value.trim();
   inputValue.value = '';
   
+  // Build systemInstruction context
+  let contextString = '';
+  
+  if (activeColumn.value?.options?.defaultPrompt) {
+    contextString += `${activeColumn.value.options.defaultPrompt}\n\n`;
+  }
+  
+  contextString += `Context from current row/shot:\n`;
+  
+  // Add active cell content
+  let activeCellContent = 'Empty';
+  if (activeCell.value?.numericValue != null) {
+    activeCellContent = String(activeCell.value.numericValue);
+  } else if (activeCell.value?.blocks && activeCell.value.blocks.length > 0) {
+    activeCellContent = activeCell.value.blocks.map(b => b.type === 'image' ? '[Image]' : b.content).join(' ');
+  }
+  contextString += `- ${activeColumn.value?.name || 'Current Cell'}: ${activeCellContent}\n`;
+  
+  // Add selected context columns
+  if (currentRow.value) {
+    for (const colId of selectedContextColumns.value) {
+      const col = getColumn(colId);
+      const cell = currentRow.value.cells[colId];
+      let cellContent = 'Empty';
+      if (cell) {
+        if (cell.numericValue != null) {
+           cellContent = String(cell.numericValue);
+        } else if (cell.blocks && cell.blocks.length > 0) {
+           cellContent = cell.blocks.map(b => b.type === 'image' ? '[Image]' : b.content).join(' ');
+        }
+      }
+      contextString += `- ${col?.name || colId}: ${cellContent}\n`;
+    }
+  }
+
   const newUserMsg: BreakdownChatMessage = {
     id: Date.now().toString(),
     role: 'user',
@@ -107,6 +156,7 @@ const handleSendMessage = async () => {
       body: {
         projectId: project.value?.id,
         prompt: userText,
+        systemInstruction: contextString,
         generationType: selectedGenerationType.value
       }
     });
@@ -290,43 +340,63 @@ const saveAndClose = async () => {
         <!-- Footer -->
         <footer class="p-4 bg-[#18181b] border-t border-neutral-800 flex flex-col gap-4">
           <div v-if="activeCell" class="flex flex-col gap-3">
-            <!-- AI Generation Selector Badges -->
-            <div class="flex items-center gap-2" v-if="activeColumn">
-              <button 
-                @click="selectedGenerationType = 'text'"
-                class="badge badge-sm cursor-pointer transition-colors"
-                :class="selectedGenerationType === 'text' ? 'badge-primary' : 'badge-neutral hover:badge-outline'"
-              >
-                Text
-              </button>
-              
-              <template v-if="activeColumn.cellType === 'media'">
+            
+            <div class="flex items-center justify-between">
+              <!-- AI Generation Selector Badges -->
+              <div class="flex items-center gap-2" v-if="activeColumn">
                 <button 
-                  @click="selectedGenerationType = 'image'"
+                  @click="selectedGenerationType = 'text'"
                   class="badge badge-sm cursor-pointer transition-colors"
-                  :class="selectedGenerationType === 'image' ? 'badge-primary' : 'badge-neutral hover:badge-outline'"
+                  :class="selectedGenerationType === 'text' ? 'badge-primary' : 'badge-neutral hover:badge-outline'"
                 >
-                  Image
+                  Text
                 </button>
                 
-                <div class="tooltip tooltip-top tooltip-neutral before:text-xs" data-tip="Not available yet">
+                <template v-if="activeColumn.cellType === 'media'">
                   <button 
-                    disabled
-                    class="badge badge-sm badge-neutral opacity-50 cursor-not-allowed"
+                    @click="selectedGenerationType = 'image'"
+                    class="badge badge-sm cursor-pointer transition-colors"
+                    :class="selectedGenerationType === 'image' ? 'badge-primary' : 'badge-neutral hover:badge-outline'"
                   >
-                    Video
+                    Image
                   </button>
+                  
+                  <div class="tooltip tooltip-top tooltip-neutral before:text-xs" data-tip="Not available yet">
+                    <button 
+                      disabled
+                      class="badge badge-sm badge-neutral opacity-50 cursor-not-allowed"
+                    >
+                      Video
+                    </button>
+                  </div>
+                  
+                  <div class="tooltip tooltip-top tooltip-neutral before:text-xs" data-tip="Not available yet">
+                    <button 
+                      disabled
+                      class="badge badge-sm badge-neutral opacity-50 cursor-not-allowed"
+                    >
+                      Audio
+                    </button>
+                  </div>
+                </template>
+              </div>
+
+              <!-- Context Selection Dropdown -->
+              <div class="dropdown dropdown-top dropdown-end" v-if="availableColumns.length > 0">
+                <div tabindex="0" role="button" class="btn btn-xs btn-outline border-neutral-700 text-neutral-400 hover:text-white flex items-center gap-1">
+                  <PlusCircleIcon :size="14" />
+                  Context ({{ selectedContextColumns.length }})
                 </div>
-                
-                <div class="tooltip tooltip-top tooltip-neutral before:text-xs" data-tip="Not available yet">
-                  <button 
-                    disabled
-                    class="badge badge-sm badge-neutral opacity-50 cursor-not-allowed"
-                  >
-                    Audio
-                  </button>
-                </div>
-              </template>
+                <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-[#262626] border border-neutral-700 rounded-box w-72 mb-2 max-h-60 overflow-y-auto">
+                  <li class="menu-title px-2 py-1 text-[10px] text-neutral-500 font-bold uppercase tracking-wider">Include in Context</li>
+                  <li v-for="col in availableColumns" :key="col.id">
+                    <label class="label cursor-pointer flex justify-start gap-2 py-1.5 px-2 hover:bg-[#333333] rounded-md">
+                      <input type="checkbox" :value="col.id" v-model="selectedContextColumns" class="checkbox checkbox-xs checkbox-primary border-neutral-500 rounded-sm" />
+                      <span class="label-text text-neutral-300 text-xs truncate">{{ col.name }}</span>
+                    </label>
+                  </li>
+                </ul>
+              </div>
             </div>
 
             <!-- Chat Input -->

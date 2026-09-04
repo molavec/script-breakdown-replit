@@ -4,6 +4,15 @@ export default defineEventHandler(async (event) => {
   await requireUser(event);
   const body = await readBody(event);
   const { prompt, generationType, systemInstruction, projectId } = body;
+
+  console.log("\n\n\n------------CHAT API----------");
+  console.log("prompt:::", prompt);
+  console.log("generationType:::", generationType);
+  console.log("systemInstruction:::", systemInstruction);
+  console.log("projectId:::", projectId);
+  console.log("--------------------------------\n\n\n");
+
+
   if (!projectId || typeof projectId !== 'string') {
     throw createError({ statusCode: 400, statusMessage: 'projectId is required' });
   }
