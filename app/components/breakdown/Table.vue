@@ -21,6 +21,23 @@ const openColumnConfig = (columnId: string) => {
   navigateTo(`/projects/${projectId}/columns/${columnId}`);
 };
 
+const getCurrencySymbol = (code?: string): string => {
+  if (!code) return '';
+  const trimmed = String(code).trim();
+  const symbols: Record<string, string> = {
+    USD: '$', EUR: '€', GBP: '£', MXN: '$', CAD: '$', AUD: '$',
+    JPY: '¥', CNY: '¥', INR: '₹', BRL: 'R$', ARS: '$', CLP: '$',
+    COP: '$', PEN: 'S/'
+  };
+  return symbols[trimmed.toUpperCase()] || trimmed;
+};
+
+const getCellCurrency = (col: any, cell?: any): string => {
+  const code = cell?.options?.currencyCode || col?.options?.currencyCode || cell?.currencyCode;
+  return getCurrencySymbol(code);
+};
+
+
 const startInlineEdit = (cell: any, type: 'number' | 'tags') => {
   editingCellId.value = cell.id;
   if (type === 'number') {
@@ -317,9 +334,14 @@ onUnmounted(() => {
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
                       </button>
                     </div>
-                    <div v-else class="cursor-pointer group flex items-center justify-between" @click="startInlineEdit(row.cells[col.id], 'number')">
-                      <span class="text-neutral-300 font-mono">{{ row.cells[col.id].numericValue ?? 'none' }}</span>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-neutral-600 opacity-0 group-hover:opacity-100 transition-opacity"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+                    <div v-else class="cursor-pointer group flex items-center justify-end gap-2 w-full text-right" @click="startInlineEdit(row.cells[col.id], 'number')">
+                      <div class="flex items-center gap-1.5 font-mono ml-auto">
+                        <span v-if="getCellCurrency(col, row.cells[col.id])" class="text-neutral-400 select-none">
+                          {{ getCellCurrency(col, row.cells[col.id]) }}
+                        </span>
+                        <span class="text-neutral-300">{{ row.cells[col.id].numericValue ?? 'none' }}</span>
+                      </div>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-neutral-600 opacity-0 group-hover:opacity-100 transition-opacity shrink-0"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
                     </div>
                   </div>
 
