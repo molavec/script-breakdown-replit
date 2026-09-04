@@ -144,7 +144,7 @@ onUnmounted(() => {
 <template>
   <div class="flex flex-col h-full bg-[#121214] text-white">
     <!-- Scene Header -->
-    <div class="px-6 py-5 flex items-start justify-between shrink-0">
+    <div class="px-6 py-5 flex flex-wrap gap-2 items-start justify-between shrink-0">
       <div v-if="activeScene">
         <div class="flex items-center gap-2 mb-1">
           <h1 class="text-2xl font-bold">Scene {{ activeScene?.order }}</h1>
@@ -170,7 +170,6 @@ onUnmounted(() => {
           Add Shot
         </button>
         <button class="btn btn-sm btn-outline border-neutral-700 text-neutral-300 hover:text-white" @click="addColumn()">
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-1"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
           Add Column
         </button>
       </div>
