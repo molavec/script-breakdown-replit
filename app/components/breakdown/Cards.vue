@@ -100,74 +100,74 @@ const getCellCurrency = (col: any, cell?: any): string => {
 
               <!-- Field Value -->
               <div 
-                class="min-h-[24px] max-h-[250px] overflow-y-auto py-1 transition-colors rounded-md"
+                class="min-h-[24px] py-1 transition-colors rounded-md"
                 :class="activeCellId === row.cells[col.id]?.id && col.cellType !== 'number' && col.cellType !== 'tags' ? 'bg-[#2a2a2e]/50 ring-1 ring-error/50 px-2' : ''"
               >
                 <div v-if="row.cells[col.id]">
-                  
-                  <!-- Number Cell (Inline Input) -->
-                  <div v-if="col.cellType === 'number'">
-                    <div v-if="editingCellId === row.cells[col.id].id" class="flex items-center gap-2">
-                      <input 
-                        type="number" 
-                        class="input input-sm input-bordered w-full bg-[#18181b] border-neutral-500 text-neutral-100 focus:outline-none focus:border-error" 
-                        v-model="inlineEditValue"
-                        @keydown.enter="saveInlineEdit(row.cells[col.id], 'number')"
-                      />
-                      <button @click="saveInlineEdit(row.cells[col.id], 'number')" class="btn btn-xs btn-circle btn-success text-white">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                      </button>
-                      <button @click="cancelInlineEdit" class="btn btn-xs btn-circle btn-error text-white">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                      </button>
-                    </div>
-                    <div v-else class="flex items-center gap-1.5 font-mono">
-                      <span v-if="getCellCurrency(col, row.cells[col.id])" class="text-neutral-400 select-none">
-                        {{ getCellCurrency(col, row.cells[col.id]) }}
-                      </span>
-                      <span class="text-neutral-200 text-sm">{{ row.cells[col.id].numericValue ?? 'none' }}</span>
-                    </div>
-                  </div>
-
-                  <!-- Tags Cell -->
-                  <div v-else-if="col.cellType === 'tags'">
-                    <div v-if="editingCellId === row.cells[col.id].id" class="flex flex-col gap-2">
-                      <input 
-                        type="text" 
-                        class="input input-sm input-bordered w-full bg-[#18181b] border-neutral-500 text-neutral-100 focus:outline-none focus:border-error" 
-                        v-model="inlineEditValue"
-                        placeholder="Tag 1, Tag 2, Tag 3..."
-                        @keydown.enter="saveInlineEdit(row.cells[col.id], 'tags')"
-                      />
-                      <div class="flex justify-end gap-1">
-                        <button @click="saveInlineEdit(row.cells[col.id], 'tags')" class="btn btn-xs btn-success text-white px-2">Save</button>
-                        <button @click="cancelInlineEdit" class="btn btn-xs btn-error text-white px-2">Cancel</button>
+                  <BreakdownExpandableCell :max-height="250">
+                    <!-- Number Cell (Inline Input) -->
+                    <div v-if="col.cellType === 'number'">
+                      <div v-if="editingCellId === row.cells[col.id].id" class="flex items-center gap-2">
+                        <input 
+                          type="number" 
+                          class="input input-sm input-bordered w-full bg-[#18181b] border-neutral-500 text-neutral-100 focus:outline-none focus:border-error" 
+                          v-model="inlineEditValue"
+                          @keydown.enter="saveInlineEdit(row.cells[col.id], 'number')"
+                        />
+                        <button @click="saveInlineEdit(row.cells[col.id], 'number')" class="btn btn-xs btn-circle btn-success text-white">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        </button>
+                        <button @click="cancelInlineEdit" class="btn btn-xs btn-circle btn-error text-white">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                        </button>
+                      </div>
+                      <div v-else class="flex items-center gap-1.5 font-mono">
+                        <span v-if="getCellCurrency(col, row.cells[col.id])" class="text-neutral-400 select-none">
+                          {{ getCellCurrency(col, row.cells[col.id]) }}
+                        </span>
+                        <span class="text-neutral-200 text-sm">{{ row.cells[col.id].numericValue ?? 'none' }}</span>
                       </div>
                     </div>
+
+                    <!-- Tags Cell -->
+                    <div v-else-if="col.cellType === 'tags'">
+                      <div v-if="editingCellId === row.cells[col.id].id" class="flex flex-col gap-2">
+                        <input 
+                          type="text" 
+                          class="input input-sm input-bordered w-full bg-[#18181b] border-neutral-500 text-neutral-100 focus:outline-none focus:border-error" 
+                          v-model="inlineEditValue"
+                          placeholder="Tag 1, Tag 2, Tag 3..."
+                          @keydown.enter="saveInlineEdit(row.cells[col.id], 'tags')"
+                        />
+                        <div class="flex justify-end gap-1">
+                          <button @click="saveInlineEdit(row.cells[col.id], 'tags')" class="btn btn-xs btn-success text-white px-2">Save</button>
+                          <button @click="cancelInlineEdit" class="btn btn-xs btn-error text-white px-2">Cancel</button>
+                        </div>
+                      </div>
+                      <div v-else>
+                        <div v-if="row.cells[col.id].blocks && row.cells[col.id].blocks.length > 0" class="flex flex-wrap gap-1.5">
+                          <template v-for="block in row.cells[col.id].blocks" :key="block.id">
+                            <span v-if="block.type === 'entity_tag'" class="badge badge-sm bg-neutral-200 text-neutral-800 border-neutral-400 font-medium px-2 py-3 rounded-md">
+                              {{ block.content }}
+                            </span>
+                            <span v-else-if="block.type === 'text'" class="text-xs text-neutral-400">{{ block.content }}</span>
+                          </template>
+                        </div>
+                        <div v-else class="text-neutral-500 italic text-sm">none</div>
+                      </div>
+                    </div>
+
+                    <!-- Text / Mixed / Default Cell -->
                     <div v-else>
-                      <div v-if="row.cells[col.id].blocks && row.cells[col.id].blocks.length > 0" class="flex flex-wrap gap-1.5">
+                      <div v-if="row.cells[col.id].blocks && row.cells[col.id].blocks.length > 0" class="flex flex-col gap-2 text-sm text-neutral-300 whitespace-pre-wrap leading-relaxed">
                         <template v-for="block in row.cells[col.id].blocks" :key="block.id">
-                          <span v-if="block.type === 'entity_tag'" class="badge badge-sm bg-neutral-200 text-neutral-800 border-neutral-400 font-medium px-2 py-3 rounded-md">
-                            {{ block.content }}
-                          </span>
-                          <span v-else-if="block.type === 'text'" class="text-xs text-neutral-400">{{ block.content }}</span>
+                          <div v-if="block.type === 'text'" class="prose prose-sm prose-invert max-w-none" v-html="parseMarkdown(block.content)"></div>
+                          <img v-else-if="block.type === 'image'" :src="block.content" class="max-w-full rounded-md border border-neutral-700" />
                         </template>
                       </div>
                       <div v-else class="text-neutral-500 italic text-sm">none</div>
                     </div>
-                  </div>
-
-                  <!-- Text / Mixed / Default Cell -->
-                  <div v-else>
-                    <div v-if="row.cells[col.id].blocks && row.cells[col.id].blocks.length > 0" class="flex flex-col gap-2 text-sm text-neutral-300 whitespace-pre-wrap leading-relaxed">
-                      <template v-for="block in row.cells[col.id].blocks" :key="block.id">
-                        <div v-if="block.type === 'text'" class="prose prose-sm prose-invert max-w-none" v-html="parseMarkdown(block.content)"></div>
-                        <img v-else-if="block.type === 'image'" :src="block.content" class="max-w-full rounded-md border border-neutral-700" />
-                      </template>
-                    </div>
-                    <div v-else class="text-neutral-500 italic text-sm">none</div>
-                  </div>
-
+                  </BreakdownExpandableCell>
                 </div>
               </div>
             </div>
