@@ -117,7 +117,7 @@ export function useAuth() {
       pending.value = false
     }
 
-    return navigateTo('/login')
+    return navigateTo('/')
   }
 
   return {
