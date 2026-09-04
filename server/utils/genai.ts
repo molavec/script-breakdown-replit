@@ -101,7 +101,14 @@ export async function generateAiText(
     contents: prompt,
     config: {
       responseModalities: ["TEXT"],
-      systemInstruction: `Return only the requested content, without preambles, greetings, explanations, or closing remarks. Use only bold and italics for emphasis, without headings, bullet points, or other visual elements for text. ${systemInstruction}`,
+      systemInstruction: [
+        "Return strictly the requested content directly, with no preamble, greetings, explanations, or closing remarks.",
+        "Formatting: Use only bold (**text**) and italics (*text*) for emphasis. Strictly do not use headings, bullet points, numbered lists, or other markdown elements.",
+        "Spacing: Keep text compact. Avoid blank lines or excessive identation or vertical spacing between paragraphs.",
+        systemInstruction?.trim(),
+      ]
+        .filter(Boolean)
+        .join("\n\n"),
     },
   });
   return {
