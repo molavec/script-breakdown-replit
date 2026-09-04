@@ -1,7 +1,7 @@
 import { requireProjectOwner, requireUser } from '../utils/auth';
 
 export default defineEventHandler(async (event) => {
-  await requireUser(event);
+  const user = await requireUser(event);
   const body = await readBody(event);
   const { prompt, generationType, systemInstruction, projectId } = body;
 
@@ -20,10 +20,10 @@ export default defineEventHandler(async (event) => {
 
   try {
     if (generationType === 'image') {
-      return await generateAiImage(prompt, systemInstruction);
+      return await generateAiImage(user.id, prompt, systemInstruction);
     }
     // We can handle 'video' or 'audio' here in the future.
-    return await generateAiText(prompt, systemInstruction);
+    return await generateAiText(user.id, prompt, systemInstruction);
   } catch (error: any) {
     console.error("API error:", error);
     if (error?.statusCode) throw error;

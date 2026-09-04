@@ -1,7 +1,7 @@
 import { and, eq } from 'drizzle-orm';
 import * as oidc from 'openid-client';
 import { db } from './db';
-import { breakdownCells, projects, scenes, shots } from './schema';
+import { breakdownCells, projects, scenes, shots, users } from './schema';
 
 export interface ReplitUser {
   id: string;
@@ -36,9 +36,24 @@ export function safeReturnPath(value: unknown): string {
   return value;
 }
 
+export async function syncUser(user: ReplitUser) {
+  const [existing] = await db.select().from(users).where(eq(users.id, user.id)).limit(1);
+  if (!existing) {
+    await db.insert(users).values({
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      profileImageUrl: user.profileImageUrl,
+    });
+  }
+}
+
 export async function getUser(event: any): Promise<ReplitUser | null> {
+  let user: ReplitUser | null = null;
   if (process.env.MOCK_AUTH === 'true') {
-    return {
+    user = {
       id: 'local-mock-user-123',
       username: 'usuario_local',
       email: 'local@example.com',
@@ -46,8 +61,15 @@ export async function getUser(event: any): Promise<ReplitUser | null> {
       lastName: 'Local',
       profileImageUrl: null,
     };
+  } else {
+    user = (await getAuthSession(event)).data.user || null;
   }
-  return (await getAuthSession(event)).data.user || null;
+
+  if (user) {
+    await syncUser(user);
+  }
+
+  return user;
 }
 
 export async function requireUser(event: any): Promise<ReplitUser> {

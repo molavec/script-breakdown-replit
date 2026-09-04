@@ -1,4 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
+import { checkAndConsumeTokens } from "./tokens";
 
 let _ai: GoogleGenAI | null = null;
 
@@ -56,9 +57,13 @@ export function useGenAI(): GoogleGenAI {
 }
 
 export async function generateAiImage(
+  userId: string,
   prompt: string,
   systemInstruction?: string,
 ) {
+  // Consumimos 5 tokens por imagen
+  await checkAndConsumeTokens(userId, 5);
+
   const ai = useGenAI();
   const response = await ai.models.generateContent({
     model: "gemini-3.1-flash-lite-image",
@@ -83,16 +88,27 @@ export async function generateAiImage(
 }
 
 export async function generateAiText(
+  userId: string,
   prompt: string,
   systemInstruction?: string,
 ) {
+  // Consumimos 1 token por texto
+  await checkAndConsumeTokens(userId, 1);
+
   const ai = useGenAI();
   const response = await ai.models.generateContent({
     model: "gemini-3.5-flash-lite",
     contents: prompt,
     config: {
       responseModalities: ["TEXT"],
-      systemInstruction: `Devuelve únicamente el contenido solicitado, sin preámbulos, saludos, explicaciones ni comentarios finales. utiliza solo negritas y cursivas para enfatizar, sin encabezados, bullets points ni otros elementos visuales para los textos. ${systemInstruction}`,
+      systemInstruction: [
+        "Return strictly the requested content directly, with no preamble, greetings, explanations, or closing remarks.",
+        "Formatting: Use only bold (**text**) and italics (*text*) for emphasis. Strictly do not use headings, bullet points, numbered lists, or other markdown elements.",
+        "Spacing: Keep text compact. Avoid blank lines or excessive identation or vertical spacing between paragraphs.",
+        systemInstruction?.trim(),
+      ]
+        .filter(Boolean)
+        .join("\n\n"),
     },
   });
   return {
