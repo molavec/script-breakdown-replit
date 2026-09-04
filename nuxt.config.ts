@@ -9,5 +9,13 @@ export default defineNuxtConfig({
     plugins: [tailwindcss() as any],
   },
 
+  $development: {
+    vite: {
+      server: {
+        allowedHosts: true
+      }
+    }
+  },
+
   css: ['~/assets/css/main.css'],
 })

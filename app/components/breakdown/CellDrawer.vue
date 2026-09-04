@@ -48,6 +48,44 @@ const messages = ref<BreakdownChatMessage[]>([]);
 const inputValue = ref('');
 const isGenerating = ref(false);
 const selectedGenerationType = ref<'text' | 'image' | 'video' | 'audio'>('text');
+const chatInputRef = ref<HTMLTextAreaElement | null>(null);
+
+const adjustTextareaHeight = () => {
+  const el = chatInputRef.value;
+  if (!el) return;
+  el.style.height = 'auto';
+  const borderOffset = el.offsetHeight - el.clientHeight;
+  const targetHeight = Math.min(el.scrollHeight + borderOffset, 300);
+  el.style.height = `${targetHeight}px`;
+  el.style.overflowY = (el.scrollHeight + borderOffset) > 300 ? 'auto' : 'hidden';
+};
+
+const isMobileDevice = () => {
+  if (typeof window === 'undefined') return false;
+  return (
+    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+    (window.matchMedia('(pointer: coarse)').matches && window.innerWidth < 1024) ||
+    window.innerWidth < 768
+  );
+};
+
+const handleKeyDown = (e: KeyboardEvent) => {
+  if (e.key === 'Enter') {
+    if (e.isComposing) return;
+    // En móviles o al presionar Shift / Ctrl / Cmd / Alt, no se envía el mensaje sino que hace un salto de línea
+    if (isMobileDevice() || e.shiftKey || e.ctrlKey || e.metaKey || e.altKey) {
+      return;
+    }
+    e.preventDefault();
+    handleSendMessage();
+  }
+};
+
+watch(inputValue, () => {
+  nextTick(() => {
+    adjustTextareaHeight();
+  });
+});
 
 watch([() => activeCell.value, () => isDrawerOpen.value], async ([newCell, isOpen]) => {
   if (isOpen && newCell) {
@@ -66,6 +104,9 @@ watch([() => activeCell.value, () => isDrawerOpen.value], async ([newCell, isOpe
     messages.value = []; // Reset chat history when opening a new cell
     inputValue.value = '';
     selectedContextColumns.value = []; // Reset context selection
+    
+    await nextTick();
+    adjustTextareaHeight();
     
     
     await nextTick();
@@ -99,6 +140,9 @@ const handleSendMessage = async () => {
 
   const userText = inputValue.value.trim();
   inputValue.value = '';
+  nextTick(() => {
+    adjustTextareaHeight();
+  });
   
   // Build systemInstruction context
   let contextString = '';
@@ -264,7 +308,7 @@ const saveAndClose = async () => {
     
     <div class="drawer-side pointer-events-auto">
       <label for="cell-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
-      <div class="w-[450px] h-full bg-[#18181b] border-l border-neutral-800 flex flex-col text-white shadow-2xl font-sans">
+      <div class="w-full lg:w-[450px] h-full bg-[#18181b] border-l border-neutral-800 flex flex-col text-white shadow-2xl font-sans">
         
         <!-- Header -->
         <header class="flex justify-between items-center p-4 border-b border-neutral-800">
@@ -338,7 +382,7 @@ const saveAndClose = async () => {
         </div>
 
         <!-- Footer -->
-        <footer class="p-4 bg-[#18181b] border-t border-neutral-800 flex flex-col gap-4">
+        <footer class="p-4 bg-[#18181b] border-t border-neutral-800 flex flex-col gap-4 flex-shrink-0">
           <div v-if="activeCell" class="flex flex-col gap-3">
             
             <div class="flex items-center justify-between">
@@ -400,19 +444,21 @@ const saveAndClose = async () => {
             </div>
 
             <!-- Chat Input -->
-            <div class="relative">
-              <input
-                type="text"
+            <div class="relative flex items-end">
+              <textarea
+                ref="chatInputRef"
+                rows="1"
                 v-model="inputValue"
-                @keydown.enter="handleSendMessage"
+                @keydown="handleKeyDown"
+                @input="adjustTextareaHeight"
                 placeholder="Type a command..."
-                class="w-full bg-[#2a2a2a] border border-neutral-700 rounded-full py-3 pl-4 pr-12 text-sm text-neutral-200 focus:outline-none focus:border-neutral-500 placeholder-neutral-500"
+                class="w-full bg-[#2a2a2a] border border-neutral-700 rounded-2xl py-2.5 pl-4 pr-12 text-sm text-neutral-200 focus:outline-none focus:border-neutral-500 placeholder-neutral-500 resize-none overflow-y-auto min-h-[42px] max-h-[300px] leading-relaxed block"
                 :disabled="isGenerating"
-              />
+              ></textarea>
               <button 
                 @click="handleSendMessage"
                 :disabled="!inputValue.trim() || isGenerating"
-                class="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 text-neutral-400 hover:text-neutral-200 disabled:opacity-50 disabled:hover:text-neutral-400 transition-colors"
+                class="absolute right-2 bottom-1.5 p-2 text-neutral-400 hover:text-neutral-200 disabled:opacity-50 disabled:hover:text-neutral-400 transition-colors rounded-lg"
               >
                 <SendIcon :size="18" />
               </button>
@@ -443,5 +489,19 @@ const saveAndClose = async () => {
   color: #737373; /* text-neutral-500 */
   pointer-events: none;
   display: block; /* For Firefox */
+}
+
+textarea::-webkit-scrollbar {
+  width: 6px;
+}
+textarea::-webkit-scrollbar-track {
+  background: transparent;
+}
+textarea::-webkit-scrollbar-thumb {
+  background-color: #404040;
+  border-radius: 9999px;
+}
+textarea::-webkit-scrollbar-thumb:hover {
+  background-color: #525252;
 }
 </style>

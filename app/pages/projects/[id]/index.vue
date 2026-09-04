@@ -21,6 +21,9 @@ onMounted(async () => {
   if (columns.value.length === 0) {
     await loadTableData(projectId.value, currentActiveSceneId.value);
   }
+
+  // Recalcular stats al cargar la vista
+  await handleRecalculateStats();
 });
 
 // Escena inicial para el botón de desglose

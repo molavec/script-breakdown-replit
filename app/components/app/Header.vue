@@ -52,9 +52,9 @@ const avatarInitial = computed(() => user.value?.name.charAt(0).toUpperCase() ||
       <NuxtLink to="/settings/profile" class="flex items-center gap-2 rounded-full text-gray-300 hover:text-white transition-colors" title="Profile settings">
         <span data-testid="user-name-display" class="hidden max-w-32 truncate text-sm font-medium sm:block">{{ user?.name }}</span>
         <div class="avatar placeholder">
-          <div class="w-8 rounded-full bg-gray-800 ring-1 ring-white/10">
+          <div class="flex items-center justify-center w-8 rounded-full bg-gray-800 ring-1 ring-white/10">
             <img v-if="user?.avatarUrl" :src="user.avatarUrl" :alt="`${user.name}'s Replit avatar`" class="object-cover" />
-            <span v-else class="text-xs text-gray-300">{{ avatarInitial }}</span>
+            <span v-else class="text-sm font-medium text-gray-300">{{ avatarInitial }}</span>
           </div>
         </div>
       </NuxtLink>
