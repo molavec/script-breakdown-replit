@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { computed, ref, watch, nextTick } from 'vue';
-import { X as XIcon, Send as SendIcon, Loader2 as Loader2Icon } from 'lucide-vue-next';
+import { X as XIcon, Send as SendIcon, Loader2 as Loader2Icon, PlusCircle as PlusCircleIcon } from 'lucide-vue-next';
 import type { BreakdownChatMessage } from '~~/shared/types/chat';
 import type { CellBlock } from '~~/shared/types/cell';
+import { parseMarkdown } from '~~/utils/markdown';
 
-const { rows, getColumn } = useSceneTable();
+const { rows, getColumn, columns } = useSceneTable();
 const { project } = useProjectBreakdown();
 const { 
   activeCellId, 
@@ -27,6 +28,18 @@ const activeColumn = computed(() => {
   return activeCellColId.value ? getColumn(activeCellColId.value) : null;
 });
 
+const selectedContextColumns = ref<string[]>([]);
+
+const currentRow = computed(() => {
+  if (lastSelectedRowIndex.value === null) return null;
+  return rows.value[lastSelectedRowIndex.value];
+});
+
+const availableColumns = computed(() => {
+  if (!activeCellColId.value || !columns.value) return [];
+  return columns.value.filter(c => c.id !== activeCellColId.value);
+});
+
 const editorRef = ref<HTMLDivElement | null>(null);
 const chatContainerRef = ref<HTMLDivElement | null>(null);
 const editContent = ref('');
@@ -45,13 +58,15 @@ watch([() => activeCell.value, () => isDrawerOpen.value], async ([newCell, isOpe
         if (b.type === 'image') {
           return `<div class="mb-4"><img src="${b.content}" class="max-w-full rounded-md border border-neutral-700" /></div>`;
         }
-        return b.content;
+        return parseMarkdown(b.content);
       }).join('');
     }
 
     editContent.value = initialContent;
     messages.value = []; // Reset chat history when opening a new cell
     inputValue.value = '';
+    selectedContextColumns.value = []; // Reset context selection
+    
     
     await nextTick();
     if (editorRef.value) {
@@ -85,6 +100,41 @@ const handleSendMessage = async () => {
   const userText = inputValue.value.trim();
   inputValue.value = '';
   
+  // Build systemInstruction context
+  let contextString = '';
+  
+  if (activeColumn.value?.options?.defaultPrompt) {
+    contextString += `${activeColumn.value.options.defaultPrompt}\n\n`;
+  }
+  
+  contextString += `Context from current row/shot:\n`;
+  
+  // Add active cell content
+  let activeCellContent = 'Empty';
+  if (activeCell.value?.numericValue != null) {
+    activeCellContent = String(activeCell.value.numericValue);
+  } else if (activeCell.value?.blocks && activeCell.value.blocks.length > 0) {
+    activeCellContent = activeCell.value.blocks.map(b => b.type === 'image' ? '[Image]' : b.content).join(' ');
+  }
+  contextString += `- ${activeColumn.value?.name || 'Current Cell'}: ${activeCellContent}\n`;
+  
+  // Add selected context columns
+  if (currentRow.value) {
+    for (const colId of selectedContextColumns.value) {
+      const col = getColumn(colId);
+      const cell = currentRow.value.cells[colId];
+      let cellContent = 'Empty';
+      if (cell) {
+        if (cell.numericValue != null) {
+           cellContent = String(cell.numericValue);
+        } else if (cell.blocks && cell.blocks.length > 0) {
+           cellContent = cell.blocks.map(b => b.type === 'image' ? '[Image]' : b.content).join(' ');
+        }
+      }
+      contextString += `- ${col?.name || colId}: ${cellContent}\n`;
+    }
+  }
+
   const newUserMsg: BreakdownChatMessage = {
     id: Date.now().toString(),
     role: 'user',
@@ -106,6 +156,7 @@ const handleSendMessage = async () => {
       body: {
         projectId: project.value?.id,
         prompt: userText,
+        systemInstruction: contextString,
         generationType: selectedGenerationType.value
       }
     });
@@ -146,7 +197,7 @@ const handleAddToContent = (text: string, imageUrl?: string) => {
   let htmlToInsert = '<div class="mb-4">';
   
   if (text) {
-    htmlToInsert += `<p class="mb-2 italic text-neutral-300">${text}</p>`;
+    htmlToInsert += `<div class="mb-2 text-neutral-300">${parseMarkdown(text)}</div>`;
   }
   
   if (imageUrl) {
@@ -213,7 +264,7 @@ const saveAndClose = async () => {
     
     <div class="drawer-side pointer-events-auto">
       <label for="cell-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
-      <div class="w-[450px] min-h-full bg-[#18181b] border-l border-neutral-800 flex flex-col text-white shadow-2xl font-sans">
+      <div class="w-[450px] h-full bg-[#18181b] border-l border-neutral-800 flex flex-col text-white shadow-2xl font-sans">
         
         <!-- Header -->
         <header class="flex justify-between items-center p-4 border-b border-neutral-800">
@@ -231,7 +282,7 @@ const saveAndClose = async () => {
             <h2 class="text-[10px] font-bold text-neutral-400 mb-2 uppercase tracking-wider">CELL CONTENT</h2>
             <div 
               ref="editorRef"
-              class="w-full min-h-[200px] max-h-[35vh] overflow-y-auto border border-neutral-700 rounded-md p-3 bg-transparent text-sm focus:outline-none focus:border-red-600 transition-colors"
+              class="w-full h-[250px] overflow-y-auto border border-neutral-700 rounded-md p-3 bg-transparent text-sm focus:outline-none focus:border-red-600 transition-colors prose prose-sm prose-invert max-w-none"
               contenteditable="true"
               @input="onEditorInput"
               data-placeholder="Continue writing here..."
@@ -248,7 +299,7 @@ const saveAndClose = async () => {
             <h2 class="text-[10px] font-bold text-neutral-400 mb-3 uppercase tracking-wider">AI ASSISTANT</h2>
             
             <!-- Chat History -->
-            <div class="flex-1 overflow-y-auto space-y-4 mb-4 pr-2" ref="chatContainerRef">
+            <div class="flex-1 overflow-y-auto space-y-4 pr-2" ref="chatContainerRef">
               <div v-if="messages.length === 0" class="text-center text-neutral-500 text-sm mt-10 italic">
                 Ask me to generate descriptions or images for your script.
               </div>
@@ -266,7 +317,7 @@ const saveAndClose = async () => {
                   </div>
                   
                   <template v-else>
-                    <p v-if="msg.text" class="italic mb-2">{{ msg.text }}</p>
+                    <div v-if="msg.text" class="mb-2 prose prose-sm prose-invert max-w-none" v-html="parseMarkdown(msg.text)"></div>
                     <img v-if="msg.imageUrl" :src="msg.imageUrl" alt="Generated" class="max-w-full rounded-md mt-2 border border-neutral-700" />
                   </template>
                 </div>
@@ -279,47 +330,77 @@ const saveAndClose = async () => {
               </div>
             </div>
 
-            <!-- AI Generation Selector Badges -->
-            <div class="flex items-center gap-2 mb-3" v-if="activeColumn">
-              <button 
-                @click="selectedGenerationType = 'text'"
-                class="badge badge-sm cursor-pointer transition-colors"
-                :class="selectedGenerationType === 'text' ? 'badge-primary' : 'badge-neutral hover:badge-outline'"
-              >
-                Text
-              </button>
-              
-              <template v-if="activeColumn.cellType === 'media'">
+          </section>
+
+        </div>
+        <div v-else class="p-6 text-center text-neutral-500 text-sm flex-1 flex items-center justify-center">
+           No cell selected
+        </div>
+
+        <!-- Footer -->
+        <footer class="p-4 bg-[#18181b] border-t border-neutral-800 flex flex-col gap-4">
+          <div v-if="activeCell" class="flex flex-col gap-3">
+            
+            <div class="flex items-center justify-between">
+              <!-- AI Generation Selector Badges -->
+              <div class="flex items-center gap-2" v-if="activeColumn">
                 <button 
-                  @click="selectedGenerationType = 'image'"
+                  @click="selectedGenerationType = 'text'"
                   class="badge badge-sm cursor-pointer transition-colors"
-                  :class="selectedGenerationType === 'image' ? 'badge-primary' : 'badge-neutral hover:badge-outline'"
+                  :class="selectedGenerationType === 'text' ? 'badge-primary' : 'badge-neutral hover:badge-outline'"
                 >
-                  Image
+                  Text
                 </button>
                 
-                <div class="tooltip tooltip-top tooltip-neutral before:text-xs" data-tip="Esta función aún no está activa">
+                <template v-if="activeColumn.cellType === 'media'">
                   <button 
-                    disabled
-                    class="badge badge-sm badge-neutral opacity-50 cursor-not-allowed"
+                    @click="selectedGenerationType = 'image'"
+                    class="badge badge-sm cursor-pointer transition-colors"
+                    :class="selectedGenerationType === 'image' ? 'badge-primary' : 'badge-neutral hover:badge-outline'"
                   >
-                    Video
+                    Image
                   </button>
+                  
+                  <div class="tooltip tooltip-top tooltip-neutral before:text-xs" data-tip="Not available yet">
+                    <button 
+                      disabled
+                      class="badge badge-sm badge-neutral opacity-50 cursor-not-allowed"
+                    >
+                      Video
+                    </button>
+                  </div>
+                  
+                  <div class="tooltip tooltip-top tooltip-neutral before:text-xs" data-tip="Not available yet">
+                    <button 
+                      disabled
+                      class="badge badge-sm badge-neutral opacity-50 cursor-not-allowed"
+                    >
+                      Audio
+                    </button>
+                  </div>
+                </template>
+              </div>
+
+              <!-- Context Selection Dropdown -->
+              <div class="dropdown dropdown-top dropdown-end" v-if="availableColumns.length > 0">
+                <div tabindex="0" role="button" class="btn btn-xs btn-outline border-neutral-700 text-neutral-400 hover:text-white flex items-center gap-1">
+                  <PlusCircleIcon :size="14" />
+                  Context ({{ selectedContextColumns.length }})
                 </div>
-                
-                <div class="tooltip tooltip-top tooltip-neutral before:text-xs" data-tip="Esta función aún no está activa">
-                  <button 
-                    disabled
-                    class="badge badge-sm badge-neutral opacity-50 cursor-not-allowed"
-                  >
-                    Audio
-                  </button>
-                </div>
-              </template>
+                <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-[#262626] border border-neutral-700 rounded-box w-72 mb-2 max-h-60 overflow-y-auto">
+                  <li class="menu-title px-2 py-1 text-[10px] text-neutral-500 font-bold uppercase tracking-wider">Include in Context</li>
+                  <li v-for="col in availableColumns" :key="col.id">
+                    <label class="label cursor-pointer flex justify-start gap-2 py-1.5 px-2 hover:bg-[#333333] rounded-md">
+                      <input type="checkbox" :value="col.id" v-model="selectedContextColumns" class="checkbox checkbox-xs checkbox-primary border-neutral-500 rounded-sm" />
+                      <span class="label-text text-neutral-300 text-xs truncate">{{ col.name }}</span>
+                    </label>
+                  </li>
+                </ul>
+              </div>
             </div>
 
             <!-- Chat Input -->
-            <div class="relative mt-auto">
+            <div class="relative">
               <input
                 type="text"
                 v-model="inputValue"
@@ -336,15 +417,8 @@ const saveAndClose = async () => {
                 <SendIcon :size="18" />
               </button>
             </div>
-          </section>
+          </div>
 
-        </div>
-        <div v-else class="p-6 text-center text-neutral-500 text-sm flex-1 flex items-center justify-center">
-           No cell selected
-        </div>
-
-        <!-- Footer -->
-        <footer class="p-4 bg-[#18181b] border-t border-neutral-800">
           <button @click="saveAndClose" :disabled="isUploading" class="w-full flex justify-center items-center gap-2 bg-[#e53e3e] hover:bg-red-600 disabled:opacity-50 disabled:hover:bg-[#e53e3e] text-white font-bold py-3 rounded-md transition-colors text-sm">
             <Loader2Icon v-if="isUploading" :size="16" class="animate-spin" />
             <span>{{ isUploading ? 'Uploading & Saving...' : 'Save Changes' }}</span>

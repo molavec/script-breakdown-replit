@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import draggable from 'vuedraggable';
+import { parseMarkdown } from '~~/utils/markdown';
 
 const { activeScene, project } = useProjectBreakdown();
 const { columns, rows, updateRowsOrder, addRow, addColumn, updateColumnsOrder } = useSceneTable();
@@ -99,10 +100,43 @@ const onMouseUp = () => {
   document.removeEventListener('mouseup', onMouseUp);
 };
 
+// Row Resizing Logic
+const rowHeights = ref<Record<string, number>>({});
+const resizingRowId = ref<string | null>(null);
+const startY = ref(0);
+const startHeight = ref(0);
+
+const getRowHeight = (id: string) => rowHeights.value[id] || 200; // default 200px
+
+const startRowResize = (e: MouseEvent, rowId: string) => {
+  resizingRowId.value = rowId;
+  startY.value = e.clientY;
+  startHeight.value = getRowHeight(rowId);
+  document.body.style.cursor = 'row-resize';
+  document.addEventListener('mousemove', onRowMouseMove);
+  document.addEventListener('mouseup', onRowMouseUp);
+};
+
+const onRowMouseMove = (e: MouseEvent) => {
+  if (!resizingRowId.value) return;
+  const delta = e.clientY - startY.value;
+  const newHeight = Math.max(48, startHeight.value + delta); // minimum 48px
+  rowHeights.value[resizingRowId.value] = newHeight;
+};
+
+const onRowMouseUp = () => {
+  resizingRowId.value = null;
+  document.body.style.cursor = '';
+  document.removeEventListener('mousemove', onRowMouseMove);
+  document.removeEventListener('mouseup', onRowMouseUp);
+};
+
 onUnmounted(() => {
   document.body.style.cursor = '';
   document.removeEventListener('mousemove', onMouseMove);
   document.removeEventListener('mouseup', onMouseUp);
+  document.removeEventListener('mousemove', onRowMouseMove);
+  document.removeEventListener('mouseup', onRowMouseUp);
 });
 </script>
 
@@ -225,19 +259,32 @@ onUnmounted(() => {
               class="transition-colors"
             >
               <!-- Row Number & Drag Handle -->
-              <td class="border border-neutral-700 p-3 text-center text-xs text-neutral-400 font-mono align-top select-none">
-                <div class="flex items-center justify-center gap-1.5 pt-1">
-                  <div class="drag-handle cursor-grab active:cursor-grabbing text-neutral-500 hover:text-neutral-300 transition-colors" title="Drag to reorder">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <circle cx="9" cy="12" r="1"></circle>
-                      <circle cx="9" cy="5" r="1"></circle>
-                      <circle cx="9" cy="19" r="1"></circle>
-                      <circle cx="15" cy="12" r="1"></circle>
-                      <circle cx="15" cy="5" r="1"></circle>
-                      <circle cx="15" cy="19" r="1"></circle>
-                    </svg>
+              <td class="border border-neutral-700 p-0 text-center text-xs text-neutral-400 font-mono align-top select-none relative group/rowheader">
+                <div class="w-full p-3 flex flex-col items-center justify-start overflow-hidden" :style="{ height: `${getRowHeight(row.id)}px` }">
+                  <div class="flex items-center justify-center gap-1.5 pt-1">
+                    <div class="drag-handle cursor-grab active:cursor-grabbing text-neutral-500 hover:text-neutral-300 transition-colors" title="Drag to reorder">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="9" cy="12" r="1"></circle>
+                        <circle cx="9" cy="5" r="1"></circle>
+                        <circle cx="9" cy="19" r="1"></circle>
+                        <circle cx="15" cy="12" r="1"></circle>
+                        <circle cx="15" cy="5" r="1"></circle>
+                        <circle cx="15" cy="19" r="1"></circle>
+                      </svg>
+                    </div>
+                    <span>{{ activeScene?.order ?? '?' }}.{{ row.order }}</span>
                   </div>
-                  <span>{{ activeScene?.order ?? '?' }}.{{ row.order }}</span>
+                </div>
+                <!-- Row Resizer Handle -->
+                <div 
+                  class="absolute bottom-0 left-0 w-full h-2 cursor-row-resize hover:bg-primary/50 z-30 flex items-center justify-center transition-colors group-hover/rowheader:opacity-100"
+                  :class="resizingRowId === row.id ? 'bg-primary/50 opacity-100' : 'opacity-0'"
+                  @mousedown.stop.prevent="startRowResize($event, row.id)"
+                >
+                  <div 
+                    class="h-[2px] w-1/2 rounded-full bg-neutral-500"
+                    :class="resizingRowId === row.id ? 'bg-primary' : ''"
+                  ></div>
                 </div>
               </td>
               
@@ -245,14 +292,15 @@ onUnmounted(() => {
               <td 
                 v-for="col in columns" 
                 :key="col.id"
-                class="border p-4 align-top transition-all min-h-[120px]"
+                class="border align-top transition-all p-0"
                 :class="[
                   activeCellId === row.cells[col.id]?.id && col.cellType !== 'number' && col.cellType !== 'tags' ? 'border-error/70 ring-1 ring-error/50 bg-[#2a2a2e]/50 z-10 relative' : 'border-neutral-700 hover:border-neutral-500',
                   col.cellType !== 'number' && col.cellType !== 'tags' ? 'cursor-pointer' : ''
                 ]"
                 @click="col.cellType !== 'number' && col.cellType !== 'tags' ? selectCell(rowIndex, col.id, row.cells[col.id]?.id) : null"
               >
-                <div v-if="row.cells[col.id]">
+                <div class="w-full overflow-y-auto p-4" :style="{ height: `${getRowHeight(row.id)}px` }">
+                  <div v-if="row.cells[col.id]">
                   
                   <!-- Number Cell (Inline Input) -->
                   <div v-if="col.cellType === 'number'">
@@ -276,18 +324,7 @@ onUnmounted(() => {
                     </div>
                   </div>
 
-                  <!-- Media Cell -->
-                  <div v-else-if="col.cellType === 'media'">
-                    <div v-if="row.cells[col.id].blocks && row.cells[col.id].blocks.length > 0" class="flex flex-col gap-2">
-                       <template v-for="block in row.cells[col.id].blocks" :key="block.id">
-                         <img v-if="block.type === 'image'" :src="block.content" class="max-w-full h-auto rounded-md border border-neutral-700" />
-                       </template>
-                    </div>
-                    <div v-else class="w-full h-24 border border-dashed border-warning/30 rounded flex flex-col items-center justify-center text-warning/70">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mb-1"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
-                      <span class="text-xs font-semibold">Generate</span>
-                    </div>
-                  </div>
+
 
                   <!-- Tags Cell -->
                   <div v-else-if="col.cellType === 'tags'">
@@ -327,13 +364,14 @@ onUnmounted(() => {
                   <div v-else>
                     <div v-if="row.cells[col.id].blocks && row.cells[col.id].blocks.length > 0" class="flex flex-col gap-1 text-sm text-neutral-300 whitespace-pre-wrap leading-relaxed">
                       <template v-for="block in row.cells[col.id].blocks" :key="block.id">
-                         <div v-if="block.type === 'text'" v-html="block.content"></div>
+                         <div v-if="block.type === 'text'" class="prose prose-sm prose-invert max-w-none" v-html="parseMarkdown(block.content)"></div>
                          <img v-else-if="block.type === 'image'" :src="block.content" class="max-w-full rounded-md border border-neutral-700" />
                       </template>
                     </div>
                     <div v-else class="text-neutral-600 italic text-sm">none</div>
                   </div>
                   
+                  </div>
                 </div>
               </td>
             </tr>
@@ -343,4 +381,22 @@ onUnmounted(() => {
     </div>
   </div>
 </template>
+
+<style scoped>
+/* Custom scrollbar for cells */
+td .overflow-y-auto::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+td .overflow-y-auto::-webkit-scrollbar-track {
+  background: transparent;
+}
+td .overflow-y-auto::-webkit-scrollbar-thumb {
+  background: #3f3f46; /* neutral-700 */
+  border-radius: 4px;
+}
+td .overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background: #52525b; /* neutral-600 */
+}
+</style>
 
