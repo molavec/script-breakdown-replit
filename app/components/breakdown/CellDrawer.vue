@@ -213,7 +213,7 @@ const saveAndClose = async () => {
     
     <div class="drawer-side pointer-events-auto">
       <label for="cell-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
-      <div class="w-[450px] min-h-full bg-[#18181b] border-l border-neutral-800 flex flex-col text-white shadow-2xl font-sans">
+      <div class="w-[450px] h-full bg-[#18181b] border-l border-neutral-800 flex flex-col text-white shadow-2xl font-sans">
         
         <!-- Header -->
         <header class="flex justify-between items-center p-4 border-b border-neutral-800">
@@ -231,7 +231,7 @@ const saveAndClose = async () => {
             <h2 class="text-[10px] font-bold text-neutral-400 mb-2 uppercase tracking-wider">CELL CONTENT</h2>
             <div 
               ref="editorRef"
-              class="w-full min-h-[200px] max-h-[35vh] overflow-y-auto border border-neutral-700 rounded-md p-3 bg-transparent text-sm focus:outline-none focus:border-red-600 transition-colors"
+              class="w-full h-[250px] overflow-y-auto border border-neutral-700 rounded-md p-3 bg-transparent text-sm focus:outline-none focus:border-red-600 transition-colors"
               contenteditable="true"
               @input="onEditorInput"
               data-placeholder="Continue writing here..."
@@ -248,7 +248,7 @@ const saveAndClose = async () => {
             <h2 class="text-[10px] font-bold text-neutral-400 mb-3 uppercase tracking-wider">AI ASSISTANT</h2>
             
             <!-- Chat History -->
-            <div class="flex-1 overflow-y-auto space-y-4 mb-4 pr-2" ref="chatContainerRef">
+            <div class="flex-1 overflow-y-auto space-y-4 pr-2" ref="chatContainerRef">
               <div v-if="messages.length === 0" class="text-center text-neutral-500 text-sm mt-10 italic">
                 Ask me to generate descriptions or images for your script.
               </div>
@@ -279,8 +279,18 @@ const saveAndClose = async () => {
               </div>
             </div>
 
+          </section>
+
+        </div>
+        <div v-else class="p-6 text-center text-neutral-500 text-sm flex-1 flex items-center justify-center">
+           No cell selected
+        </div>
+
+        <!-- Footer -->
+        <footer class="p-4 bg-[#18181b] border-t border-neutral-800 flex flex-col gap-4">
+          <div v-if="activeCell" class="flex flex-col gap-3">
             <!-- AI Generation Selector Badges -->
-            <div class="flex items-center gap-2 mb-3" v-if="activeColumn">
+            <div class="flex items-center gap-2" v-if="activeColumn">
               <button 
                 @click="selectedGenerationType = 'text'"
                 class="badge badge-sm cursor-pointer transition-colors"
@@ -319,7 +329,7 @@ const saveAndClose = async () => {
             </div>
 
             <!-- Chat Input -->
-            <div class="relative mt-auto">
+            <div class="relative">
               <input
                 type="text"
                 v-model="inputValue"
@@ -336,15 +346,8 @@ const saveAndClose = async () => {
                 <SendIcon :size="18" />
               </button>
             </div>
-          </section>
+          </div>
 
-        </div>
-        <div v-else class="p-6 text-center text-neutral-500 text-sm flex-1 flex items-center justify-center">
-           No cell selected
-        </div>
-
-        <!-- Footer -->
-        <footer class="p-4 bg-[#18181b] border-t border-neutral-800">
           <button @click="saveAndClose" :disabled="isUploading" class="w-full flex justify-center items-center gap-2 bg-[#e53e3e] hover:bg-red-600 disabled:opacity-50 disabled:hover:bg-[#e53e3e] text-white font-bold py-3 rounded-md transition-colors text-sm">
             <Loader2Icon v-if="isUploading" :size="16" class="animate-spin" />
             <span>{{ isUploading ? 'Uploading & Saving...' : 'Save Changes' }}</span>
