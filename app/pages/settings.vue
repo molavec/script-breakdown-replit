@@ -58,6 +58,15 @@ const navItems = [
       ]"
     >
       <div class="w-64 h-full flex flex-col shrink-0 overflow-hidden">
+        <div class="px-6 mb-6">
+          <NuxtLink to="/" class="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors w-fit group">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 group-hover:-translate-x-1 transition-transform">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+            </svg>
+            Volver
+          </NuxtLink>
+        </div>
+
         <div class="px-6 mb-6 flex items-center justify-between">
           <div class="flex items-center gap-3">
             <div class="p-1.5 bg-[#323339] rounded-md">
