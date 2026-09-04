@@ -324,18 +324,7 @@ onUnmounted(() => {
                     </div>
                   </div>
 
-                  <!-- Media Cell -->
-                  <div v-else-if="col.cellType === 'media'">
-                    <div v-if="row.cells[col.id].blocks && row.cells[col.id].blocks.length > 0" class="flex flex-col gap-2">
-                       <template v-for="block in row.cells[col.id].blocks" :key="block.id">
-                         <img v-if="block.type === 'image'" :src="block.content" class="max-w-full h-auto rounded-md border border-neutral-700" />
-                       </template>
-                    </div>
-                    <div v-else class="w-full h-24 border border-dashed border-warning/30 rounded flex flex-col items-center justify-center text-warning/70">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mb-1"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
-                      <span class="text-xs font-semibold">Generate</span>
-                    </div>
-                  </div>
+
 
                   <!-- Tags Cell -->
                   <div v-else-if="col.cellType === 'tags'">

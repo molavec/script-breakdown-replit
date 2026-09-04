@@ -309,7 +309,7 @@ const saveAndClose = async () => {
                   Image
                 </button>
                 
-                <div class="tooltip tooltip-top tooltip-neutral before:text-xs" data-tip="Esta función aún no está activa">
+                <div class="tooltip tooltip-top tooltip-neutral before:text-xs" data-tip="Not available yet">
                   <button 
                     disabled
                     class="badge badge-sm badge-neutral opacity-50 cursor-not-allowed"
@@ -318,7 +318,7 @@ const saveAndClose = async () => {
                   </button>
                 </div>
                 
-                <div class="tooltip tooltip-top tooltip-neutral before:text-xs" data-tip="Esta función aún no está activa">
+                <div class="tooltip tooltip-top tooltip-neutral before:text-xs" data-tip="Not available yet">
                   <button 
                     disabled
                     class="badge badge-sm badge-neutral opacity-50 cursor-not-allowed"
