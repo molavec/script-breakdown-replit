@@ -1,4 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
+import { checkAndConsumeTokens } from "./tokens";
 
 let _ai: GoogleGenAI | null = null;
 
@@ -56,9 +57,13 @@ export function useGenAI(): GoogleGenAI {
 }
 
 export async function generateAiImage(
+  userId: string,
   prompt: string,
   systemInstruction?: string,
 ) {
+  // Consumimos 5 tokens por imagen
+  await checkAndConsumeTokens(userId, 5);
+
   const ai = useGenAI();
   const response = await ai.models.generateContent({
     model: "gemini-3.1-flash-lite-image",
@@ -83,9 +88,13 @@ export async function generateAiImage(
 }
 
 export async function generateAiText(
+  userId: string,
   prompt: string,
   systemInstruction?: string,
 ) {
+  // Consumimos 1 token por texto
+  await checkAndConsumeTokens(userId, 1);
+
   const ai = useGenAI();
   const response = await ai.models.generateContent({
     model: "gemini-3.5-flash-lite",

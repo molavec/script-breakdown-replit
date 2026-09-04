@@ -18,6 +18,26 @@ import type {
   CellBlock,
 } from '../../shared/types';
 
+export const users = pgTable('users', {
+  id: varchar('id', { length: 255 }).primaryKey(), // Replit user ID or mock ID
+  username: varchar('username', { length: 255 }),
+  email: varchar('email', { length: 255 }),
+  firstName: varchar('first_name', { length: 255 }),
+  lastName: varchar('last_name', { length: 255 }),
+  profileImageUrl: varchar('profile_image_url', { length: 1024 }),
+  
+  // Subscription Plan
+  plan: varchar('plan', { length: 50 }).default('FREE').notNull(), // 'FREE', 'PRO', 'TEAM'
+
+  // Token tracking
+  dailyTokenUsage: integer('daily_token_usage').default(0).notNull(),
+  monthlyTokenUsage: integer('monthly_token_usage').default(0).notNull(),
+  lastTokenUsageDate: timestamp('last_token_usage_date').defaultNow().notNull(),
+  
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
 export const projects = pgTable('projects', {
   id: uuid('id').defaultRandom().primaryKey(),
   // Null keeps pre-authentication projects inaccessible rather than assigning them
