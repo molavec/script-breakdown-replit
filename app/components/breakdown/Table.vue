@@ -107,6 +107,14 @@ const onRowMouseUp = () => {
   document.removeEventListener('mouseup', onRowMouseUp);
 };
 
+// Sticky first-column activation threshold (matches container px-6 = 24px)
+const containerScrollLeft = ref(0);
+const isColumnSticky = computed(() => containerScrollLeft.value >= 24);
+
+const onContainerScroll = (e: Event) => {
+  containerScrollLeft.value = (e.currentTarget as HTMLElement).scrollLeft;
+};
+
 onUnmounted(() => {
   document.body.style.cursor = '';
   document.removeEventListener('mousemove', onMouseMove);
@@ -118,7 +126,7 @@ onUnmounted(() => {
 
 
 <template>
-  <div class="h-full overflow-auto pb-6 px-6">
+  <div class="h-full overflow-auto pb-6 px-6" @scroll.passive="onContainerScroll">
     <table class="w-max text-left border-separate border-spacing-0 table-fixed mb-128">
       <!-- Table Header -->
       <thead class="sticky top-0 z-20 bg-[#242427] text-neutral-300 text-xs font-bold font-mono">
@@ -130,7 +138,11 @@ onUnmounted(() => {
           @end="updateColumnsOrder(project?.id || '1', columns)"
         >
           <template #header>
-            <th class="sticky top-0 z-20 bg-[#242427] w-16 min-w-[64px] border border-neutral-700 p-3 text-center">#</th>
+            <th 
+              class="sticky top-0 z-30 bg-[#242427] w-16 min-w-[64px] border border-neutral-700 p-3 text-center"
+              :class="isColumnSticky ? 'left-[-24px] shadow-[1px_0_0_0_#3f3f46]' : ''"
+              
+            >#</th>
           </template>
           <template #item="{ element: col }">
             <th 
@@ -200,7 +212,13 @@ onUnmounted(() => {
             class="transition-colors"
           >
             <!-- Row Number & Drag Handle -->
-            <td class="border border-neutral-700 p-0 text-center text-xs text-neutral-400 font-mono align-top select-none relative group/rowheader">
+            <td 
+              class="z-10 border border-neutral-700 p-0 text-center text-xs text-neutral-400 font-mono align-top select-none relative group/rowheader"
+              :class="[
+                isColumnSticky ? 'sticky left-[-24px] -shadow-[1px_0_0_0_#3f3f46]' : '',
+                rowIndex === lastSelectedRowIndex ? 'bg-[#212124]' : 'bg-[#18181b]'
+              ]"
+            >
               <div class="w-full p-3 flex flex-col items-center justify-start overflow-hidden" :style="{ height: `${getRowHeight(row.id)}px` }">
                 <div class="flex items-center justify-center gap-1.5 pt-1">
                   <div class="drag-handle cursor-grab active:cursor-grabbing text-neutral-500 hover:text-neutral-300 transition-colors" title="Drag to reorder">
