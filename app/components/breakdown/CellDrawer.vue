@@ -37,8 +37,28 @@ const currentRow = computed(() => {
 
 const availableColumns = computed(() => {
   if (!activeCellColId.value || !columns.value) return [];
-  return columns.value.filter(c => c.id !== activeCellColId.value);
+  return [...columns.value]
+    .filter(c => c.id !== activeCellColId.value)
+    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 });
+
+const initContextColumns = () => {
+  const currentOrder = activeColumn.value?.order;
+  if (typeof currentOrder === 'number') {
+    selectedContextColumns.value = (columns.value || [])
+      .filter(c => c.id !== activeCellColId.value && typeof c.order === 'number' && c.order < currentOrder)
+      .map(c => c.id);
+  } else {
+    const currentIndex = (columns.value || []).findIndex(c => c.id === activeCellColId.value);
+    if (currentIndex > 0) {
+      selectedContextColumns.value = (columns.value || [])
+        .slice(0, currentIndex)
+        .map(c => c.id);
+    } else {
+      selectedContextColumns.value = [];
+    }
+  }
+};
 
 const editorRef = ref<HTMLDivElement | null>(null);
 const chatContainerRef = ref<HTMLDivElement | null>(null);
@@ -142,7 +162,7 @@ watch([() => activeCell.value, () => isDrawerOpen.value], async ([newCell, isOpe
     editContent.value = initialContent;
     messages.value = []; // Reset chat history when opening a new cell
     inputValue.value = '';
-    selectedContextColumns.value = []; // Reset context selection
+    initContextColumns();
     
     await nextTick();
     adjustTextareaHeight();
@@ -162,6 +182,12 @@ watch([() => activeCell.value, () => isDrawerOpen.value], async ([newCell, isOpe
     }
   }
 });
+
+watch(columns, () => {
+  if (isDrawerOpen.value && selectedContextColumns.value.length === 0) {
+    initContextColumns();
+  }
+}, { deep: true });
 
 const onEditorInput = (e: Event) => {
   const target = e.target as HTMLDivElement;
