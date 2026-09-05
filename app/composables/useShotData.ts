@@ -14,7 +14,7 @@ export const useShotData = () => {
   };
 
   const deleteShot = async (sceneId: string, shotId: string): Promise<void> => {
-    return await $fetch(`/api/scenes/${sceneId}/shots/${shotId}`, {
+    return await $fetch<void>(`/api/scenes/${sceneId}/shots/${shotId}`, {
       method: 'DELETE'
     });
   };
