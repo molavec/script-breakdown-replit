@@ -2,13 +2,8 @@
 
 
 ## escenas
-* Que el input del editor de la celda se vea como un editor de parrafo para que el usuario saber que se puede editar. Un texto declarativo bajo el titulo del campo puede ayudar.
-* Que el input de contenido ocupe todo el largo del drawer. 
-* Debe haber un icono flotante que en la esquina superior derecha del input de contenido que abra el asistente de IA.
-* El asistente debe estar por encima. El asistente puede salir desde la parte inferior con una animación y puede ocupar 75% de todo el alto del drawer.
-* Evidenciar mejor el resultado que el usuario obtendrá con el asistente corto en el placeholder, con un ejemplo de lo que el usuario puede escribir.
+* Evidenciar mejor el resultado que el usuario obtendrá con el asistente corto en el placeholder, con un ejemplo de lo que el usuario puede escribir y lo que pueede recibir. Considera el tipo de contenido habilitado para la columna.
 * Desactivar el botón guardar si el usuario no ha realizado cambios en el contenido o el asistente aún está abierto.
-* Añadir un botón secundario Cancelar al lado izquierdo de guardar que descarte cualquier cambio no guardado.
 
 
 * Que el contexto adicional quede evidenciado.

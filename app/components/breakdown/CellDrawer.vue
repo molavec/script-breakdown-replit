@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch, nextTick } from 'vue';
 import { 
-  X as XIcon, 
   Send as SendIcon, 
   Loader2 as Loader2Icon, 
   PlusCircle as PlusCircleIcon,
@@ -736,6 +735,29 @@ const saveAndClose = async () => {
   }
   closeDrawer();
 };
+
+const handleCancel = () => {
+  // Discard any unsaved changes and restore original cell content
+  if (activeCell.value) {
+    let initialContent = '';
+    if (activeCell.value.blocks && activeCell.value.blocks.length > 0) {
+      initialContent = activeCell.value.blocks.map(b => {
+        if (b.type === 'image') {
+          return createImageHtml(b.content);
+        }
+        return parseMarkdown(b.content);
+      }).join('');
+    }
+    editContent.value = initialContent;
+    if (editorRef.value) {
+      editorRef.value.innerHTML = initialContent;
+      wrapRawImages(editorRef.value);
+      ensureTrailingParagraph(editorRef.value);
+    }
+    checkIsEmpty();
+  }
+  closeDrawer();
+};
 </script>
 
 <template>
@@ -750,9 +772,6 @@ const saveAndClose = async () => {
         <!-- Header -->
         <header class="flex justify-between items-center p-4 border-b border-neutral-800">
           <h1 class="text-sm font-semibold text-neutral-300">Edit Cell</h1>
-          <button @click="closeDrawer()" class="text-neutral-500 hover:text-neutral-300 transition-colors">
-            <XIcon :size="18" />
-          </button>
         </header>
 
         <!-- Body -->
@@ -1058,10 +1077,25 @@ const saveAndClose = async () => {
             </div>
           </div>
 
-          <button @click="saveAndClose" :disabled="isUploading" class="w-full flex justify-center items-center gap-2 bg-[#e53e3e] hover:bg-red-600 disabled:opacity-50 disabled:hover:bg-[#e53e3e] text-white font-bold py-3 rounded-md transition-colors text-sm">
-            <Loader2Icon v-if="isUploading" :size="16" class="animate-spin" />
-            <span>{{ isUploading ? 'Uploading & Saving...' : 'Save Changes' }}</span>
-          </button>
+          <div class="flex items-center gap-3 w-full">
+            <button 
+              type="button" 
+              @click="handleCancel" 
+              :disabled="isUploading" 
+              class="flex-1 flex justify-center items-center py-3 px-4 rounded-md border border-neutral-700 hover:border-neutral-600 bg-neutral-800/40 hover:bg-neutral-800 text-neutral-300 hover:text-white font-medium transition-colors text-sm cursor-pointer disabled:opacity-50"
+            >
+              Cancel
+            </button>
+            <button 
+              type="button" 
+              @click="saveAndClose" 
+              :disabled="isUploading" 
+              class="flex-[2] flex justify-center items-center gap-2 bg-[#e53e3e] hover:bg-red-600 disabled:opacity-50 disabled:hover:bg-[#e53e3e] text-white font-bold py-3 px-4 rounded-md transition-colors text-sm cursor-pointer shadow-md shadow-red-950/20"
+            >
+              <Loader2Icon v-if="isUploading" :size="16" class="animate-spin" />
+              <span>{{ isUploading ? 'Uploading & Saving...' : 'Save Changes' }}</span>
+            </button>
+          </div>
         </footer>
       </div>
     </div>
