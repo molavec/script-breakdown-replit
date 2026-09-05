@@ -215,7 +215,7 @@ onUnmounted(() => {
             <td 
               class="z-10 border border-neutral-700 p-0 text-center text-xs text-neutral-400 font-mono align-top select-none relative group/rowheader"
               :class="[
-                isColumnSticky ? 'sticky left-[-24px] -shadow-[1px_0_0_0_#3f3f46]' : '',
+                isColumnSticky ? 'sticky left-[-24px] -shadow-[1px_0_0_0_#3f3f46] z-30' : '',
                 rowIndex === lastSelectedRowIndex ? 'bg-[#212124]' : 'bg-[#18181b]'
               ]"
             >
