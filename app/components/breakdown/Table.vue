@@ -3,7 +3,7 @@ import draggable from 'vuedraggable';
 import { parseMarkdown } from '~~/utils/markdown';
 
 const { activeScene, project } = useProjectBreakdown();
-const { columns, rows, updateRowsOrder, updateColumnsOrder } = useSceneTable();
+const { columns, rows, updateRowsOrder, updateColumnsOrder, confirmDeleteRow } = useSceneTable();
 const { activeCellId, lastSelectedRowIndex, selectCell } = useBreakdownCell();
 const { editingCellId, inlineEditValue, startInlineEdit, cancelInlineEdit, saveInlineEdit } = useCellInlineEdit();
 
@@ -215,6 +215,20 @@ onUnmounted(() => {
                   </div>
                   <span>{{ activeScene?.order ?? '?' }}.{{ row.order }}</span>
                 </div>
+                
+                <button 
+                  class="mt-2 opacity-0 group-hover/rowheader:opacity-100 btn btn-xs btn-ghost btn-square text-neutral-500 hover:text-error hover:bg-error/10 transition-all scale-90"
+                  title="Delete Shot"
+                  @click.stop="confirmDeleteRow(row.id)"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 6h18"></path>
+                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                  </svg>
+                </button>
               </div>
               <!-- Row Resizer Handle -->
               <div 
@@ -340,6 +354,7 @@ onUnmounted(() => {
     </table>
 
     <BreakdownImageModal :src="previewImageUrl" @close="closeImagePreview" />
+    <BreakdownDeleteShotModal />
   </div>
 </template>
 

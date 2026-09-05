@@ -13,5 +13,11 @@ export const useShotData = () => {
     });
   };
 
-  return { fetchShots, createShot };
+  const deleteShot = async (sceneId: string, shotId: string): Promise<void> => {
+    return await $fetch(`/api/scenes/${sceneId}/shots/${shotId}`, {
+      method: 'DELETE'
+    });
+  };
+
+  return { fetchShots, createShot, deleteShot };
 };
