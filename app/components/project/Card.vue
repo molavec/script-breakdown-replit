@@ -3,31 +3,41 @@ const props = defineProps<{
   to: string
   title: string
   type: string
-  status: 'In Progress' | 'Draft'
+  status: string
   image: string
   modifiedAt: string
   users?: boolean
 }>()
 
+const isDraft = computed(() => props.status?.toLowerCase() === 'draft')
+
 const imageClasses = computed(() => {
-  if (props.status === 'Draft') {
+  if (isDraft.value) {
     return 'opacity-60 grayscale group-hover:grayscale-0 group-hover:opacity-90'
   }
   return 'opacity-80 group-hover:opacity-100'
 })
 
 const statusContainerClasses = computed(() => {
-  if (props.status === 'Draft') {
+  if (isDraft.value) {
     return 'text-gray-300'
   }
   return ''
 })
 
 const statusDotClasses = computed(() => {
-  if (props.status === 'Draft') {
+  if (isDraft.value) {
     return 'bg-gray-400'
   }
   return 'bg-yellow-500 shadow-[0_0_8px_rgba(234,179,8,0.8)]'
+})
+
+const formattedStatus = computed(() => {
+  if (!props.status) return 'Unknown'
+  return props.status
+    .split('_')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ')
 })
 </script>
 
@@ -38,7 +48,7 @@ const statusDotClasses = computed(() => {
       <div class="absolute inset-0 bg-gradient-to-t from-[#1c1c1c] via-transparent to-transparent opacity-80"></div>
       <div class="absolute top-4 left-4 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-md text-xs font-medium flex items-center gap-2 border border-white/10" :class="statusContainerClasses">
         <span class="w-1.5 h-1.5 rounded-full" :class="statusDotClasses"></span>
-        {{ status }}
+        {{ formattedStatus }}
       </div>
     </div>
     <div class="p-6 flex-1 flex flex-col justify-between -mt-2 relative z-10">
