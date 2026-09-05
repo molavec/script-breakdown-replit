@@ -10,11 +10,19 @@ export const useProjectData = () => {
     return await $fetch<Project[]>('/api/projects');
   };
 
+  const updateProject = async (id: string, data: Partial<Project>): Promise<Project> => {
+    return await $fetch<Project>(`/api/projects/${id}`, {
+      method: 'PUT',
+      body: data
+    });
+  };
+
   const deleteProject = async (id: string): Promise<void> => {
     await $fetch(`/api/projects/${id}`, {
       method: 'DELETE'
     });
   };
 
-  return { fetchProject, fetchProjects, deleteProject };
+  return { fetchProject, fetchProjects, updateProject, deleteProject };
 };
+

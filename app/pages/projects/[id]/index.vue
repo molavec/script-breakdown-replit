@@ -120,12 +120,23 @@ const handleDeleteProject = async () => {
                     {{ project.name }}
                   </h1>
                   <p class="text-neutral-400 max-w-3xl text-sm md:text-base leading-relaxed">
-                    {{ project.logline }}
+                    {{ project.logline || project.description }}
                   </p>
                 </div>
 
                 <!-- Quick Action Breakdown Link -->
                 <div class="flex items-center gap-3 shrink-0">
+                  <NuxtLink 
+                    :to="`/projects/${projectId}/edit`"
+                    class="btn btn-outline border-neutral-700 bg-neutral-900/80 hover:bg-neutral-800 hover:border-neutral-500 text-neutral-200 hover:text-white font-medium px-4 shadow-sm flex items-center gap-2"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M12 20h9"/>
+                      <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                    </svg>
+                    <span>Edit Project</span>
+                  </NuxtLink>
+
                   <NuxtLink 
                     :to="`/projects/${projectId}/scene/${currentActiveSceneId}`"
                     class="btn btn-error text-white font-semibold px-6 shadow-md"
