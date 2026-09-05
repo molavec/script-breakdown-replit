@@ -266,6 +266,52 @@ const isGenerating = ref(false);
 const selectedGenerationType = ref<'text' | 'image' | 'video' | 'audio'>('text');
 const chatInputRef = ref<HTMLTextAreaElement | null>(null);
 
+const aiExample = computed(() => {
+  const col = activeColumn.value;
+  const colName = col?.name?.toLowerCase() || '';
+  const isImageMode = selectedGenerationType.value === 'image' || col?.cellType === 'media';
+
+  if (isImageMode) {
+    return {
+      description: 'an image for this shot',
+      promptExample: 'Cinematic 35mm wide shot, moody sunset lighting, rainy street',
+      resultSummary: 'a high-resolution visual ready to insert',
+      placeholder: 'e.g., Cinematic wide angle, moody warm lighting, rainy street...'
+    };
+  }
+
+  if (col?.cellType === 'tags') {
+    const isCast = colName.includes('cast') || colName.includes('personaje') || colName.includes('actor');
+    return {
+      description: `tags for ${col?.name || 'this cell'}`,
+      promptExample: isCast 
+        ? 'List main characters and background extras for this scene' 
+        : `List all ${col?.name || 'items'} needed for this shot`,
+      resultSummary: 'a list of tags ready to insert',
+      placeholder: `e.g., List ${col?.name || 'items'} appearing in this shot...`
+    };
+  }
+
+  if (col?.cellType === 'number') {
+    return {
+      description: `a calculated ${col?.name || 'value'} for this shot`,
+      promptExample: 'Estimate shot duration in seconds based on dialogue',
+      resultSummary: 'a numeric value to apply',
+      placeholder: `e.g., Estimate ${col?.name || 'value'} in seconds...`
+    };
+  }
+
+  // Text columns
+  return {
+    description: `content for ${col?.name || 'this cell'}`,
+    promptExample: col?.options?.defaultPrompt || `Draft details for ${col?.name || 'this shot'}`,
+    resultSummary: 'formatted text ready to insert or replace',
+    placeholder: `e.g., Draft details for ${col?.name || 'this cell'}...`
+  };
+});
+
+const chatInputPlaceholder = computed(() => aiExample.value.placeholder);
+
 const adjustTextareaHeight = () => {
   const el = chatInputRef.value;
   if (!el) return;
@@ -929,8 +975,14 @@ const handleCancel = () => {
             
             <!-- Chat History -->
             <div class="flex-1 overflow-y-auto space-y-4 pr-2" ref="chatContainerRef">
-              <div v-if="messages.length === 0" class="text-center text-neutral-500 text-sm mt-10 italic">
-                Ask me to generate descriptions or images for your script.
+              <!-- Empty state simple message -->
+              <div v-if="messages.length === 0" class="text-center text-xs mt-10 px-6 space-y-1.5 select-none leading-relaxed">
+                <p class="text-neutral-400">
+                  Ask me to generate {{ aiExample.description }}.
+                </p>
+                <p class="text-neutral-500 italic">
+                  Try: "{{ aiExample.promptExample }}" to receive {{ aiExample.resultSummary }}.
+                </p>
               </div>
               
               <div v-for="msg in messages" :key="msg.id" 
@@ -1063,7 +1115,7 @@ const handleCancel = () => {
                 v-model="inputValue"
                 @keydown="handleKeyDown"
                 @input="adjustTextareaHeight"
-                placeholder="Type a command..."
+                :placeholder="chatInputPlaceholder"
                 class="w-full bg-[#2a2a2a] border border-neutral-700 rounded-2xl py-2.5 pl-4 pr-12 text-sm text-neutral-200 focus:outline-none focus:border-neutral-500 placeholder-neutral-500 resize-none overflow-y-auto min-h-[42px] max-h-[300px] leading-relaxed block"
                 :disabled="isGenerating"
               ></textarea>

@@ -8,6 +8,8 @@
 
 * Que el contexto adicional quede evidenciado.
 
+* Ajusta la creación de una nueva columna.
+
 
 
 
