@@ -1,12 +1,22 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import draggable from 'vuedraggable';
 import { parseMarkdown } from '~~/utils/markdown';
 
 const { activeScene } = useProjectBreakdown();
-const { columns, rows, updateRowsOrder } = useSceneTable();
+const { columns, rows, updateRowsOrder, confirmDeleteRow } = useSceneTable();
 const { activeCellId, selectCell } = useBreakdownCell();
 const { editingCellId, inlineEditValue, startInlineEdit, cancelInlineEdit, saveInlineEdit } = useCellInlineEdit();
+
+const previewImageUrl = ref<string | null>(null);
+
+const openImagePreview = (url: string) => {
+  previewImageUrl.value = url;
+};
+
+const closeImagePreview = () => {
+  previewImageUrl.value = null;
+};
 
 const tableRows = computed({
   get: () => rows.value,
@@ -44,7 +54,7 @@ const getCellCurrency = (col: any, cell?: any): string => {
       ghost-class="opacity-50"
     >
       <template #item="{ element: row, index: rowIndex }">
-        <div class="bg-[#18181b] border border-neutral-700 rounded-xl p-5 shadow-lg relative group transition-colors hover:border-neutral-500 max-w-md w-full">
+        <div class="bg-[#18181b] border border-neutral-700 rounded-xl p-5 shadow-lg relative group transition-colors hover:border-neutral-500 w-full max-w-none lg:max-w-md">
           
           <!-- Card Header (Shot Number & Drag) -->
           <div class="flex items-center justify-between mb-4 pb-3 border-b border-neutral-800">
@@ -59,6 +69,19 @@ const getCellCurrency = (col: any, cell?: any): string => {
                 SHOT {{ activeScene?.order ?? '?' }}.{{ row.order }}
               </span>
             </div>
+            <button 
+              class="btn btn-xs btn-ghost btn-square text-neutral-500 hover:text-error hover:bg-error/10 transition-colors"
+              title="Delete Shot"
+              @click="confirmDeleteRow(row.id)"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 6h18"></path>
+                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                <line x1="10" y1="11" x2="10" y2="17"></line>
+                <line x1="14" y1="11" x2="14" y2="17"></line>
+              </svg>
+            </button>
           </div>
 
           <!-- Card Fields -->
@@ -107,19 +130,24 @@ const getCellCurrency = (col: any, cell?: any): string => {
                   <BreakdownExpandableCell :max-height="250">
                     <!-- Number Cell (Inline Input) -->
                     <div v-if="col.cellType === 'number'">
-                      <div v-if="editingCellId === row.cells[col.id].id" class="flex items-center gap-2">
-                        <input 
-                          type="number" 
-                          class="input input-sm input-bordered w-full bg-[#18181b] border-neutral-500 text-neutral-100 focus:outline-none focus:border-error" 
-                          v-model="inlineEditValue"
-                          @keydown.enter="saveInlineEdit(row.cells[col.id], 'number')"
-                        />
-                        <button @click="saveInlineEdit(row.cells[col.id], 'number')" class="btn btn-xs btn-circle btn-success text-white">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                        </button>
-                        <button @click="cancelInlineEdit" class="btn btn-xs btn-circle btn-error text-white">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                        </button>
+                      <div v-if="editingCellId === row.cells[col.id].id" class="flex flex-col gap-1.5">
+                        <p v-if="col.description" class="text-xs text-neutral-400 mb-0.5 leading-relaxed">
+                          {{ col.description }}
+                        </p>
+                        <div class="flex items-center gap-2">
+                          <input 
+                            type="number" 
+                            class="input input-sm input-bordered w-full bg-[#18181b] border-neutral-500 text-neutral-100 focus:outline-none focus:border-error" 
+                            v-model="inlineEditValue"
+                            @keydown.enter="saveInlineEdit(row.cells[col.id], 'number')"
+                          />
+                          <button @click="saveInlineEdit(row.cells[col.id], 'number')" class="btn btn-xs btn-circle btn-success text-white">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                          </button>
+                          <button @click="cancelInlineEdit" class="btn btn-xs btn-circle btn-error text-white">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                          </button>
+                        </div>
                       </div>
                       <div v-else class="flex items-center gap-1.5 font-mono">
                         <span v-if="getCellCurrency(col, row.cells[col.id])" class="text-neutral-400 select-none">
@@ -132,11 +160,14 @@ const getCellCurrency = (col: any, cell?: any): string => {
                     <!-- Tags Cell -->
                     <div v-else-if="col.cellType === 'tags'">
                       <div v-if="editingCellId === row.cells[col.id].id" class="flex flex-col gap-2">
+                        <p v-if="col.description" class="text-xs text-neutral-400 mb-0.5 leading-relaxed">
+                          {{ col.description }}
+                        </p>
                         <input 
                           type="text" 
                           class="input input-sm input-bordered w-full bg-[#18181b] border-neutral-500 text-neutral-100 focus:outline-none focus:border-error" 
                           v-model="inlineEditValue"
-                          placeholder="Tag 1, Tag 2, Tag 3..."
+                          placeholder="Item 1, Item 2, Item 3..."
                           @keydown.enter="saveInlineEdit(row.cells[col.id], 'tags')"
                         />
                         <div class="flex justify-end gap-1">
@@ -162,7 +193,23 @@ const getCellCurrency = (col: any, cell?: any): string => {
                       <div v-if="row.cells[col.id].blocks && row.cells[col.id].blocks.length > 0" class="flex flex-col gap-2 text-sm text-neutral-300 whitespace-pre-wrap leading-relaxed">
                         <template v-for="block in row.cells[col.id].blocks" :key="block.id">
                           <div v-if="block.type === 'text'" class="prose prose-sm prose-invert max-w-none" v-html="parseMarkdown(block.content)"></div>
-                          <img v-else-if="block.type === 'image'" :src="block.content" class="max-w-full rounded-md border border-neutral-700" />
+                          <div v-else-if="block.type === 'image'" class="relative inline-block max-w-full group/img my-1">
+                            <img :src="block.content" class="max-w-full rounded-md border border-neutral-700 block" alt="Card image" />
+                            <button 
+                              type="button"
+                              class="absolute bottom-2 right-2 w-7 h-7 flex items-center justify-center rounded-md bg-neutral-900/85 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-700/80 shadow-lg backdrop-blur-sm transition-all hover:scale-110 active:scale-95 cursor-pointer"
+                              title="Ver imagen completa"
+                              aria-label="Ver imagen completa"
+                              @click.stop="openImagePreview(block.content)"
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="15 3 21 3 21 9"></polyline>
+                                <polyline points="9 21 3 21 3 15"></polyline>
+                                <line x1="21" y1="3" x2="14" y2="10"></line>
+                                <line x1="3" y1="21" x2="10" y2="14"></line>
+                              </svg>
+                            </button>
+                          </div>
                         </template>
                       </div>
                       <div v-else class="text-neutral-500 italic text-sm">none</div>
@@ -175,6 +222,9 @@ const getCellCurrency = (col: any, cell?: any): string => {
         </div>
       </template>
     </draggable>
+
+    <BreakdownImageModal :src="previewImageUrl" @close="closeImagePreview" />
+    <BreakdownDeleteShotModal />
   </div>
 </template>
 

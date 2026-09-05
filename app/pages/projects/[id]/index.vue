@@ -43,6 +43,55 @@ const handleRecalculateStats = async () => {
   }
 };
 
+const formatType = (type?: string) => {
+  if (!type) return 'Feature Film';
+  const types: Record<string, string> = {
+    feature: 'Feature Film',
+    feature_film: 'Feature Film',
+    series: 'Series',
+    short: 'Short Film',
+    short_film: 'Short Film',
+    documentary: 'Documentary',
+    commercial: 'Commercial',
+    music_video: 'Music Video',
+    animation: 'Animation',
+    other: 'Other'
+  };
+  return types[type] || type.replace(/_/g, ' ');
+};
+
+const formatStatus = (status?: string) => {
+  if (!status) return 'Draft';
+  const statuses: Record<string, string> = {
+    draft: 'Draft',
+    in_progress: 'In Progress',
+    breakdown_review: 'Breakdown Review',
+    pre_production: 'Pre-Production',
+    production: 'Production',
+    completed: 'Completed',
+    archived: 'Archived'
+  };
+  return statuses[status] || status.replace(/_/g, ' ');
+};
+
+const statusBadgeClass = (status?: string) => {
+  switch (status) {
+    case 'in_progress':
+    case 'production':
+      return 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30';
+    case 'completed':
+      return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30';
+    case 'breakdown_review':
+    case 'pre_production':
+      return 'bg-purple-500/10 text-purple-400 border-purple-500/30';
+    case 'archived':
+      return 'bg-neutral-800 text-neutral-400 border-neutral-700';
+    case 'draft':
+    default:
+      return 'bg-amber-500/10 text-amber-400 border-amber-500/30';
+  }
+};
+
 // Project deletion logic
 const deleteModalRef = ref<HTMLDialogElement | null>(null);
 const isDeleting = ref(false);
@@ -84,35 +133,11 @@ const handleDeleteProject = async () => {
       <!-- Project Details Content -->
       <div class="flex-1 overflow-y-auto bg-[#121214] text-white p-6 md:p-10">
         <div class="max-w-6xl mx-auto space-y-8 pb-12">
-          <!-- Breadcrumb & Top Actions -->
-          <div class="flex items-center justify-between gap-4">
-            <div class="flex items-center gap-2 text-xs font-mono text-neutral-400 truncate">
-              <NuxtLink to="/" class="hover:text-white transition-colors">Projects</NuxtLink>
-              <span>/</span>
-              <span class="text-white font-medium truncate">{{ project.name }}</span>
-            </div>
-
-            <div class="flex items-center gap-2 shrink-0">
-              <button 
-                type="button" 
-                @click="openDeleteModal" 
-                class="btn btn-sm btn-ghost text-red-400 hover:bg-red-950/40 hover:text-red-300 flex items-center gap-1.5"
-                title="Delete Project"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
-                </svg>
-                <span>Delete</span>
-              </button>
-
-              <NuxtLink 
-                :to="`/projects/${projectId}/scene/${currentActiveSceneId}`"
-                class="btn btn-sm btn-error shadow-lg shadow-rose-950/40 text-white flex items-center gap-2"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h7"/></svg>
-                Open Script Breakdown
-              </NuxtLink>
-            </div>
+          <!-- Breadcrumb -->
+          <div class="flex items-center gap-2 text-xs font-mono text-neutral-400 truncate">
+            <NuxtLink to="/" class="hover:text-white transition-colors">Projects</NuxtLink>
+            <span>/</span>
+            <span class="text-white font-medium truncate">{{ project.name }}</span>
           </div>
 
           <!-- Hero Banner / Project Overview Card -->
@@ -128,28 +153,72 @@ const handleDeleteProject = async () => {
               <!-- Badges on top -->
               <div class="absolute top-6 left-6 flex items-center gap-3">
                 <span class="badge badge-warning text-black font-semibold text-xs py-2 px-3">
-                  {{ project.status }}
+                  {{ formatStatus(project.status) }}
                 </span>
                 <span class="badge badge-neutral border-neutral-700 bg-black/60 backdrop-blur-md text-xs py-2 px-3 text-neutral-300 font-mono">
-                  {{ project.type }} • {{ project.genre }}
+                  {{ formatType(project.type) }} • {{ project.genre }}
                 </span>
               </div>
             </div>
 
             <!-- Project Hero Body -->
             <div class="p-8 -mt-20 relative z-10 space-y-6">
-              <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                <div>
-                  <h1 class="text-4xl md:text-5xl font-black tracking-tight text-white mb-2">
+              <div class="flex flex-col md:flex-row md:items-start justify-between gap-6">
+                <div class="space-y-4 max-w-3xl">
+                  <h1 class="text-4xl md:text-5xl font-black tracking-tight text-white">
                     {{ project.name }}
                   </h1>
-                  <p class="text-neutral-400 max-w-3xl text-sm md:text-base leading-relaxed">
-                    {{ project.logline }}
-                  </p>
+
+                  <!-- Metadata Strip: Production Type, Primary Genre, Status -->
+                  <div class="flex flex-wrap items-center gap-2.5 text-xs">
+                    <!-- Production Type -->
+                    <div class="inline-flex items-center gap-2 bg-[#141416]/90 border border-neutral-800 px-3 py-1.5 rounded-lg shadow-sm">
+                      <span class="text-neutral-400 font-medium uppercase tracking-wider text-[10px]">Production Type</span>
+                      <span class="text-white font-semibold capitalize">{{ formatType(project.type) }}</span>
+                    </div>
+
+                    <!-- Primary Genre -->
+                    <div class="inline-flex items-center gap-2 bg-[#141416]/90 border border-neutral-800 px-3 py-1.5 rounded-lg shadow-sm">
+                      <span class="text-neutral-400 font-medium uppercase tracking-wider text-[10px]">Primary Genre</span>
+                      <span class="text-white font-semibold capitalize">{{ project.genre || 'Unspecified' }}</span>
+                    </div>
+
+                    <!-- Status -->
+                    <div class="inline-flex items-center gap-2 bg-[#141416]/90 border border-neutral-800 px-3 py-1.5 rounded-lg shadow-sm">
+                      <span class="text-neutral-400 font-medium uppercase tracking-wider text-[10px]">Status</span>
+                      <span class="badge badge-sm font-semibold capitalize border" :class="statusBadgeClass(project.status)">
+                        {{ formatStatus(project.status) }}
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- Original Story / Logline -->
+                  <div class="pt-1">
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-neutral-400 block mb-1">
+                      Original Story / Logline
+                    </span>
+                    <p v-if="project.logline || project.description" class="text-neutral-300 text-sm md:text-base leading-relaxed">
+                      {{ project.logline || project.description }}
+                    </p>
+                    <p v-else class="text-neutral-500 text-xs italic">
+                      No logline or synopsis added yet.
+                    </p>
+                  </div>
                 </div>
 
                 <!-- Quick Action Breakdown Link -->
-                <div class="flex items-center gap-3 shrink-0">
+                <div class="flex items-center gap-3 shrink-0 pt-1">
+                  <NuxtLink 
+                    :to="`/projects/${projectId}/edit`"
+                    class="btn btn-outline border-neutral-700 bg-neutral-900/80 hover:bg-neutral-800 hover:border-neutral-500 text-neutral-200 hover:text-white font-medium px-4 shadow-sm flex items-center gap-2"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M12 20h9"/>
+                      <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                    </svg>
+                    <span>Edit Project</span>
+                  </NuxtLink>
+
                   <NuxtLink 
                     :to="`/projects/${projectId}/scene/${currentActiveSceneId}`"
                     class="btn btn-error text-white font-semibold px-6 shadow-md"
@@ -272,8 +341,8 @@ const handleDeleteProject = async () => {
           <div class="space-y-4 pt-4 border-t border-neutral-800/60">
             <div class="flex items-center justify-between">
               <div>
-                <h2 class="text-xl font-bold text-white">Breakdown Columns & Departments</h2>
-                <p class="text-xs text-neutral-400">Configure technical columns, AI prompts, and data formats for this project.</p>
+                <h2 class="text-xl font-bold text-white">Breakdown Columns</h2>
+                <p class="text-xs text-neutral-400">Configure columns for this project.</p>
               </div>
               <button class="btn btn-sm btn-outline border-neutral-700 text-neutral-300 hover:text-white" @click="addColumn()">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
@@ -284,58 +353,70 @@ const handleDeleteProject = async () => {
             <draggable 
               v-model="columns" 
               tag="div"
-              class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+              class="flex flex-col gap-2.5"
               item-key="id"
               handle=".card-drag-handle"
+              ghost-class="opacity-40"
               @end="updateColumnsOrder(projectId, columns)"
             >
               <template #item="{ element: col }">
                 <div 
-                  class="bg-[#1a1a1e] border border-neutral-800 hover:border-neutral-600 rounded-xl p-4 transition-all group flex flex-col justify-between"
+                  class="bg-[#1a1a1e] border border-neutral-800 hover:border-neutral-600 rounded-xl px-4 py-3 transition-all group flex flex-col sm:flex-row sm:items-center justify-between gap-3"
                 >
-                  <div>
-                    <div class="flex items-center justify-between mb-2">
-                      <div class="flex items-center gap-2">
-                        <div class="card-drag-handle cursor-grab active:cursor-grabbing text-neutral-500 hover:text-neutral-300 transition-colors" title="Drag to reorder">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="9" cy="12" r="1"></circle>
-                            <circle cx="9" cy="5" r="1"></circle>
-                            <circle cx="9" cy="19" r="1"></circle>
-                            <circle cx="15" cy="12" r="1"></circle>
-                            <circle cx="15" cy="5" r="1"></circle>
-                            <circle cx="15" cy="19" r="1"></circle>
-                          </svg>
-                        </div>
-                        <span 
-                          class="w-2.5 h-2.5 rounded-full shrink-0 shadow-sm" 
-                          :style="{ backgroundColor: col.color || '#3b82f6' }"
-                        ></span>
-                        <span v-if="col.isSystem" class="font-mono text-xs text-neutral-400 bg-neutral-800/80 px-2 py-0.5 rounded uppercase">
-                          System
-                        </span>
-                      </div>
-                      <span class="badge badge-neutral border-neutral-700 text-[10px] uppercase font-mono">
+                  <!-- Left: Drag Handle, Color Indicator, Name & Description -->
+                  <div class="flex items-center gap-3 min-w-0 flex-1">
+                    <div 
+                      class="card-drag-handle cursor-grab active:cursor-grabbing text-neutral-500 hover:text-neutral-300 p-1 -ml-1 rounded transition-colors shrink-0" 
+                      title="Drag to reorder"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="9" cy="12" r="1"></circle>
+                        <circle cx="9" cy="5" r="1"></circle>
+                        <circle cx="9" cy="19" r="1"></circle>
+                        <circle cx="15" cy="12" r="1"></circle>
+                        <circle cx="15" cy="5" r="1"></circle>
+                        <circle cx="15" cy="19" r="1"></circle>
+                      </svg>
+                    </div>
+
+                    <span 
+                      class="w-2.5 h-2.5 rounded-full shrink-0 shadow-sm" 
+                      :style="{ backgroundColor: col.color || '#3b82f6' }"
+                    ></span>
+
+                    <div class="min-w-0 flex-1 flex flex-col md:flex-row md:items-center gap-0.5 md:gap-3">
+                      <h3 class="text-sm font-semibold text-white group-hover:text-rose-400 transition-colors shrink-0">
+                        {{ col.name }}
+                      </h3>
+                      <span class="hidden md:inline text-neutral-600 text-xs">•</span>
+                      <p class="text-xs text-neutral-400 truncate flex-1" :title="col.description">
+                        {{ col.description || 'No description configured.' }}
+                      </p>
+                    </div>
+                  </div>
+
+                  <!-- Right: Badges & Settings Action -->
+                  <div class="flex items-center justify-between sm:justify-end gap-2.5 shrink-0 pl-8 sm:pl-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-neutral-800/60">
+                    <div class="flex items-center gap-1.5">
+                      <span class="badge badge-sm badge-neutral border-neutral-700 text-[10px] uppercase font-mono text-neutral-300">
                         {{ col.cellType || 'text' }}
+                      </span>
+                      <span v-if="col.isSystem" class="badge badge-sm font-mono text-[10px] uppercase text-neutral-400 bg-neutral-800/80 border-neutral-700">
+                        System
+                      </span>
+                      <span v-else class="badge badge-sm font-mono text-[10px] uppercase text-neutral-500 bg-neutral-900/60 border-neutral-800">
+                        Custom
                       </span>
                     </div>
 
-                    <h3 class="text-base font-bold text-white group-hover:text-rose-400 transition-colors mb-1">
-                      {{ col.name }}
-                    </h3>
-                    <p class="text-xs text-neutral-400 line-clamp-2 leading-relaxed">
-                      {{ col.description || 'No description configured.' }}
-                    </p>
-                  </div>
-
-                  <div class="pt-3 mt-3 border-t border-neutral-800/60 flex items-center justify-between">
-                    <span class="text-[10px] font-mono text-neutral-500">
-                      {{ col.isSystem ? 'System Column' : 'Custom Column' }}
-                    </span>
                     <NuxtLink 
                       :to="`/projects/${projectId}/columns/${col.id}`"
-                      class="btn btn-xs btn-outline border-neutral-700 text-neutral-300 hover:text-white hover:btn-error flex items-center gap-1"
+                      class="btn btn-xs btn-outline border-neutral-700 text-neutral-300 hover:text-white hover:btn-error flex items-center gap-1 shrink-0"
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                      </svg>
                       Settings
                     </NuxtLink>
                   </div>

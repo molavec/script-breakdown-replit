@@ -1,11 +1,28 @@
-## storage
-Ajustar al servicio que utiliza replit
-
-## postgre
-Importante pero dejarlo para despues de la prueba de concepto de generación de contenido con IA.
+# UX
 
 
-## auth y limit
-Crear autenticación con google y limitación de uso de manera que pueda ofrecer un servicio de pago para usuarios que quieran más cantidad de generación de contenido con IA. Al menos dejarlo preparado.
+## escenas
+* Evidenciar mejor el resultado que el usuario obtendrá con el asistente corto en el placeholder, con un ejemplo de lo que el usuario puede escribir y lo que pueede recibir. Considera el tipo de contenido habilitado para la columna.
+* Desactivar el botón guardar si el usuario no ha realizado cambios en el contenido o el asistente aún está abierto.
 
-Utilizar replit
+
+* Ajusta la creación de una nueva columna.
+
+
+* Persistir el alto en los shots y el ancho en las columnas. En los shots utiliza una propiedad options, al igual que en las columns. Crea un plan.
+
+
+
+# Github README.md
+* Indicar donde se puede ver el uso de GenIA.
+* Beneficios de utilizar Replit. Ventajas, depliegue, git, storage, bbdd e IA para resolver depliegue, desarrollo estrachamente vinculado a la arquitectura, resolver bugs de arquitectura y seguridad. Capacidad de mantener desarrollo local, que se puede mejorar para no tener que solo depender de la interfaz web.
+* Hablar de UX y responsive. Si vamos a ahorrar tiempo la UX es primer ciudadano.
+* Hablar de la contabilización por créditos.
+* hablar de los features dejado de lado para potenciar los aspectos técnicos solicitados por la hackaton. 
+
+## Futuras funcionalidades
+* Importación de scripts.
+* Añadir equipo
+* compartir escena.
+* Compartir con enlace público.
+* Historial de Chat

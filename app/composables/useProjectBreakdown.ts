@@ -4,7 +4,7 @@ import type { Project } from '~~/shared/types/project';
 import type { Scene } from '~~/shared/types/scene';
 
 export const useProjectBreakdown = () => {
-  const { fetchProject, deleteProject } = useProjectData();
+  const { fetchProject, updateProject, deleteProject } = useProjectData();
   const { fetchScenes, createScene, updateScene, deleteScene } = useSceneData();
 
   // Shared state using useState for SSR safety
@@ -86,6 +86,19 @@ export const useProjectBreakdown = () => {
     }
   };
 
+  const editProject = async (projectId: string, data: Partial<Project>) => {
+    isLoading.value = true;
+    try {
+      const updated = await updateProject(projectId, data);
+      if (project.value && project.value.id === projectId) {
+        project.value = { ...project.value, ...updated };
+      }
+      return updated;
+    } finally {
+      isLoading.value = false;
+    }
+  };
+
   const removeProject = async (projectId: string) => {
     isLoading.value = true;
     try {
@@ -113,7 +126,10 @@ export const useProjectBreakdown = () => {
     editScene,
     removeScene,
     recalculateStats,
+    editProject,
+    updateProject: editProject,
     removeProject,
     deleteProject: removeProject
   };
 };
+

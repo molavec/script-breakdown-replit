@@ -13,5 +13,18 @@ export const useShotData = () => {
     });
   };
 
-  return { fetchShots, createShot };
+  const updateShot = async (sceneId: string, shotId: string, shotData: Partial<Shot>): Promise<Shot> => {
+    return await $fetch<Shot>(`/api/scenes/${sceneId}/shots/${shotId}`, {
+      method: 'PUT',
+      body: shotData
+    });
+  };
+
+  const deleteShot = async (sceneId: string, shotId: string): Promise<void> => {
+    return await $fetch<void>(`/api/scenes/${sceneId}/shots/${shotId}`, {
+      method: 'DELETE'
+    });
+  };
+
+  return { fetchShots, createShot, updateShot, deleteShot };
 };

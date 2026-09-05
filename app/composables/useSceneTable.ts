@@ -6,7 +6,7 @@ import type { Shot } from '~~/shared/types/shot';
 
 export const useSceneTable = () => {
   const { fetchColumns } = useColumnData();
-  const { fetchShots, createShot } = useShotData();
+  const { fetchShots, createShot, updateShot, deleteShot } = useShotData();
   const { activeScene, project } = useProjectBreakdown();
 
   const columns = useState<BreakdownColumn[]>('scene_columns', () => []);
@@ -38,6 +38,42 @@ export const useSceneTable = () => {
       rows.value.push(newShot);
     } catch (error) {
       console.error('Failed to create shot:', error);
+    }
+  };
+
+  const shotToDelete = ref<string | null>(null);
+  const isDeletingRow = ref(false);
+
+  const confirmDeleteRow = (shotId: string) => {
+    shotToDelete.value = shotId;
+    const modal = document.getElementById('delete_shot_modal') as HTMLDialogElement | null;
+    if (modal) modal.showModal();
+  };
+
+  const cancelDeleteRow = () => {
+    shotToDelete.value = null;
+    const modal = document.getElementById('delete_shot_modal') as HTMLDialogElement | null;
+    if (modal) modal.close();
+  };
+
+  const executeDeleteRow = async () => {
+    if (!shotToDelete.value || !activeScene.value?.id) return;
+    const shotId = shotToDelete.value;
+    const sceneId = activeScene.value.id;
+
+    isDeletingRow.value = true;
+    try {
+      await deleteShot(sceneId, shotId);
+      const rowIndex = rows.value.findIndex(r => r.id === shotId);
+      if (rowIndex !== -1) {
+        rows.value.splice(rowIndex, 1);
+      }
+      cancelDeleteRow();
+    } catch (error) {
+      console.error('Failed to delete shot:', error);
+      alert('Failed to delete shot.');
+    } finally {
+      isDeletingRow.value = false;
     }
   };
 
@@ -131,6 +167,9 @@ export const useSceneTable = () => {
 
   const updateColumnsOrder = async (projectId: string, newOrderedColumns: BreakdownColumn[]) => {
     // 1. Update local state for immediate feedback
+    newOrderedColumns.forEach((col, index) => {
+      col.order = index + 1;
+    });
     columns.value = [...newOrderedColumns];
 
     // 2. Call backend to persist order
@@ -146,16 +185,48 @@ export const useSceneTable = () => {
     }
   };
 
+  const updateRow = async (shotId: string, partial: Partial<Shot>) => {
+    const rowIndex = rows.value.findIndex(r => r.id === shotId);
+    if (rowIndex !== -1) {
+      const existing = rows.value[rowIndex];
+      if (existing) {
+        rows.value[rowIndex] = {
+          ...existing,
+          ...partial,
+          options: {
+            ...existing.options,
+            ...(partial.options || {})
+          }
+        };
+      }
+    }
+
+    const sceneId = activeScene.value?.id;
+    if (!sceneId) return;
+
+    try {
+      await updateShot(sceneId, shotId, partial);
+    } catch (error) {
+      console.error('Failed to update row:', error);
+      throw error;
+    }
+  };
+
   return {
     columns,
     rows,
     loadTableData,
     updateRowsOrder,
     addRow,
+    confirmDeleteRow,
+    executeDeleteRow,
+    cancelDeleteRow,
+    isDeletingRow,
     getColumn,
     updateColumn,
     deleteColumn,
     addColumn,
-    updateColumnsOrder
+    updateColumnsOrder,
+    updateRow
   };
 };

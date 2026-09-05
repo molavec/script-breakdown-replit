@@ -16,6 +16,7 @@ import type {
   ColumnOptions,
   CellAiMetadata,
   CellBlock,
+  ShotOptions,
 } from '../../shared/types';
 
 export const users = pgTable('users', {
@@ -82,6 +83,7 @@ export const shots = pgTable('shots', {
   id: uuid('id').defaultRandom().primaryKey(),
   sceneId: uuid('scene_id').references(() => scenes.id, { onDelete: 'cascade' }).notNull(),
   order: integer('order').notNull(),
+  options: jsonb('options').$type<ShotOptions>(),
 });
 
 export const breakdownCells = pgTable('breakdown_cells', {

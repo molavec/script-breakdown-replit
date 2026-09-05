@@ -3,9 +3,19 @@ import draggable from 'vuedraggable';
 import { parseMarkdown } from '~~/utils/markdown';
 
 const { activeScene, project } = useProjectBreakdown();
-const { columns, rows, updateRowsOrder, updateColumnsOrder } = useSceneTable();
+const { columns, rows, updateRowsOrder, updateColumnsOrder, confirmDeleteRow, updateColumn, updateRow } = useSceneTable();
 const { activeCellId, lastSelectedRowIndex, selectCell } = useBreakdownCell();
 const { editingCellId, inlineEditValue, startInlineEdit, cancelInlineEdit, saveInlineEdit } = useCellInlineEdit();
+
+const previewImageUrl = ref<string | null>(null);
+
+const openImagePreview = (url: string) => {
+  previewImageUrl.value = url;
+};
+
+const closeImagePreview = () => {
+  previewImageUrl.value = null;
+};
 
 const tableRows = computed({
   get: () => rows.value,
@@ -41,7 +51,11 @@ const resizingColId = ref<string | null>(null);
 const startX = ref(0);
 const startWidth = ref(0);
 
-const getColWidth = (id: string) => colWidths.value[id] || 320;
+const getColWidth = (id: string) => {
+  if (colWidths.value[id]) return colWidths.value[id];
+  const col = columns.value.find(c => c.id === id);
+  return col?.options?.width || 320;
+};
 
 const startResize = (e: MouseEvent, colId: string) => {
   resizingColId.value = colId;
@@ -60,6 +74,11 @@ const onMouseMove = (e: MouseEvent) => {
 };
 
 const onMouseUp = () => {
+  if (resizingColId.value) {
+    updateColumn(resizingColId.value, { 
+      options: { width: colWidths.value[resizingColId.value] } 
+    });
+  }
   resizingColId.value = null;
   document.body.style.cursor = '';
   document.removeEventListener('mousemove', onMouseMove);
@@ -72,7 +91,11 @@ const resizingRowId = ref<string | null>(null);
 const startY = ref(0);
 const startHeight = ref(0);
 
-const getRowHeight = (id: string) => rowHeights.value[id] || 200; // default 200px
+const getRowHeight = (id: string) => {
+  if (rowHeights.value[id]) return rowHeights.value[id];
+  const row = rows.value.find(r => r.id === id);
+  return row?.options?.height || 200; // default 200px
+};
 
 const startRowResize = (e: MouseEvent, rowId: string) => {
   resizingRowId.value = rowId;
@@ -91,10 +114,23 @@ const onRowMouseMove = (e: MouseEvent) => {
 };
 
 const onRowMouseUp = () => {
+  if (resizingRowId.value) {
+    updateRow(resizingRowId.value, {
+      options: { height: rowHeights.value[resizingRowId.value] }
+    });
+  }
   resizingRowId.value = null;
   document.body.style.cursor = '';
   document.removeEventListener('mousemove', onRowMouseMove);
   document.removeEventListener('mouseup', onRowMouseUp);
+};
+
+// Sticky first-column activation threshold (matches container px-6 = 24px)
+const containerScrollLeft = ref(0);
+const isColumnSticky = computed(() => containerScrollLeft.value >= 24);
+
+const onContainerScroll = (e: Event) => {
+  containerScrollLeft.value = (e.currentTarget as HTMLElement).scrollLeft;
 };
 
 onUnmounted(() => {
@@ -108,8 +144,8 @@ onUnmounted(() => {
 
 
 <template>
-  <div class="h-full overflow-auto pb-6 px-6">
-    <table class="w-max text-left border-collapse table-fixed">
+  <div class="h-full overflow-auto pb-6 px-6" @scroll.passive="onContainerScroll">
+    <table class="w-max text-left border-separate border-spacing-0 table-fixed mb-128">
       <!-- Table Header -->
       <thead class="sticky top-0 z-20 bg-[#242427] text-neutral-300 text-xs font-bold font-mono">
         <draggable
@@ -120,7 +156,11 @@ onUnmounted(() => {
           @end="updateColumnsOrder(project?.id || '1', columns)"
         >
           <template #header>
-            <th class="sticky top-0 z-20 bg-[#242427] w-16 min-w-[64px] border border-neutral-700 p-3 text-center">#</th>
+            <th 
+              class="sticky top-0 z-30 bg-[#242427] w-16 min-w-[64px] border border-neutral-700 p-3 text-center"
+              :class="isColumnSticky ? 'left-[-24px] shadow-[1px_0_0_0_#3f3f46]' : ''"
+              
+            >#</th>
           </template>
           <template #item="{ element: col }">
             <th 
@@ -190,7 +230,13 @@ onUnmounted(() => {
             class="transition-colors"
           >
             <!-- Row Number & Drag Handle -->
-            <td class="border border-neutral-700 p-0 text-center text-xs text-neutral-400 font-mono align-top select-none relative group/rowheader">
+            <td 
+              class="z-10 border border-neutral-700 p-0 text-center text-xs text-neutral-400 font-mono align-top select-none relative group/rowheader"
+              :class="[
+                isColumnSticky ? 'sticky left-[-24px] -shadow-[1px_0_0_0_#3f3f46] z-30' : '',
+                rowIndex === lastSelectedRowIndex ? 'bg-[#212124]' : 'bg-[#18181b]'
+              ]"
+            >
               <div class="w-full p-3 flex flex-col items-center justify-start overflow-hidden" :style="{ height: `${getRowHeight(row.id)}px` }">
                 <div class="flex items-center justify-center gap-1.5 pt-1">
                   <div class="drag-handle cursor-grab active:cursor-grabbing text-neutral-500 hover:text-neutral-300 transition-colors" title="Drag to reorder">
@@ -205,6 +251,20 @@ onUnmounted(() => {
                   </div>
                   <span>{{ activeScene?.order ?? '?' }}.{{ row.order }}</span>
                 </div>
+                
+                <button 
+                  class="mt-2 opacity-0 group-hover/rowheader:opacity-100 btn btn-xs btn-ghost btn-square text-neutral-500 hover:text-error hover:bg-error/10 transition-all scale-90"
+                  title="Delete Shot"
+                  @click.stop="confirmDeleteRow(row.id)"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 6h18"></path>
+                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                  </svg>
+                </button>
               </div>
               <!-- Row Resizer Handle -->
               <div 
@@ -267,7 +327,7 @@ onUnmounted(() => {
                       type="text" 
                       class="input input-sm input-bordered w-full bg-[#18181b] border-neutral-500 text-neutral-100 focus:outline-none focus:border-error" 
                       v-model="inlineEditValue"
-                      placeholder="Tag 1, Tag 2, Tag 3..."
+                      placeholder="Item 1, Item 2, Item 3..."
                       @keydown.enter="saveInlineEdit(row.cells[col.id], 'tags')"
                     />
                     <div class="flex justify-end gap-1">
@@ -299,7 +359,23 @@ onUnmounted(() => {
                   <div v-if="row.cells[col.id].blocks && row.cells[col.id].blocks.length > 0" class="flex flex-col gap-1 text-sm text-neutral-300 whitespace-pre-wrap leading-relaxed">
                     <template v-for="block in row.cells[col.id].blocks" :key="block.id">
                        <div v-if="block.type === 'text'" class="prose prose-sm prose-invert max-w-none" v-html="parseMarkdown(block.content)"></div>
-                       <img v-else-if="block.type === 'image'" :src="block.content" class="max-w-full rounded-md border border-neutral-700" />
+                       <div v-else-if="block.type === 'image'" class="relative inline-block max-w-full group/img my-1">
+                         <img :src="block.content" class="max-w-full rounded-md border border-neutral-700 block" alt="Table cell image" />
+                         <button 
+                           type="button"
+                           class="absolute bottom-2 right-2 w-7 h-7 flex items-center justify-center rounded-md bg-neutral-900/85 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-700/80 shadow-lg backdrop-blur-sm transition-all hover:scale-110 active:scale-95 cursor-pointer"
+                           title="Ver imagen completa"
+                           aria-label="Ver imagen completa"
+                           @click.stop="openImagePreview(block.content)"
+                         >
+                           <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                             <polyline points="15 3 21 3 21 9"></polyline>
+                             <polyline points="9 21 3 21 3 15"></polyline>
+                             <line x1="21" y1="3" x2="14" y2="10"></line>
+                             <line x1="3" y1="21" x2="10" y2="14"></line>
+                           </svg>
+                         </button>
+                       </div>
                     </template>
                   </div>
                   <div v-else class="text-neutral-600 italic text-sm">none</div>
@@ -312,6 +388,9 @@ onUnmounted(() => {
         </template>
       </draggable>
     </table>
+
+    <BreakdownImageModal :src="previewImageUrl" @close="closeImagePreview" />
+    <BreakdownDeleteShotModal />
   </div>
 </template>
 
