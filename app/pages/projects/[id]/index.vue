@@ -272,8 +272,8 @@ const handleDeleteProject = async () => {
           <div class="space-y-4 pt-4 border-t border-neutral-800/60">
             <div class="flex items-center justify-between">
               <div>
-                <h2 class="text-xl font-bold text-white">Breakdown Columns & Departments</h2>
-                <p class="text-xs text-neutral-400">Configure technical columns, AI prompts, and data formats for this project.</p>
+                <h2 class="text-xl font-bold text-white">Breakdown Columns</h2>
+                <p class="text-xs text-neutral-400">Configure columns for this project.</p>
               </div>
               <button class="btn btn-sm btn-outline border-neutral-700 text-neutral-300 hover:text-white" @click="addColumn()">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>

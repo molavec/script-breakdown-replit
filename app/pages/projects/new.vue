@@ -1,3 +1,37 @@
+<script setup lang="ts">
+const form = ref({
+  title: '',
+  type: '',
+  genre: '',
+  description: ''
+})
+
+const isLoading = ref(false)
+
+const createProject = async () => {
+  if (isLoading.value) return
+  isLoading.value = true
+  
+  try {
+    const project = await $fetch('/api/projects', {
+      method: 'POST',
+      body: form.value
+    })
+    
+    if (project && project.id) {
+      navigateTo(`/projects/${project.id}`)
+    } else {
+      console.error('Failed to get project ID back')
+    }
+  } catch (error) {
+    console.error('Failed to create project:', error)
+    // Handle error UI if needed
+  } finally {
+    isLoading.value = false
+  }
+}
+</script>
+
 <template>
   <main class="p-6 md:p-8 max-w-3xl mx-auto">
     <div class="bg-[#1c1c1c] border border-white/10 rounded-xl overflow-hidden">
@@ -61,7 +95,7 @@
         <div>
           <div class="flex justify-between items-end mb-2">
             <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest">Original Story / Logline</label>
-            <span class="text-xs text-gray-500 font-mono">Markdown supported</span>
+              <!-- <span class="text-xs text-gray-500 font-mono">Markdown supported</span> -->
           </div>
           <textarea 
             v-model="form.description"
@@ -109,36 +143,3 @@
   </main>
 </template>
 
-<script setup lang="ts">
-const form = ref({
-  title: '',
-  type: '',
-  genre: '',
-  description: ''
-})
-
-const isLoading = ref(false)
-
-const createProject = async () => {
-  if (isLoading.value) return
-  isLoading.value = true
-  
-  try {
-    const project = await $fetch('/api/projects', {
-      method: 'POST',
-      body: form.value
-    })
-    
-    if (project && project.id) {
-      navigateTo(`/projects/${project.id}`)
-    } else {
-      console.error('Failed to get project ID back')
-    }
-  } catch (error) {
-    console.error('Failed to create project:', error)
-    // Handle error UI if needed
-  } finally {
-    isLoading.value = false
-  }
-}
-</script>
