@@ -64,6 +64,16 @@ const editorRef = ref<HTMLDivElement | null>(null);
 const chatContainerRef = ref<HTMLDivElement | null>(null);
 const editContent = ref('');
 
+const previewImageUrl = ref<string | null>(null);
+
+const openImagePreview = (url: string) => {
+  previewImageUrl.value = url;
+};
+
+const closeImagePreview = () => {
+  previewImageUrl.value = null;
+};
+
 const messages = ref<BreakdownChatMessage[]>([]);
 const inputValue = ref('');
 const isGenerating = ref(false);
@@ -108,7 +118,7 @@ watch(inputValue, () => {
 });
 
 const createImageHtml = (src: string) => {
-  return `<div class="image-wrapper not-prose mb-4 block" contenteditable="false"><div class="relative inline-block max-w-full group/img"><img src="${src}" class="max-w-full rounded-md border border-neutral-700 block m-0" alt="Cell image" /><button type="button" data-action="delete-image" class="image-delete-btn" title="Eliminar imagen" aria-label="Eliminar imagen"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div></div>`;
+  return `<div class="image-wrapper not-prose mb-4 block" contenteditable="false"><div class="relative inline-block max-w-full group/img"><img src="${src}" class="max-w-full rounded-md border border-neutral-700 block m-0" alt="Cell image" /><button type="button" data-action="delete-image" class="image-delete-btn" title="Eliminar imagen" aria-label="Eliminar imagen"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button><button type="button" data-action="view-image" class="image-view-btn" title="Ver imagen completa" aria-label="Ver imagen completa"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg></button></div></div>`;
 };
 
 const wrapRawImages = (container: HTMLElement) => {
@@ -132,10 +142,31 @@ const wrapRawImages = (container: HTMLElement) => {
       btn.setAttribute('aria-label', 'Eliminar imagen');
       btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
 
+      const viewBtn = document.createElement('button');
+      viewBtn.type = 'button';
+      viewBtn.setAttribute('data-action', 'view-image');
+      viewBtn.className = 'image-view-btn';
+      viewBtn.title = 'Ver imagen completa';
+      viewBtn.setAttribute('aria-label', 'Ver imagen completa');
+      viewBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>`;
+
       img.parentNode?.insertBefore(wrapper, img);
       inner.appendChild(img);
       inner.appendChild(btn);
+      inner.appendChild(viewBtn);
       wrapper.appendChild(inner);
+    } else {
+      const inner = img.parentElement;
+      if (inner && !inner.querySelector('[data-action="view-image"]')) {
+        const viewBtn = document.createElement('button');
+        viewBtn.type = 'button';
+        viewBtn.setAttribute('data-action', 'view-image');
+        viewBtn.className = 'image-view-btn';
+        viewBtn.title = 'Ver imagen completa';
+        viewBtn.setAttribute('aria-label', 'Ver imagen completa');
+        viewBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>`;
+        inner.appendChild(viewBtn);
+      }
     }
   });
 
@@ -199,6 +230,20 @@ const handleEditorClick = (e: MouseEvent) => {
   const target = e.target as HTMLElement | null;
   if (!target) return;
   
+  const viewBtn = target.closest('[data-action="view-image"]');
+  if (viewBtn) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const wrapper = viewBtn.closest('.image-wrapper') || viewBtn.parentElement?.parentElement || viewBtn.parentElement;
+    const img = wrapper?.querySelector('img');
+    const src = img?.getAttribute('src') || img?.src;
+    if (src) {
+      openImagePreview(src);
+    }
+    return;
+  }
+
   const deleteBtn = target.closest('[data-action="delete-image"]');
   if (deleteBtn) {
     e.preventDefault();
@@ -521,7 +566,23 @@ const saveAndClose = async () => {
                   
                   <template v-else>
                     <div v-if="msg.text" class="mb-2 prose prose-sm prose-invert max-w-none" v-html="parseMarkdown(msg.text)"></div>
-                    <img v-if="msg.imageUrl" :src="msg.imageUrl" alt="Generated" class="max-w-full rounded-md mt-2 border border-neutral-700" />
+                    <div v-if="msg.imageUrl" class="relative inline-block max-w-full group/msg-img mt-2">
+                      <img :src="msg.imageUrl" alt="Generated" class="max-w-full rounded-md border border-neutral-700 block" />
+                      <button 
+                        type="button"
+                        class="absolute bottom-2 right-2 w-7 h-7 flex items-center justify-center rounded-md bg-neutral-900/85 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-700/80 shadow-lg backdrop-blur-sm transition-all hover:scale-110 active:scale-95 cursor-pointer"
+                        title="Ver imagen completa"
+                        aria-label="Ver imagen completa"
+                        @click.stop="openImagePreview(msg.imageUrl)"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <polyline points="15 3 21 3 21 9"></polyline>
+                          <polyline points="9 21 3 21 3 15"></polyline>
+                          <line x1="21" y1="3" x2="14" y2="10"></line>
+                          <line x1="3" y1="21" x2="10" y2="14"></line>
+                        </svg>
+                      </button>
+                    </div>
                   </template>
 
                   <div v-if="msg.role === 'model' && !msg.isGenerating && (msg.text || msg.imageUrl)" class="flex justify-end gap-1.5 mt-2.5">
@@ -642,6 +703,8 @@ const saveAndClose = async () => {
         </footer>
       </div>
     </div>
+    
+    <BreakdownImageModal :src="previewImageUrl" @close="closeImagePreview" />
   </div>
 </template>
 
@@ -720,6 +783,53 @@ textarea::-webkit-scrollbar-thumb:hover {
   height: 12px !important;
   stroke: #ffffff !important;
   stroke-width: 2.5 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  pointer-events: none !important;
+}
+
+:deep(.image-view-btn) {
+  position: absolute !important;
+  bottom: 5px !important;
+  right: 5px !important;
+  width: 24px !important;
+  height: 24px !important;
+  min-width: 24px !important;
+  min-height: 24px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: 6px !important;
+  background-color: rgba(24, 24, 27, 0.85) !important;
+  backdrop-filter: blur(4px) !important;
+  color: #e5e5e5 !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.45) !important;
+  cursor: pointer !important;
+  user-select: none !important;
+  line-height: 0 !important;
+  transition: transform 0.15s ease, background-color 0.15s ease, color 0.15s ease !important;
+  z-index: 10 !important;
+}
+
+:deep(.image-view-btn:hover) {
+  background-color: rgba(38, 38, 38, 0.95) !important;
+  color: #ffffff !important;
+  transform: scale(1.1) !important;
+}
+
+:deep(.image-view-btn:active) {
+  transform: scale(0.92) !important;
+}
+
+:deep(.image-view-btn svg) {
+  display: block !important;
+  width: 13px !important;
+  height: 13px !important;
+  stroke: currentColor !important;
+  stroke-width: 2 !important;
   margin: 0 !important;
   padding: 0 !important;
   pointer-events: none !important;

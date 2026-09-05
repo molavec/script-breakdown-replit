@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import draggable from 'vuedraggable';
 import { parseMarkdown } from '~~/utils/markdown';
 
@@ -7,6 +7,16 @@ const { activeScene } = useProjectBreakdown();
 const { columns, rows, updateRowsOrder } = useSceneTable();
 const { activeCellId, selectCell } = useBreakdownCell();
 const { editingCellId, inlineEditValue, startInlineEdit, cancelInlineEdit, saveInlineEdit } = useCellInlineEdit();
+
+const previewImageUrl = ref<string | null>(null);
+
+const openImagePreview = (url: string) => {
+  previewImageUrl.value = url;
+};
+
+const closeImagePreview = () => {
+  previewImageUrl.value = null;
+};
 
 const tableRows = computed({
   get: () => rows.value,
@@ -162,7 +172,23 @@ const getCellCurrency = (col: any, cell?: any): string => {
                       <div v-if="row.cells[col.id].blocks && row.cells[col.id].blocks.length > 0" class="flex flex-col gap-2 text-sm text-neutral-300 whitespace-pre-wrap leading-relaxed">
                         <template v-for="block in row.cells[col.id].blocks" :key="block.id">
                           <div v-if="block.type === 'text'" class="prose prose-sm prose-invert max-w-none" v-html="parseMarkdown(block.content)"></div>
-                          <img v-else-if="block.type === 'image'" :src="block.content" class="max-w-full rounded-md border border-neutral-700" />
+                          <div v-else-if="block.type === 'image'" class="relative inline-block max-w-full group/img my-1">
+                            <img :src="block.content" class="max-w-full rounded-md border border-neutral-700 block" alt="Card image" />
+                            <button 
+                              type="button"
+                              class="absolute bottom-2 right-2 w-7 h-7 flex items-center justify-center rounded-md bg-neutral-900/85 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-700/80 shadow-lg backdrop-blur-sm transition-all hover:scale-110 active:scale-95 cursor-pointer"
+                              title="Ver imagen completa"
+                              aria-label="Ver imagen completa"
+                              @click.stop="openImagePreview(block.content)"
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="15 3 21 3 21 9"></polyline>
+                                <polyline points="9 21 3 21 3 15"></polyline>
+                                <line x1="21" y1="3" x2="14" y2="10"></line>
+                                <line x1="3" y1="21" x2="10" y2="14"></line>
+                              </svg>
+                            </button>
+                          </div>
                         </template>
                       </div>
                       <div v-else class="text-neutral-500 italic text-sm">none</div>
@@ -175,6 +201,8 @@ const getCellCurrency = (col: any, cell?: any): string => {
         </div>
       </template>
     </draggable>
+
+    <BreakdownImageModal :src="previewImageUrl" @close="closeImagePreview" />
   </div>
 </template>
 
