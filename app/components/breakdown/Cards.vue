@@ -136,7 +136,7 @@ const getCellCurrency = (col: any, cell?: any): string => {
                           type="text" 
                           class="input input-sm input-bordered w-full bg-[#18181b] border-neutral-500 text-neutral-100 focus:outline-none focus:border-error" 
                           v-model="inlineEditValue"
-                          placeholder="Tag 1, Tag 2, Tag 3..."
+                          placeholder="Item 1, Item 2, Item 3..."
                           @keydown.enter="saveInlineEdit(row.cells[col.id], 'tags')"
                         />
                         <div class="flex justify-end gap-1">
