@@ -2,10 +2,9 @@
 
 
 ## escenas
-* que la opción de añadir o reemplazar esté dentro de la burbuja de la IA.
+* Para las imagenes añadir un ícono de X en la parte superios derecha de la imagen para facilitar su eliminación.
 * En los campos con tag evidenciar que se debe utilizar comas para separar los tags.
 * Añadir el contenido actual al contexto.
-* Para las imagenes añadir un ícono de X en la parte superios derecha de la imagen para facilitar su eliminación.
 * Cambiar orden de los campos a completar, para brindar contextos de forma gradual.
 * Imagen que se pueda ver en tamaño completo y poder hacer zoom.  
 

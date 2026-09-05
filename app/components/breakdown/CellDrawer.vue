@@ -87,6 +87,45 @@ watch(inputValue, () => {
   });
 });
 
+const createImageHtml = (src: string) => {
+  return `<div class="image-wrapper not-prose mb-4 block" contenteditable="false"><div class="relative inline-block max-w-full group/img"><img src="${src}" class="max-w-full rounded-md border border-neutral-700 block m-0" alt="Cell image" /><button type="button" data-action="delete-image" class="image-delete-btn" title="Eliminar imagen" aria-label="Eliminar imagen"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div></div>`;
+};
+
+const wrapRawImages = (container: HTMLElement) => {
+  const imgs = container.querySelectorAll('img');
+  imgs.forEach((img) => {
+    if (!img.closest('.image-wrapper')) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'image-wrapper not-prose mb-4 block';
+      wrapper.setAttribute('contenteditable', 'false');
+      
+      const inner = document.createElement('div');
+      inner.className = 'relative inline-block max-w-full group/img';
+      
+      img.className = 'max-w-full rounded-md border border-neutral-700 block m-0';
+      
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.setAttribute('data-action', 'delete-image');
+      btn.className = 'image-delete-btn';
+      btn.title = 'Eliminar imagen';
+      btn.setAttribute('aria-label', 'Eliminar imagen');
+      btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
+
+      img.parentNode?.insertBefore(wrapper, img);
+      inner.appendChild(img);
+      inner.appendChild(btn);
+      wrapper.appendChild(inner);
+    }
+  });
+
+  // Ensure any existing delete buttons have updated class and centered SVG
+  container.querySelectorAll('[data-action="delete-image"]').forEach((btn) => {
+    btn.className = 'image-delete-btn';
+    btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
+  });
+};
+
 watch([() => activeCell.value, () => isDrawerOpen.value], async ([newCell, isOpen]) => {
   if (isOpen && newCell) {
     let initialContent = '';
@@ -94,7 +133,7 @@ watch([() => activeCell.value, () => isDrawerOpen.value], async ([newCell, isOpe
     if (newCell.blocks && newCell.blocks.length > 0) {
       initialContent = newCell.blocks.map(b => {
         if (b.type === 'image') {
-          return `<div class="mb-4"><img src="${b.content}" class="max-w-full rounded-md border border-neutral-700" /></div>`;
+          return createImageHtml(b.content);
         }
         return parseMarkdown(b.content);
       }).join('');
@@ -112,6 +151,7 @@ watch([() => activeCell.value, () => isDrawerOpen.value], async ([newCell, isOpe
     await nextTick();
     if (editorRef.value) {
       editorRef.value.innerHTML = editContent.value;
+      wrapRawImages(editorRef.value);
     }
     
     // Set default selected generation type based on column
@@ -125,7 +165,61 @@ watch([() => activeCell.value, () => isDrawerOpen.value], async ([newCell, isOpe
 
 const onEditorInput = (e: Event) => {
   const target = e.target as HTMLDivElement;
+  wrapRawImages(target);
   editContent.value = target.innerHTML;
+};
+
+const handleEditorClick = (e: MouseEvent) => {
+  const target = e.target as HTMLElement | null;
+  if (!target) return;
+  
+  const deleteBtn = target.closest('[data-action="delete-image"]');
+  if (deleteBtn) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const wrapper = deleteBtn.closest('.image-wrapper') || deleteBtn.closest('.image-container') || deleteBtn.parentElement?.parentElement;
+    if (wrapper) {
+      wrapper.remove();
+      if (editorRef.value) {
+        editContent.value = editorRef.value.innerHTML;
+        editorRef.value.focus();
+      }
+    }
+  }
+};
+
+const handleEditorPaste = (e: ClipboardEvent) => {
+  const items = e.clipboardData?.items;
+  if (!items) return;
+
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
+    if (item && item.type.indexOf('image') !== -1) {
+      e.preventDefault();
+      const file = item.getAsFile();
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const base64 = event.target?.result as string;
+          if (base64 && editorRef.value) {
+            const imgHtml = createImageHtml(base64);
+            document.execCommand('insertHTML', false, imgHtml);
+            editContent.value = editorRef.value.innerHTML;
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+      return;
+    }
+  }
+
+  setTimeout(() => {
+    if (editorRef.value) {
+      wrapRawImages(editorRef.value);
+      editContent.value = editorRef.value.innerHTML;
+    }
+  }, 0);
 };
 
 const scrollToBottom = async () => {
@@ -236,16 +330,15 @@ const handleSendMessage = async () => {
 };
 
 const formatContentHtml = (text: string, imageUrl?: string) => {
-  let htmlToInsert = '<div class="mb-4">';
+  let htmlToInsert = '';
   
   if (text) {
-    htmlToInsert += `<div class="mb-2 text-neutral-300">${parseMarkdown(text)}</div>`;
+    htmlToInsert += `<div class="mb-4 text-neutral-300">${parseMarkdown(text)}</div>`;
   }
   
   if (imageUrl) {
-    htmlToInsert += `<img src="${imageUrl}" class="max-w-full rounded-md border border-neutral-700" alt="Generated script element" />`;
+    htmlToInsert += createImageHtml(imageUrl);
   }
-  htmlToInsert += '</div>';
   return htmlToInsert;
 };
 
@@ -350,6 +443,8 @@ const saveAndClose = async () => {
               class="w-full h-[250px] overflow-y-auto border border-neutral-700 rounded-md p-3 bg-transparent text-sm focus:outline-none focus:border-red-600 transition-colors prose prose-sm prose-invert max-w-none"
               contenteditable="true"
               @input="onEditorInput"
+              @click="handleEditorClick"
+              @paste="handleEditorPaste"
               data-placeholder="Continue writing here..."
             >
             </div>
@@ -535,5 +630,55 @@ textarea::-webkit-scrollbar-thumb {
 }
 textarea::-webkit-scrollbar-thumb:hover {
   background-color: #525252;
+}
+
+:deep(.image-wrapper) {
+  position: relative;
+  user-select: none;
+}
+
+:deep(.image-delete-btn) {
+  position: absolute !important;
+  top: 5px !important;
+  right: 5px !important;
+  width: 22px !important;
+  height: 22px !important;
+  min-width: 22px !important;
+  min-height: 22px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  border-radius: 9999px !important;
+  background-color: #dc2626 !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.45) !important;
+  cursor: pointer !important;
+  user-select: none !important;
+  line-height: 0 !important;
+  transition: transform 0.15s ease, background-color 0.15s ease !important;
+  z-index: 10 !important;
+}
+
+:deep(.image-delete-btn:hover) {
+  background-color: #b91c1c !important;
+  transform: scale(1.1) !important;
+}
+
+:deep(.image-delete-btn:active) {
+  transform: scale(0.92) !important;
+}
+
+:deep(.image-delete-btn svg) {
+  display: block !important;
+  width: 12px !important;
+  height: 12px !important;
+  stroke: #ffffff !important;
+  stroke-width: 2.5 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  pointer-events: none !important;
 }
 </style>
