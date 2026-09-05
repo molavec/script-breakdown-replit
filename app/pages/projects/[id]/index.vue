@@ -84,35 +84,11 @@ const handleDeleteProject = async () => {
       <!-- Project Details Content -->
       <div class="flex-1 overflow-y-auto bg-[#121214] text-white p-6 md:p-10">
         <div class="max-w-6xl mx-auto space-y-8 pb-12">
-          <!-- Breadcrumb & Top Actions -->
-          <div class="flex items-center justify-between gap-4">
-            <div class="flex items-center gap-2 text-xs font-mono text-neutral-400 truncate">
-              <NuxtLink to="/" class="hover:text-white transition-colors">Projects</NuxtLink>
-              <span>/</span>
-              <span class="text-white font-medium truncate">{{ project.name }}</span>
-            </div>
-
-            <div class="flex items-center gap-2 shrink-0">
-              <button 
-                type="button" 
-                @click="openDeleteModal" 
-                class="btn btn-sm btn-ghost text-red-400 hover:bg-red-950/40 hover:text-red-300 flex items-center gap-1.5"
-                title="Delete Project"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
-                </svg>
-                <span>Delete</span>
-              </button>
-
-              <NuxtLink 
-                :to="`/projects/${projectId}/scene/${currentActiveSceneId}`"
-                class="btn btn-sm btn-error shadow-lg shadow-rose-950/40 text-white flex items-center gap-2"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h7"/></svg>
-                Open Script Breakdown
-              </NuxtLink>
-            </div>
+          <!-- Breadcrumb -->
+          <div class="flex items-center gap-2 text-xs font-mono text-neutral-400 truncate">
+            <NuxtLink to="/" class="hover:text-white transition-colors">Projects</NuxtLink>
+            <span>/</span>
+            <span class="text-white font-medium truncate">{{ project.name }}</span>
           </div>
 
           <!-- Hero Banner / Project Overview Card -->
