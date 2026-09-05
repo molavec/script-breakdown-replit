@@ -1091,7 +1091,7 @@ const handleCancel = () => {
 
               <!-- Context Selection Dropdown -->
               <div class="dropdown dropdown-top dropdown-end" v-if="availableColumns.length > 0">
-                <div tabindex="0" role="button" class="btn btn-xs btn-outline border-neutral-700 text-neutral-400 hover:text-white flex items-center gap-1">
+                <div tabindex="0" role="button" class="btn btn-xs btn-warning text-black flex items-center gap-1">
                   <PlusCircleIcon :size="14" />
                   Context ({{ selectedContextColumns.length }})
                 </div>
@@ -1099,7 +1099,7 @@ const handleCancel = () => {
                   <li class="menu-title px-2 py-1 text-[10px] text-neutral-500 font-bold uppercase tracking-wider">Include in Context</li>
                   <li v-for="col in availableColumns" :key="col.id">
                     <label class="label cursor-pointer flex justify-start gap-2 py-1.5 px-2 hover:bg-[#333333] rounded-md">
-                      <input type="checkbox" :value="col.id" v-model="selectedContextColumns" class="checkbox checkbox-xs checkbox-primary border-neutral-500 rounded-sm" />
+                      <input type="checkbox" :value="col.id" v-model="selectedContextColumns" class="checkbox checkbox-xs checkbox-warning border-neutral-500 rounded-sm" />
                       <span class="label-text text-neutral-300 text-xs truncate">{{ col.name }}</span>
                     </label>
                   </li>

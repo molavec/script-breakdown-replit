@@ -6,8 +6,6 @@
 * Desactivar el botón guardar si el usuario no ha realizado cambios en el contenido o el asistente aún está abierto.
 
 
-* Que el contexto adicional quede evidenciado.
-
 * Ajusta la creación de una nueva columna.
 
 
