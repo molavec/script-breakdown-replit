@@ -43,6 +43,55 @@ const handleRecalculateStats = async () => {
   }
 };
 
+const formatType = (type?: string) => {
+  if (!type) return 'Feature Film';
+  const types: Record<string, string> = {
+    feature: 'Feature Film',
+    feature_film: 'Feature Film',
+    series: 'Series',
+    short: 'Short Film',
+    short_film: 'Short Film',
+    documentary: 'Documentary',
+    commercial: 'Commercial',
+    music_video: 'Music Video',
+    animation: 'Animation',
+    other: 'Other'
+  };
+  return types[type] || type.replace(/_/g, ' ');
+};
+
+const formatStatus = (status?: string) => {
+  if (!status) return 'Draft';
+  const statuses: Record<string, string> = {
+    draft: 'Draft',
+    in_progress: 'In Progress',
+    breakdown_review: 'Breakdown Review',
+    pre_production: 'Pre-Production',
+    production: 'Production',
+    completed: 'Completed',
+    archived: 'Archived'
+  };
+  return statuses[status] || status.replace(/_/g, ' ');
+};
+
+const statusBadgeClass = (status?: string) => {
+  switch (status) {
+    case 'in_progress':
+    case 'production':
+      return 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30';
+    case 'completed':
+      return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30';
+    case 'breakdown_review':
+    case 'pre_production':
+      return 'bg-purple-500/10 text-purple-400 border-purple-500/30';
+    case 'archived':
+      return 'bg-neutral-800 text-neutral-400 border-neutral-700';
+    case 'draft':
+    default:
+      return 'bg-amber-500/10 text-amber-400 border-amber-500/30';
+  }
+};
+
 // Project deletion logic
 const deleteModalRef = ref<HTMLDialogElement | null>(null);
 const isDeleting = ref(false);
@@ -104,28 +153,61 @@ const handleDeleteProject = async () => {
               <!-- Badges on top -->
               <div class="absolute top-6 left-6 flex items-center gap-3">
                 <span class="badge badge-warning text-black font-semibold text-xs py-2 px-3">
-                  {{ project.status }}
+                  {{ formatStatus(project.status) }}
                 </span>
                 <span class="badge badge-neutral border-neutral-700 bg-black/60 backdrop-blur-md text-xs py-2 px-3 text-neutral-300 font-mono">
-                  {{ project.type }} • {{ project.genre }}
+                  {{ formatType(project.type) }} • {{ project.genre }}
                 </span>
               </div>
             </div>
 
             <!-- Project Hero Body -->
             <div class="p-8 -mt-20 relative z-10 space-y-6">
-              <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                <div>
-                  <h1 class="text-4xl md:text-5xl font-black tracking-tight text-white mb-2">
+              <div class="flex flex-col md:flex-row md:items-start justify-between gap-6">
+                <div class="space-y-4 max-w-3xl">
+                  <h1 class="text-4xl md:text-5xl font-black tracking-tight text-white">
                     {{ project.name }}
                   </h1>
-                  <p class="text-neutral-400 max-w-3xl text-sm md:text-base leading-relaxed">
-                    {{ project.logline || project.description }}
-                  </p>
+
+                  <!-- Metadata Strip: Production Type, Primary Genre, Status -->
+                  <div class="flex flex-wrap items-center gap-2.5 text-xs">
+                    <!-- Production Type -->
+                    <div class="inline-flex items-center gap-2 bg-[#141416]/90 border border-neutral-800 px-3 py-1.5 rounded-lg shadow-sm">
+                      <span class="text-neutral-400 font-medium uppercase tracking-wider text-[10px]">Production Type</span>
+                      <span class="text-white font-semibold capitalize">{{ formatType(project.type) }}</span>
+                    </div>
+
+                    <!-- Primary Genre -->
+                    <div class="inline-flex items-center gap-2 bg-[#141416]/90 border border-neutral-800 px-3 py-1.5 rounded-lg shadow-sm">
+                      <span class="text-neutral-400 font-medium uppercase tracking-wider text-[10px]">Primary Genre</span>
+                      <span class="text-white font-semibold capitalize">{{ project.genre || 'Unspecified' }}</span>
+                    </div>
+
+                    <!-- Status -->
+                    <div class="inline-flex items-center gap-2 bg-[#141416]/90 border border-neutral-800 px-3 py-1.5 rounded-lg shadow-sm">
+                      <span class="text-neutral-400 font-medium uppercase tracking-wider text-[10px]">Status</span>
+                      <span class="badge badge-sm font-semibold capitalize border" :class="statusBadgeClass(project.status)">
+                        {{ formatStatus(project.status) }}
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- Original Story / Logline -->
+                  <div class="pt-1">
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-neutral-400 block mb-1">
+                      Original Story / Logline
+                    </span>
+                    <p v-if="project.logline || project.description" class="text-neutral-300 text-sm md:text-base leading-relaxed">
+                      {{ project.logline || project.description }}
+                    </p>
+                    <p v-else class="text-neutral-500 text-xs italic">
+                      No logline or synopsis added yet.
+                    </p>
+                  </div>
                 </div>
 
                 <!-- Quick Action Breakdown Link -->
-                <div class="flex items-center gap-3 shrink-0">
+                <div class="flex items-center gap-3 shrink-0 pt-1">
                   <NuxtLink 
                     :to="`/projects/${projectId}/edit`"
                     class="btn btn-outline border-neutral-700 bg-neutral-900/80 hover:bg-neutral-800 hover:border-neutral-500 text-neutral-200 hover:text-white font-medium px-4 shadow-sm flex items-center gap-2"
