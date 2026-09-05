@@ -2,8 +2,8 @@
 
 
 ## escenas
-* Añadir el contenido actual al contexto.
 * Cambiar orden de los campos a completar, para brindar contextos de forma gradual.
+* Añadir el contenido actual al contexto de forma gradual.
 * Imagen que se pueda ver en tamaño completo y poder hacer zoom.  
 
 * Que el input del editor de la celda se vea como un editor de parrafo para que el usuario saber que se puede editar. Un texto declarativo puede ayudar.

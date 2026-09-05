@@ -24,40 +24,12 @@ export async function createDefaultProjectData(projectId: string) {
       },
     },
     {
-      id: `col_storyboard_${projectId}`,
-      projectId,
-      name: 'Storyboard',
-      cellType: 'media' as const,
-      description: 'Visual storyboard frame, framing reference, and composition.',
-      order: 2,
-      isSystem: true,
-      color: '#06b6d4',
-      options: {
-        defaultPrompt: 'Purely visual storytelling. Absolutely no text, no words, no speech bubbles, no comic dialogs, no typography. Textless image.',
-        width: 250,
-      },
-    },
-    {
-      id: `col_camera_${projectId}`,
-      projectId,
-      name: 'Camera',
-      cellType: 'text' as const,
-      description: 'Camera angle, shot size, lens, and camera movement specifications.',
-      order: 3,
-      isSystem: true,
-      color: '#9ca3af',
-      options: {
-        defaultPrompt: 'Generate shot description',
-        width: 200,
-      },
-    },
-    {
       id: `col_cast_${projectId}`,
       projectId,
       name: 'Cast',
       cellType: 'tags' as const,
       description: 'Characters, actors, and background extras featured in the shot.',
-      order: 4,
+      order: 2,
       isSystem: true,
       color: '#ef4444', // Red
       options: {
@@ -71,7 +43,7 @@ export async function createDefaultProjectData(projectId: string) {
       name: 'Props',
       cellType: 'text' as const,
       description: 'Key physical props, items, and set dressing handled or featured.',
-      order: 5,
+      order: 3,
       isSystem: true,
       color: '#a855f7', // Purple
       options: {
@@ -85,11 +57,39 @@ export async function createDefaultProjectData(projectId: string) {
       name: 'Make-up & Hair',
       cellType: 'text' as const,
       description: 'Special make-up, hair styling, prosthetics, and character appearance notes.',
-      order: 6,
+      order: 4,
       isSystem: true,
       color: '#ec4899', // Pink
       options: {
         defaultPrompt: 'List hair, makeup, special effects makeup, wounds, or styling requirements for the characters in this shot.',
+        width: 200,
+      },
+    },
+    {
+      id: `col_camera_${projectId}`,
+      projectId,
+      name: 'Camera',
+      cellType: 'text' as const,
+      description: 'Camera angle, shot size, lens, and camera movement specifications.',
+      order: 5,
+      isSystem: true,
+      color: '#9ca3af',
+      options: {
+        defaultPrompt: 'Generate shot description',
+        width: 200,
+      },
+    },
+    {
+      id: `col_vfx_${projectId}`,
+      projectId,
+      name: 'VFX',
+      cellType: 'text' as const,
+      description: 'Visual effects, CGI elements, screen replacements, and post-production digital work.',
+      order: 6,
+      isSystem: true,
+      color: '#3b82f6', // Blue
+      options: {
+        defaultPrompt: 'Identify visual effects (VFX), CGI elements, compositing, green screen, or digital cleanup needed for this shot.',
         width: 200,
       },
     },
@@ -108,17 +108,31 @@ export async function createDefaultProjectData(projectId: string) {
       },
     },
     {
-      id: `col_vfx_${projectId}`,
+      id: `col_notes_${projectId}`,
       projectId,
-      name: 'VFX',
+      name: 'Notes',
       cellType: 'text' as const,
-      description: 'Visual effects, CGI elements, screen replacements, and post-production digital work.',
+      description: 'Director, production, logistics, and technical execution notes.',
       order: 8,
       isSystem: true,
-      color: '#3b82f6', // Blue
+      color: '#eab308', // Yellow
       options: {
-        defaultPrompt: 'Identify visual effects (VFX), CGI elements, compositing, green screen, or digital cleanup needed for this shot.',
+        defaultPrompt: 'Generate production advice, safety considerations, and creative reminders for filming this shot.',
         width: 200,
+      },
+    },
+    {
+      id: `col_storyboard_${projectId}`,
+      projectId,
+      name: 'Storyboard',
+      cellType: 'media' as const,
+      description: 'Visual storyboard frame, framing reference, and composition.',
+      order: 9,
+      isSystem: true,
+      color: '#06b6d4',
+      options: {
+        defaultPrompt: 'Purely visual storytelling. Absolutely no text, no words, no speech bubbles, no comic dialogs, no typography. Textless image.',
+        width: 250,
       },
     },
     {
@@ -127,27 +141,13 @@ export async function createDefaultProjectData(projectId: string) {
       name: 'Budget',
       cellType: 'number' as const,
       description: 'Estimated production cost and financial allocation for this shot.',
-      order: 9,
+      order: 10,
       isSystem: true,
       color: '#22c55e', // Green
       options: {
         currencyCode: "USD",
         defaultPrompt: 'Estimate the production cost and budget allocation for this shot based on the required elements.',
         width: 150,
-      },
-    },
-    {
-      id: `col_notes_${projectId}`,
-      projectId,
-      name: 'Notes',
-      cellType: 'text' as const,
-      description: 'Director, production, logistics, and technical execution notes.',
-      order: 10,
-      isSystem: true,
-      color: '#eab308', // Yellow
-      options: {
-        defaultPrompt: 'Generate production advice, safety considerations, and creative reminders for filming this shot.',
-        width: 200,
       },
     },
   ];
@@ -195,30 +195,6 @@ export async function createDefaultProjectData(projectId: string) {
       ],
     },
     {
-      id: `cell_${shot1Id}_storyboard`,
-      shotId: shot1Id,
-      columnId: `col_storyboard_${projectId}`,
-      blocks: [
-        {
-          id: 'b1',
-          type: 'image' as const,
-          content: '/uploads/storyboard_shot_1_1.jpg',
-        },
-      ],
-    },
-    {
-      id: `cell_${shot1Id}_camera`,
-      shotId: shot1Id,
-      columnId: `col_camera_${projectId}`,
-      blocks: [
-        {
-          id: 'b1',
-          type: 'text' as const,
-          content: 'Wide Shot, 35mm lens, Crane down',
-        },
-      ],
-    },
-    {
       id: `cell_${shot1Id}_cast`,
       shotId: shot1Id,
       columnId: `col_cast_${projectId}`,
@@ -255,14 +231,14 @@ export async function createDefaultProjectData(projectId: string) {
       ],
     },
     {
-      id: `cell_${shot1Id}_sound`,
+      id: `cell_${shot1Id}_camera`,
       shotId: shot1Id,
-      columnId: `col_sound_${projectId}`,
+      columnId: `col_camera_${projectId}`,
       blocks: [
         {
           id: 'b1',
           type: 'text' as const,
-          content: 'Heavy rain, Distant thunder, Neon hum',
+          content: 'Wide Shot, 35mm lens, Crane down',
         },
       ],
     },
@@ -279,15 +255,14 @@ export async function createDefaultProjectData(projectId: string) {
       ],
     },
     {
-      id: `cell_${shot1Id}_budget`,
+      id: `cell_${shot1Id}_sound`,
       shotId: shot1Id,
-      columnId: `col_budget_${projectId}`,
-      numericValue: 1500,
+      columnId: `col_sound_${projectId}`,
       blocks: [
         {
           id: 'b1',
           type: 'text' as const,
-          content: '1500',
+          content: 'Heavy rain, Distant thunder, Neon hum',
         },
       ],
     },
@@ -303,6 +278,31 @@ export async function createDefaultProjectData(projectId: string) {
         },
       ],
     },
+    {
+      id: `cell_${shot1Id}_storyboard`,
+      shotId: shot1Id,
+      columnId: `col_storyboard_${projectId}`,
+      blocks: [
+        {
+          id: 'b1',
+          type: 'image' as const,
+          content: '/uploads/storyboard_shot_1_1.jpg',
+        },
+      ],
+    },
+    {
+      id: `cell_${shot1Id}_budget`,
+      shotId: shot1Id,
+      columnId: `col_budget_${projectId}`,
+      numericValue: 1500,
+      blocks: [
+        {
+          id: 'b1',
+          type: 'text' as const,
+          content: '1500',
+        },
+      ],
+    },
 
     // Shot 1.2 Cells
     {
@@ -314,30 +314,6 @@ export async function createDefaultProjectData(projectId: string) {
           id: 'b1',
           type: 'text' as const,
           content: 'The figure turns suddenly. It\'s SARAH, looking terrified. She breathes heavily, clutching a small box.',
-        },
-      ],
-    },
-    {
-      id: `cell_${shot2Id}_storyboard`,
-      shotId: shot2Id,
-      columnId: `col_storyboard_${projectId}`,
-      blocks: [
-        {
-          id: 'b1',
-          type: 'image' as const,
-          content: '/uploads/storyboard_shot_1_2.jpg',
-        },
-      ],
-    },
-    {
-      id: `cell_${shot2Id}_camera`,
-      shotId: shot2Id,
-      columnId: `col_camera_${projectId}`,
-      blocks: [
-        {
-          id: 'b1',
-          type: 'text' as const,
-          content: 'Close Up, 50mm lens, Handheld',
         },
       ],
     },
@@ -378,6 +354,24 @@ export async function createDefaultProjectData(projectId: string) {
       ],
     },
     {
+      id: `cell_${shot2Id}_camera`,
+      shotId: shot2Id,
+      columnId: `col_camera_${projectId}`,
+      blocks: [
+        {
+          id: 'b1',
+          type: 'text' as const,
+          content: 'Close Up, 50mm lens, Handheld',
+        },
+      ],
+    },
+    {
+      id: `cell_${shot2Id}_vfx`,
+      shotId: shot2Id,
+      columnId: `col_vfx_${projectId}`,
+      blocks: [],
+    },
+    {
       id: `cell_${shot2Id}_sound`,
       shotId: shot2Id,
       columnId: `col_sound_${projectId}`,
@@ -390,10 +384,28 @@ export async function createDefaultProjectData(projectId: string) {
       ],
     },
     {
-      id: `cell_${shot2Id}_vfx`,
+      id: `cell_${shot2Id}_notes`,
       shotId: shot2Id,
-      columnId: `col_vfx_${projectId}`,
-      blocks: [],
+      columnId: `col_notes_${projectId}`,
+      blocks: [
+        {
+          id: 'b1',
+          type: 'text' as const,
+          content: 'Make sure the box is visible but its contents remain hidden.',
+        },
+      ],
+    },
+    {
+      id: `cell_${shot2Id}_storyboard`,
+      shotId: shot2Id,
+      columnId: `col_storyboard_${projectId}`,
+      blocks: [
+        {
+          id: 'b1',
+          type: 'image' as const,
+          content: '/uploads/storyboard_shot_1_2.jpg',
+        },
+      ],
     },
     {
       id: `cell_${shot2Id}_budget`,
@@ -405,18 +417,6 @@ export async function createDefaultProjectData(projectId: string) {
           id: 'b1',
           type: 'text' as const,
           content: '500',
-        },
-      ],
-    },
-    {
-      id: `cell_${shot2Id}_notes`,
-      shotId: shot2Id,
-      columnId: `col_notes_${projectId}`,
-      blocks: [
-        {
-          id: 'b1',
-          type: 'text' as const,
-          content: 'Make sure the box is visible but its contents remain hidden.',
         },
       ],
     },
