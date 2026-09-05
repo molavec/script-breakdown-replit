@@ -2,17 +2,18 @@
 
 
 ## escenas
-* Imagen que se pueda ver en tamaño completo y poder hacer zoom.  
-
+* Utilizar la descripción de la columna para guiar al usuario acerca de que debe ir en la columna y como el usuario debe llenar el contenido de la celda. Esto debe estar en el placeholder del editor de contenido. Al hacer clic se borra el placeholder. Si no hay contenido debe mostrarse siempre. 
 * Que el input del editor de la celda se vea como un editor de parrafo para que el usuario saber que se puede editar. Un texto declarativo puede ayudar.
-* Añadir campos por defecto al contexto.
-* Que el input de contenido ocupe todo el largo del drawer. El asistente debe estar por encima.
-* El asistente puede salir desde la parte inferior.
-* Utilizar la descripción para guiar al usuario acerca de que debe ir en la columna y como el usuario debe llenar el contenido de la celda.
+* Que el input de contenido ocupe todo el largo del drawer. 
+* Debe haber un icono flotante que en la esquina superior derecha del input de contenido que abra el asistente de IA.
+* El asistente debe estar por encima. El asistente puede salir desde la parte inferior con una animación y puede ocupar 75% de todo el alto del drawer.
+* Evidenciar mejor el resultado que el usuario obtendrá con el asistente corto en el placeholder, con un ejemplo de lo que el usuario puede escribir.
 * Desactivar el botón guardar si el usuario no ha realizado cambios en el contenido o el asistente aún está abierto.
-* Modificar la visual del asistente de IA. El usuario desea modificar el contenido. Por lo que se debe brindar la posibilidad de reemplazar el contenido o añadir el nuevo contenido.
+* Añadir un botón secundario Cancelar al lado izquierdo de guardar que descarte cualquier cambio no guardado.
+
+
 * Que el contexto adicional quede evidenciado.
-* Evidenciar mejor el resultado que el usuario obtendrá con el asistente.
+
 
 
 

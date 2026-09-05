@@ -64,6 +64,66 @@ const editorRef = ref<HTMLDivElement | null>(null);
 const chatContainerRef = ref<HTMLDivElement | null>(null);
 const editContent = ref('');
 
+const isEditorFocused = ref(false);
+const isEditorEmpty = ref(true);
+
+const editorPlaceholder = computed(() => {
+  const desc = activeColumn.value?.description?.trim();
+  if (desc) {
+    return desc;
+  }
+  const colPlaceholder = activeColumn.value?.options?.placeholder?.trim();
+  if (colPlaceholder) {
+    return colPlaceholder;
+  }
+  const defaultPrompt = activeColumn.value?.options?.defaultPrompt?.trim();
+  if (defaultPrompt) {
+    return defaultPrompt;
+  }
+  if (activeColumn.value?.name) {
+    return `Enter details for ${activeColumn.value.name}...`;
+  }
+  return 'Enter content here...';
+});
+
+const showPlaceholder = computed(() => {
+  return isEditorEmpty.value && !isEditorFocused.value;
+});
+
+const checkIsEmpty = () => {
+  if (!editorRef.value) {
+    isEditorEmpty.value = true;
+    return true;
+  }
+  if (editorRef.value.querySelector('img')) {
+    isEditorEmpty.value = false;
+    return false;
+  }
+  const text = (editorRef.value.innerText || editorRef.value.textContent || '')
+    .replace(/[\s\u00A0\u200B-\u200D\uFEFF]/g, '');
+  const empty = text.length === 0;
+  isEditorEmpty.value = empty;
+  return empty;
+};
+
+const focusEditor = () => {
+  if (editorRef.value && document.activeElement !== editorRef.value) {
+    editorRef.value.focus();
+  }
+};
+
+const onEditorFocus = () => {
+  isEditorFocused.value = true;
+};
+
+const onEditorBlur = () => {
+  isEditorFocused.value = false;
+  if (checkIsEmpty() && editorRef.value) {
+    editorRef.value.innerHTML = '';
+    editContent.value = '';
+  }
+};
+
 const previewImageUrl = ref<string | null>(null);
 
 const openImagePreview = (url: string) => {
@@ -204,6 +264,11 @@ watch([() => activeCell.value, () => isDrawerOpen.value], async ([newCell, isOpe
       editorRef.value.innerHTML = editContent.value;
       wrapRawImages(editorRef.value);
     }
+    isEditorFocused.value = false;
+    checkIsEmpty();
+    if (isEditorEmpty.value && editorRef.value) {
+      editorRef.value.innerHTML = '';
+    }
     
     // Set default selected generation type based on column
     if (activeColumn.value?.cellType === 'media') {
@@ -211,6 +276,8 @@ watch([() => activeCell.value, () => isDrawerOpen.value], async ([newCell, isOpe
     } else {
       selectedGenerationType.value = 'text';
     }
+  } else if (!isOpen) {
+    isEditorFocused.value = false;
   }
 });
 
@@ -224,9 +291,11 @@ const onEditorInput = (e: Event) => {
   const target = e.target as HTMLDivElement;
   wrapRawImages(target);
   editContent.value = target.innerHTML;
+  checkIsEmpty();
 };
 
 const handleEditorClick = (e: MouseEvent) => {
+  isEditorFocused.value = true;
   const target = e.target as HTMLElement | null;
   if (!target) return;
   
@@ -255,6 +324,7 @@ const handleEditorClick = (e: MouseEvent) => {
       if (editorRef.value) {
         editContent.value = editorRef.value.innerHTML;
         editorRef.value.focus();
+        checkIsEmpty();
       }
     }
   }
@@ -277,6 +347,7 @@ const handleEditorPaste = (e: ClipboardEvent) => {
             const imgHtml = createImageHtml(base64);
             document.execCommand('insertHTML', false, imgHtml);
             editContent.value = editorRef.value.innerHTML;
+            checkIsEmpty();
           }
         };
         reader.readAsDataURL(file);
@@ -289,6 +360,7 @@ const handleEditorPaste = (e: ClipboardEvent) => {
     if (editorRef.value) {
       wrapRawImages(editorRef.value);
       editContent.value = editorRef.value.innerHTML;
+      checkIsEmpty();
     }
   }, 0);
 };
@@ -436,6 +508,7 @@ const handleAddToContent = (text: string, imageUrl?: string) => {
   const htmlToInsert = formatContentHtml(text, imageUrl);
   editorRef.value.insertAdjacentHTML('beforeend', htmlToInsert);
   editContent.value = editorRef.value.innerHTML;
+  checkIsEmpty();
   
   // Move cursor to end
   const range = document.createRange();
@@ -453,6 +526,7 @@ const handleReplaceContent = (text: string, imageUrl?: string) => {
   const htmlToInsert = formatContentHtml(text, imageUrl);
   editorRef.value.innerHTML = htmlToInsert;
   editContent.value = editorRef.value.innerHTML;
+  checkIsEmpty();
   
   // Move cursor to end
   const range = document.createRange();
@@ -525,16 +599,33 @@ const saveAndClose = async () => {
           
           <!-- Top Section: Cell Content Editor -->
           <section class="p-4 flex-shrink-0">
-            <h2 class="text-[10px] font-bold text-neutral-400 mb-2 uppercase tracking-wider">CELL CONTENT</h2>
-            <div 
-              ref="editorRef"
-              class="w-full h-[250px] overflow-y-auto border border-neutral-700 rounded-md p-3 bg-transparent text-sm focus:outline-none focus:border-red-600 transition-colors prose prose-sm prose-invert max-w-none"
-              contenteditable="true"
-              @input="onEditorInput"
-              @click="handleEditorClick"
-              @paste="handleEditorPaste"
-              data-placeholder="Continue writing here..."
-            >
+            <div class="flex items-center justify-between mb-2">
+              <h2 class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">CELL CONTENT</h2>
+              <span v-if="activeColumn" class="text-xs text-neutral-400 font-medium truncate max-w-[200px]" :title="activeColumn.name">
+                {{ activeColumn.name }}
+              </span>
+            </div>
+            <div class="relative w-full h-[250px]" @click="focusEditor">
+              <div 
+                ref="editorRef"
+                class="w-full h-full overflow-y-auto border border-neutral-700 rounded-md p-3 bg-transparent text-sm focus:outline-none focus:border-red-600 transition-colors prose prose-sm prose-invert max-w-none relative z-10"
+                contenteditable="true"
+                @input="onEditorInput"
+                @focus="onEditorFocus"
+                @blur="onEditorBlur"
+                @click="handleEditorClick"
+                @paste="handleEditorPaste"
+                :data-placeholder="editorPlaceholder"
+              >
+              </div>
+
+              <!-- Placeholder Overlay -->
+              <div
+                v-if="showPlaceholder"
+                class="absolute inset-0 p-3 pointer-events-none text-sm text-neutral-500 select-none leading-relaxed overflow-hidden italic z-20 border border-transparent"
+              >
+                {{ editorPlaceholder }}
+              </div>
             </div>
           </section>
 
@@ -715,13 +806,6 @@ const saveAndClose = async () => {
 :deep(.drawer-end .drawer-toggle:checked ~ .drawer-side > *:not(.drawer-overlay)) {
   transform: none !important;
   will-change: auto !important;
-}
-
-[contenteditable="true"]:empty:before {
-  content: attr(data-placeholder);
-  color: #737373; /* text-neutral-500 */
-  pointer-events: none;
-  display: block; /* For Firefox */
 }
 
 textarea::-webkit-scrollbar {
