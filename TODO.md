@@ -9,7 +9,7 @@
 * Ajusta la creación de una nueva columna.
 
 
-* Persistir el alto en los shots y el ancho en las columnas.
+* Persistir el alto en los shots y el ancho en las columnas. En los shots utiliza una propiedad options, al igual que en las columns. Crea un plan.
 
 
 
