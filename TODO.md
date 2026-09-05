@@ -9,6 +9,8 @@
 * Ajusta la creación de una nueva columna.
 
 
+* Persistir el alto en los shots y el ancho en las columnas.
+
 
 
 # Github README.md
