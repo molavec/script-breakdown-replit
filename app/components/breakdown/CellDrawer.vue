@@ -209,12 +209,42 @@ const ensureTrailingParagraph = (container: HTMLElement) => {
   }
 };
 
-const placeCaretAtEnd = (el: HTMLElement) => {
-  ensureTrailingParagraph(el);
-  el.focus();
-  
+const normalizeEditorBlocks = (container: HTMLElement) => {
+  if (!container) return;
+  let current = container.firstElementChild;
+  while (current) {
+    if (current.classList && current.classList.contains('image-wrapper')) {
+      const prev = current.previousElementSibling;
+      if (!prev || prev.classList.contains('image-wrapper')) {
+        const p = document.createElement('p');
+        p.innerHTML = '<br>';
+        container.insertBefore(p, current);
+      }
+    }
+    current = current.nextElementSibling;
+  }
+  ensureTrailingParagraph(container);
+};
+
+const setCursorInElement = (el: Node, atStart: boolean) => {
   const range = document.createRange();
   const sel = window.getSelection();
+  
+  if (el.nodeName === 'P' && el.childNodes.length === 1 && el.firstChild?.nodeName === 'BR') {
+    range.setStart(el, 0);
+    range.collapse(true);
+  } else {
+    range.selectNodeContents(el);
+    range.collapse(atStart);
+  }
+  
+  sel?.removeAllRanges();
+  sel?.addRange(range);
+};
+
+const placeCaretAtEnd = (el: HTMLElement) => {
+  normalizeEditorBlocks(el);
+  el.focus();
   
   let targetNode: Node = el;
   const lastChild = el.lastElementChild;
@@ -222,18 +252,25 @@ const placeCaretAtEnd = (el: HTMLElement) => {
     targetNode = lastChild;
   }
   
-  range.selectNodeContents(targetNode);
-  range.collapse(false);
-  sel?.removeAllRanges();
-  sel?.addRange(range);
+  setCursorInElement(targetNode, false);
 };
 
 const focusEditor = (e?: MouseEvent) => {
   if (!editorRef.value) return;
   isEditorFocused.value = true;
-  if (!e || e.target === editorRef.value || e.currentTarget !== editorRef.value) {
+  // Only force caret to end when clicking on the outer wrapper (empty space),
+  // not when clicking directly on the contenteditable editor or its children.
+  // The editor's own @click (handleEditorClick) handles internal positioning.
+  if (e && e.target !== editorRef.value) {
+    // Click was on outer wrapper padding area — place caret at end
     placeCaretAtEnd(editorRef.value);
-  } else if (document.activeElement !== editorRef.value) {
+  } else if (!e) {
+    // Called programmatically (no event)
+    placeCaretAtEnd(editorRef.value);
+  }
+  // If e.target === editorRef.value, the click is directly on the editor:
+  // let the browser handle natural cursor placement, just ensure it's focused.
+  if (document.activeElement !== editorRef.value) {
     editorRef.value.focus();
   }
 };
@@ -435,7 +472,7 @@ watch([() => activeCell.value, () => isDrawerOpen.value], async ([newCell, isOpe
     if (editorRef.value) {
       editorRef.value.innerHTML = editContent.value;
       wrapRawImages(editorRef.value);
-      ensureTrailingParagraph(editorRef.value);
+      normalizeEditorBlocks(editorRef.value);
     }
     isEditorFocused.value = false;
     checkIsEmpty();
@@ -495,7 +532,7 @@ const handleEditorClick = (e: MouseEvent) => {
     if (wrapper) {
       wrapper.remove();
       if (editorRef.value) {
-        ensureTrailingParagraph(editorRef.value);
+        normalizeEditorBlocks(editorRef.value);
         editContent.value = editorRef.value.innerHTML;
         placeCaretAtEnd(editorRef.value);
         checkIsEmpty();
@@ -508,27 +545,45 @@ const handleEditorClick = (e: MouseEvent) => {
   const imgWrapper = target.closest('.image-wrapper');
   if (imgWrapper) {
     e.preventDefault();
-    let nextEl = imgWrapper.nextElementSibling as HTMLElement | null;
-    if (!nextEl || nextEl.classList.contains('image-wrapper')) {
-      const p = document.createElement('p');
-      p.innerHTML = '<br>';
-      imgWrapper.parentNode?.insertBefore(p, nextEl);
-      nextEl = p;
+    const rect = imgWrapper.getBoundingClientRect();
+    const isTopHalf = (e.clientY - rect.top) < (rect.height / 2);
+    
+    let targetP: HTMLElement;
+    if (isTopHalf) {
+      let prevEl = imgWrapper.previousElementSibling as HTMLElement | null;
+      if (!prevEl || prevEl.classList.contains('image-wrapper')) {
+        const p = document.createElement('p');
+        p.innerHTML = '<br>';
+        imgWrapper.parentNode?.insertBefore(p, imgWrapper);
+        prevEl = p;
+      }
+      targetP = prevEl;
+      
+      editorRef.value.focus();
+      setCursorInElement(targetP, false);
+    } else {
+      let nextEl = imgWrapper.nextElementSibling as HTMLElement | null;
+      if (!nextEl || nextEl.classList.contains('image-wrapper')) {
+        const p = document.createElement('p');
+        p.innerHTML = '<br>';
+        imgWrapper.parentNode?.insertBefore(p, nextEl);
+        nextEl = p;
+      }
+      targetP = nextEl;
+      
+      editorRef.value.focus();
+      setCursorInElement(targetP, true);
     }
     
-    editorRef.value.focus();
-    const range = document.createRange();
-    const sel = window.getSelection();
-    range.selectNodeContents(nextEl);
-    range.collapse(false);
-    sel?.removeAllRanges();
-    sel?.addRange(range);
+    if (editorRef.value) {
+      editContent.value = editorRef.value.innerHTML;
+    }
     return;
   }
 
   // If clicked directly on the editor container (e.g. empty space below or between blocks)
   if (target === editorRef.value) {
-    ensureTrailingParagraph(editorRef.value);
+    normalizeEditorBlocks(editorRef.value);
     const lastChild = editorRef.value.lastElementChild;
     if (lastChild) {
       const lastRect = lastChild.getBoundingClientRect();
@@ -570,6 +625,7 @@ const handleEditorPaste = (e: ClipboardEvent) => {
   setTimeout(() => {
     if (editorRef.value) {
       wrapRawImages(editorRef.value);
+      normalizeEditorBlocks(editorRef.value);
       editContent.value = editorRef.value.innerHTML;
       checkIsEmpty();
     }
@@ -719,7 +775,7 @@ const handleAddToContent = (text: string, imageUrl?: string) => {
   
   const htmlToInsert = formatContentHtml(text, imageUrl);
   editorRef.value.insertAdjacentHTML('beforeend', htmlToInsert);
-  ensureTrailingParagraph(editorRef.value);
+  normalizeEditorBlocks(editorRef.value);
   editContent.value = editorRef.value.innerHTML;
   checkIsEmpty();
   placeCaretAtEnd(editorRef.value);
@@ -730,7 +786,7 @@ const handleReplaceContent = (text: string, imageUrl?: string) => {
   
   const htmlToInsert = formatContentHtml(text, imageUrl);
   editorRef.value.innerHTML = htmlToInsert;
-  ensureTrailingParagraph(editorRef.value);
+  normalizeEditorBlocks(editorRef.value);
   editContent.value = editorRef.value.innerHTML;
   checkIsEmpty();
   placeCaretAtEnd(editorRef.value);
@@ -931,7 +987,7 @@ const handleCancel = () => {
               </div>
 
               <!-- Editable Text Body -->
-              <div class="relative flex-1 min-h-0 cursor-text" @click="focusEditor">
+              <div class="relative flex-1 min-h-0 cursor-text" @click.self="focusEditor">
                 <div 
                   ref="editorRef"
                   class="w-full h-full overflow-y-auto p-3 bg-transparent text-sm focus:outline-none cursor-text prose prose-sm prose-invert max-w-none relative z-10 editor-scroll"
