@@ -119,7 +119,7 @@ onUnmounted(() => {
 
 <template>
   <div class="h-full overflow-auto pb-6 px-6">
-    <table class="w-max text-left border-collapse table-fixed mb-128">
+    <table class="w-max text-left border-separate border-spacing-0 table-fixed mb-128">
       <!-- Table Header -->
       <thead class="sticky top-0 z-20 bg-[#242427] text-neutral-300 text-xs font-bold font-mono">
         <draggable
