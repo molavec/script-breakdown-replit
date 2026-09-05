@@ -1,6 +1,18 @@
 <script setup lang="ts">
 import { computed, ref, watch, nextTick } from 'vue';
-import { X as XIcon, Send as SendIcon, Loader2 as Loader2Icon, PlusCircle as PlusCircleIcon } from 'lucide-vue-next';
+import { 
+  X as XIcon, 
+  Send as SendIcon, 
+  Loader2 as Loader2Icon, 
+  PlusCircle as PlusCircleIcon,
+  Bold as BoldIcon,
+  Italic as ItalicIcon,
+  List as ListIcon,
+  ListOrdered as ListOrderedIcon,
+  Undo as UndoIcon,
+  Redo as RedoIcon,
+  Pencil as PencilIcon
+} from 'lucide-vue-next';
 import type { BreakdownChatMessage } from '~~/shared/types/chat';
 import type { CellBlock } from '~~/shared/types/cell';
 import { parseMarkdown } from '~~/utils/markdown';
@@ -67,6 +79,29 @@ const editContent = ref('');
 const isEditorFocused = ref(false);
 const isEditorEmpty = ref(true);
 
+const wordCount = computed(() => {
+  if (!editContent.value) return 0;
+  const text = editContent.value.replace(/<[^>]*>/g, ' ').trim();
+  if (!text) return 0;
+  return text.split(/\s+/).filter(w => w.length > 0).length;
+});
+
+const imageCount = computed(() => {
+  if (!editContent.value) return 0;
+  const matches = editContent.value.match(/<img\b[^>]*>/gi);
+  return matches ? matches.length : 0;
+});
+
+const formatDoc = (command: string, value: string | undefined = undefined) => {
+  if (!editorRef.value) return;
+  if (document.activeElement !== editorRef.value) {
+    editorRef.value.focus();
+  }
+  document.execCommand(command, false, value);
+  editContent.value = editorRef.value.innerHTML;
+  checkIsEmpty();
+};
+
 const editorPlaceholder = computed(() => {
   if (activeColumn.value?.cellType === 'tags') {
     return activeColumn.value?.options?.placeholder?.trim() || 'Item 1, Item 2, Item 3...';
@@ -112,8 +147,51 @@ const checkIsEmpty = () => {
   return empty;
 };
 
-const focusEditor = () => {
-  if (editorRef.value && document.activeElement !== editorRef.value) {
+const ensureTrailingParagraph = (container: HTMLElement) => {
+  if (!container) return;
+  const lastChild = container.lastElementChild;
+  if (!lastChild) {
+    const p = document.createElement('p');
+    p.innerHTML = '<br>';
+    container.appendChild(p);
+    return;
+  }
+  if (
+    lastChild.classList.contains('image-wrapper') || 
+    lastChild.getAttribute('contenteditable') === 'false' || 
+    lastChild.tagName.toLowerCase() === 'img'
+  ) {
+    const p = document.createElement('p');
+    p.innerHTML = '<br>';
+    container.appendChild(p);
+  }
+};
+
+const placeCaretAtEnd = (el: HTMLElement) => {
+  ensureTrailingParagraph(el);
+  el.focus();
+  
+  const range = document.createRange();
+  const sel = window.getSelection();
+  
+  let targetNode: Node = el;
+  const lastChild = el.lastElementChild;
+  if (lastChild) {
+    targetNode = lastChild;
+  }
+  
+  range.selectNodeContents(targetNode);
+  range.collapse(false);
+  sel?.removeAllRanges();
+  sel?.addRange(range);
+};
+
+const focusEditor = (e?: MouseEvent) => {
+  if (!editorRef.value) return;
+  isEditorFocused.value = true;
+  if (!e || e.target === editorRef.value || e.currentTarget !== editorRef.value) {
+    placeCaretAtEnd(editorRef.value);
+  } else if (document.activeElement !== editorRef.value) {
     editorRef.value.focus();
   }
 };
@@ -269,6 +347,7 @@ watch([() => activeCell.value, () => isDrawerOpen.value], async ([newCell, isOpe
     if (editorRef.value) {
       editorRef.value.innerHTML = editContent.value;
       wrapRawImages(editorRef.value);
+      ensureTrailingParagraph(editorRef.value);
     }
     isEditorFocused.value = false;
     checkIsEmpty();
@@ -303,7 +382,7 @@ const onEditorInput = (e: Event) => {
 const handleEditorClick = (e: MouseEvent) => {
   isEditorFocused.value = true;
   const target = e.target as HTMLElement | null;
-  if (!target) return;
+  if (!target || !editorRef.value) return;
   
   const viewBtn = target.closest('[data-action="view-image"]');
   if (viewBtn) {
@@ -328,9 +407,46 @@ const handleEditorClick = (e: MouseEvent) => {
     if (wrapper) {
       wrapper.remove();
       if (editorRef.value) {
+        ensureTrailingParagraph(editorRef.value);
         editContent.value = editorRef.value.innerHTML;
-        editorRef.value.focus();
+        placeCaretAtEnd(editorRef.value);
         checkIsEmpty();
+      }
+    }
+    return;
+  }
+
+  // If clicked on an image or inside image wrapper (which is contenteditable="false")
+  const imgWrapper = target.closest('.image-wrapper');
+  if (imgWrapper) {
+    e.preventDefault();
+    let nextEl = imgWrapper.nextElementSibling as HTMLElement | null;
+    if (!nextEl || nextEl.classList.contains('image-wrapper')) {
+      const p = document.createElement('p');
+      p.innerHTML = '<br>';
+      imgWrapper.parentNode?.insertBefore(p, nextEl);
+      nextEl = p;
+    }
+    
+    editorRef.value.focus();
+    const range = document.createRange();
+    const sel = window.getSelection();
+    range.selectNodeContents(nextEl);
+    range.collapse(false);
+    sel?.removeAllRanges();
+    sel?.addRange(range);
+    return;
+  }
+
+  // If clicked directly on the editor container (e.g. empty space below or between blocks)
+  if (target === editorRef.value) {
+    ensureTrailingParagraph(editorRef.value);
+    const lastChild = editorRef.value.lastElementChild;
+    if (lastChild) {
+      const lastRect = lastChild.getBoundingClientRect();
+      if (e.clientY > lastRect.bottom) {
+        e.preventDefault();
+        placeCaretAtEnd(editorRef.value);
       }
     }
   }
@@ -350,10 +466,11 @@ const handleEditorPaste = (e: ClipboardEvent) => {
         reader.onload = (event) => {
           const base64 = event.target?.result as string;
           if (base64 && editorRef.value) {
-            const imgHtml = createImageHtml(base64);
+            const imgHtml = createImageHtml(base64) + '<p><br></p>';
             document.execCommand('insertHTML', false, imgHtml);
             editContent.value = editorRef.value.innerHTML;
             checkIsEmpty();
+            placeCaretAtEnd(editorRef.value);
           }
         };
         reader.readAsDataURL(file);
@@ -504,6 +621,7 @@ const formatContentHtml = (text: string, imageUrl?: string) => {
   
   if (imageUrl) {
     htmlToInsert += createImageHtml(imageUrl);
+    htmlToInsert += '<p><br></p>';
   }
   return htmlToInsert;
 };
@@ -513,17 +631,10 @@ const handleAddToContent = (text: string, imageUrl?: string) => {
   
   const htmlToInsert = formatContentHtml(text, imageUrl);
   editorRef.value.insertAdjacentHTML('beforeend', htmlToInsert);
+  ensureTrailingParagraph(editorRef.value);
   editContent.value = editorRef.value.innerHTML;
   checkIsEmpty();
-  
-  // Move cursor to end
-  const range = document.createRange();
-  const sel = window.getSelection();
-  range.selectNodeContents(editorRef.value);
-  range.collapse(false);
-  sel?.removeAllRanges();
-  sel?.addRange(range);
-  editorRef.value.focus();
+  placeCaretAtEnd(editorRef.value);
 };
 
 const handleReplaceContent = (text: string, imageUrl?: string) => {
@@ -531,17 +642,10 @@ const handleReplaceContent = (text: string, imageUrl?: string) => {
   
   const htmlToInsert = formatContentHtml(text, imageUrl);
   editorRef.value.innerHTML = htmlToInsert;
+  ensureTrailingParagraph(editorRef.value);
   editContent.value = editorRef.value.innerHTML;
   checkIsEmpty();
-  
-  // Move cursor to end
-  const range = document.createRange();
-  const sel = window.getSelection();
-  range.selectNodeContents(editorRef.value);
-  range.collapse(false);
-  sel?.removeAllRanges();
-  sel?.addRange(range);
-  editorRef.value.focus();
+  placeCaretAtEnd(editorRef.value);
 };
 
 const saveAndClose = async () => {
@@ -568,7 +672,7 @@ const saveAndClose = async () => {
         if (img) {
           blocks.push({ id: `b${Date.now()}_${index}`, type: 'image', content: img.getAttribute('src') || img.src });
         } else {
-           if (el.outerHTML.trim()) {
+           if (el.textContent?.trim()) {
              blocks.push({ id: `b${Date.now()}_${index}`, type: 'text', content: el.outerHTML });
            }
         }
@@ -620,33 +724,113 @@ const saveAndClose = async () => {
               </span>
             </div>
 
-            <!-- Description above input for tags and number -->
-            <p 
-              v-if="activeColumn?.description && (activeColumn.cellType === 'tags' || activeColumn.cellType === 'number')" 
-              class="text-xs text-neutral-400 mb-2 leading-relaxed"
-            >
-              {{ activeColumn.description }}
-            </p>
-            <div class="relative w-full h-[250px]" @click="focusEditor">
-              <div 
-                ref="editorRef"
-                class="w-full h-full overflow-y-auto border border-neutral-700 rounded-md p-3 bg-transparent text-sm focus:outline-none focus:border-red-600 transition-colors prose prose-sm prose-invert max-w-none relative z-10"
-                contenteditable="true"
-                @input="onEditorInput"
-                @focus="onEditorFocus"
-                @blur="onEditorBlur"
-                @click="handleEditorClick"
-                @paste="handleEditorPaste"
-                :data-placeholder="editorPlaceholder"
-              >
+            <!-- Declarative text & column description -->
+            <div class="mb-2.5 space-y-0.5">
+              <p v-if="activeColumn?.description" class="text-xs text-neutral-300 leading-relaxed">
+                {{ activeColumn.description }}
+              </p>
+              <p class="text-[11px] text-neutral-400 leading-relaxed flex items-center gap-1.5">
+                <PencilIcon :size="12" class="text-neutral-500 shrink-0" />
+                <span>Click inside the editor below to write or edit content directly.</span>
+              </p>
+            </div>
+
+            <!-- Rich Text Editor Container -->
+            <div class="w-full h-[240px] flex flex-col rounded-lg border border-neutral-700/80 bg-[#121215] focus-within:border-neutral-500 focus-within:ring-1 focus-within:ring-neutral-500/40 transition-all overflow-hidden shadow-inner">
+              <!-- Editor Toolbar Header -->
+              <div class="flex items-center justify-between px-2.5 py-1.5 bg-[#1e1e24] border-b border-neutral-800 select-none flex-shrink-0">
+                <div class="flex items-center gap-0.5">
+                  <button 
+                    type="button" 
+                    @mousedown.prevent="formatDoc('bold')" 
+                    title="Bold" 
+                    class="p-1 rounded text-neutral-400 hover:text-white hover:bg-neutral-700/60 active:scale-95 transition-all cursor-pointer"
+                  >
+                    <BoldIcon :size="14" />
+                  </button>
+                  <button 
+                    type="button" 
+                    @mousedown.prevent="formatDoc('italic')" 
+                    title="Italic" 
+                    class="p-1 rounded text-neutral-400 hover:text-white hover:bg-neutral-700/60 active:scale-95 transition-all cursor-pointer"
+                  >
+                    <ItalicIcon :size="14" />
+                  </button>
+                  
+                  <div class="w-px h-3.5 bg-neutral-700 mx-1"></div>
+
+                  <button 
+                    type="button" 
+                    @mousedown.prevent="formatDoc('insertUnorderedList')" 
+                    title="Bullet List" 
+                    class="p-1 rounded text-neutral-400 hover:text-white hover:bg-neutral-700/60 active:scale-95 transition-all cursor-pointer"
+                  >
+                    <ListIcon :size="14" />
+                  </button>
+                  <button 
+                    type="button" 
+                    @mousedown.prevent="formatDoc('insertOrderedList')" 
+                    title="Numbered List" 
+                    class="p-1 rounded text-neutral-400 hover:text-white hover:bg-neutral-700/60 active:scale-95 transition-all cursor-pointer"
+                  >
+                    <ListOrderedIcon :size="14" />
+                  </button>
+
+                  <div class="w-px h-3.5 bg-neutral-700 mx-1"></div>
+
+                  <button 
+                    type="button" 
+                    @mousedown.prevent="formatDoc('undo')" 
+                    title="Undo" 
+                    class="p-1 rounded text-neutral-400 hover:text-white hover:bg-neutral-700/60 active:scale-95 transition-all cursor-pointer"
+                  >
+                    <UndoIcon :size="13" />
+                  </button>
+                  <button 
+                    type="button" 
+                    @mousedown.prevent="formatDoc('redo')" 
+                    title="Redo" 
+                    class="p-1 rounded text-neutral-400 hover:text-white hover:bg-neutral-700/60 active:scale-95 transition-all cursor-pointer"
+                  >
+                    <RedoIcon :size="13" />
+                  </button>
+                </div>
+
+                <!-- Status & Counts -->
+                <div class="flex items-center gap-2 text-[11px] text-neutral-400 font-mono">
+                  <span v-if="imageCount > 0">{{ imageCount }} {{ imageCount === 1 ? 'img' : 'imgs' }}</span>
+                  <span v-if="imageCount > 0 && wordCount > 0" class="text-neutral-600">•</span>
+                  <span>{{ wordCount }} {{ wordCount === 1 ? 'word' : 'words' }}</span>
+                  <span 
+                    class="inline-block w-1.5 h-1.5 rounded-full transition-colors ml-0.5" 
+                    :class="isEditorFocused ? 'bg-red-500 animate-pulse' : 'bg-neutral-600'"
+                    :title="isEditorFocused ? 'Editing...' : 'Click to edit'"
+                  ></span>
+                </div>
               </div>
 
-              <!-- Placeholder Overlay -->
-              <div
-                v-if="showPlaceholder"
-                class="absolute inset-0 p-3 pointer-events-none text-sm text-neutral-500 select-none leading-relaxed overflow-hidden italic z-20 border border-transparent"
-              >
-                {{ editorPlaceholder }}
+              <!-- Editable Text Body -->
+              <div class="relative flex-1 min-h-0 cursor-text" @click="focusEditor">
+                <div 
+                  ref="editorRef"
+                  class="w-full h-full overflow-y-auto p-3 bg-transparent text-sm focus:outline-none cursor-text prose prose-sm prose-invert max-w-none relative z-10 editor-scroll"
+                  contenteditable="true"
+                  @input="onEditorInput"
+                  @focus="onEditorFocus"
+                  @blur="onEditorBlur"
+                  @click="handleEditorClick"
+                  @paste="handleEditorPaste"
+                  :data-placeholder="editorPlaceholder"
+                >
+                </div>
+
+                <!-- Placeholder Overlay -->
+                <div
+                  v-if="showPlaceholder"
+                  class="absolute inset-0 p-3 pointer-events-none text-sm text-neutral-500 select-none leading-relaxed overflow-hidden italic z-20 border border-transparent"
+                >
+                  {{ editorPlaceholder }}
+                </div>
               </div>
             </div>
           </section>
@@ -844,9 +1028,28 @@ textarea::-webkit-scrollbar-thumb:hover {
   background-color: #525252;
 }
 
+.editor-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.editor-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.editor-scroll::-webkit-scrollbar-thumb {
+  background-color: #404040;
+  border-radius: 9999px;
+}
+.editor-scroll::-webkit-scrollbar-thumb:hover {
+  background-color: #525252;
+}
+
 :deep(.image-wrapper) {
   position: relative;
   user-select: none;
+  cursor: default;
+}
+
+:deep(.editor-scroll p) {
+  min-height: 1.5em;
 }
 
 :deep(.image-delete-btn) {
