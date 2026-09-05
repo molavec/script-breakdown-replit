@@ -136,6 +136,15 @@ async function createOwnedResources(request: APIRequestContext, owner: string): 
   return { projectId: project.id, sceneId: scene.id, shotId: shot.id, cellId: cell.id }
 }
 
+async function expectInitialDashboardProject(request: APIRequestContext, projectId: string, owner: string) {
+  const response = await request.get(appOrigin)
+  expect(response.status(), `${await response.text()}\n${appOutput}`).toBe(200)
+  const html = await response.text()
+  expect(html).toContain(projectId)
+  expect(html).toContain(owner)
+  expect(html).not.toContain('Projects could not be loaded')
+}
+
 async function expectNonLeakingNotFound(response: Awaited<ReturnType<APIRequestContext['get']>>) {
   expect(response.status()).toBe(404)
   const body = await response.text()
@@ -316,6 +325,7 @@ test('two Replit identities cannot access each other’s work', async ({ browser
     const pageA = await signIn(contextA, claimsA, '/projects/new')
     expect(new URL(pageA.url()).pathname).toBe('/projects/new')
     resourcesA = await createOwnedResources(contextA.request, 'Alice')
+    await expectInitialDashboardProject(contextA.request, resourcesA.projectId, 'Alice')
 
     const upload = await contextA.request.post(`${appOrigin}/api/upload`, {
       multipart: {
@@ -337,6 +347,7 @@ test('two Replit identities cannot access each other’s work', async ({ browser
 
     await signIn(contextB, claimsB, '/projects/new')
     resourcesB = await createOwnedResources(contextB.request, 'Bob')
+    await expectInitialDashboardProject(contextB.request, resourcesB.projectId, 'Bob')
 
     const projectsB = await contextB.request.get(`${appOrigin}/api/projects`)
     expect(projectsB.status()).toBe(200)

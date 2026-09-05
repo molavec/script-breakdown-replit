@@ -43,6 +43,20 @@ describe('authentication safety', () => {
 })
 
 describe('server authorization coverage', () => {
+  it('keeps the initial project list request authenticated and server-rendered', async () => {
+    const composable = await readFile('app/composables/useProjectData.ts', 'utf8')
+    const dashboard = await readFile('app/components/project/ProjectDashboard.vue', 'utf8')
+
+    assert.ok(composable.includes('const requestFetch = useRequestFetch()'))
+    assert.ok(composable.includes("requestFetch<Project[]>('/api/projects')"))
+    assert.ok(!composable.includes("return await $fetch<Project[]>('/api/projects')"))
+    assert.ok(dashboard.includes("await useAsyncData('projects_list'"))
+    assert.ok(!dashboard.includes("useLazyAsyncData('projects_list'"))
+    assert.ok(dashboard.includes('v-else-if="error"'))
+    assert.ok(dashboard.includes('@click="refresh()"'))
+    assert.ok(dashboard.includes('v-else-if="projects?.length === 0"'))
+  })
+
   it('requires auth or ownership in every non-auth API route', async () => {
     const routes = [
       'server/api/projects/index.get.ts',

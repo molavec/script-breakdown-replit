@@ -2,7 +2,12 @@
 import { useProjectData } from '~/composables/useProjectData'
 
 const { fetchProjects } = useProjectData()
-const { data: projects, status } = useLazyAsyncData('projects_list', () => fetchProjects())
+const {
+  data: projects,
+  error,
+  refresh,
+  status,
+} = await useAsyncData('projects_list', () => fetchProjects())
 
 const searchQuery = ref('')
 
@@ -49,9 +54,23 @@ const filteredProjects = computed(() => {
     <div v-if="status === 'pending'" class="flex justify-center py-20">
       <span class="loading loading-spinner loading-lg text-error"></span>
     </div>
+    <div v-else-if="error" role="alert" class="alert alert-error alert-soft sm:alert-horizontal">
+      <div>
+        <h3 class="font-semibold">Projects could not be loaded</h3>
+        <p class="text-sm">Your projects are still safe. Please try the request again.</p>
+      </div>
+      <button class="btn btn-sm btn-error" type="button" @click="refresh()">
+        Try again
+      </button>
+    </div>
     <div v-else-if="filteredProjects.length === 0 && searchQuery" class="text-center py-16 bg-[#16161a]/60 rounded-xl border border-white/5">
       <p class="text-neutral-400 text-sm">No projects matching "{{ searchQuery }}".</p>
       <button @click="searchQuery = ''" class="btn btn-sm btn-ghost text-rose-400 mt-3">Clear search</button>
+    </div>
+    <div v-else-if="projects?.length === 0" class="text-center py-16 bg-[#16161a]/60 rounded-xl border border-white/5">
+      <h3 class="font-semibold text-gray-100">No projects yet</h3>
+      <p class="text-neutral-400 text-sm mt-1">Create your first project to start breaking down a script.</p>
+      <NuxtLink to="/projects/new" class="btn btn-sm btn-error mt-4">Create a project</NuxtLink>
     </div>
     <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <ProjectCard
