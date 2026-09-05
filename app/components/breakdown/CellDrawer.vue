@@ -11,7 +11,9 @@ import {
   ListOrdered as ListOrderedIcon,
   Undo as UndoIcon,
   Redo as RedoIcon,
-  Pencil as PencilIcon
+  Pencil as PencilIcon,
+  Maximize2 as Maximize2Icon,
+  Minimize2 as Minimize2Icon
 } from 'lucide-vue-next';
 import type { BreakdownChatMessage } from '~~/shared/types/chat';
 import type { CellBlock } from '~~/shared/types/cell';
@@ -78,6 +80,47 @@ const editContent = ref('');
 
 const isEditorFocused = ref(false);
 const isEditorEmpty = ref(true);
+
+const editorHeight = ref(240);
+const isExpanded = ref(false);
+const savedHeight = ref(240);
+const isResizing = ref(false);
+
+const toggleExpand = () => {
+  if (isExpanded.value) {
+    editorHeight.value = savedHeight.value || 240;
+    isExpanded.value = false;
+  } else {
+    savedHeight.value = editorHeight.value;
+    const maxH = typeof window !== 'undefined' ? Math.max(300, window.innerHeight - 360) : 480;
+    editorHeight.value = Math.min(maxH, 500);
+    isExpanded.value = true;
+  }
+};
+
+const startResize = (e: MouseEvent) => {
+  e.preventDefault();
+  isResizing.value = true;
+  const startY = e.clientY;
+  const startHeight = editorHeight.value;
+
+  const onMouseMove = (moveEvent: MouseEvent) => {
+    const deltaY = moveEvent.clientY - startY;
+    const maxH = typeof window !== 'undefined' ? Math.max(260, window.innerHeight - 340) : 600;
+    const newHeight = Math.min(Math.max(160, startHeight + deltaY), maxH);
+    editorHeight.value = newHeight;
+    isExpanded.value = newHeight > 380;
+  };
+
+  const onMouseUp = () => {
+    isResizing.value = false;
+    window.removeEventListener('mousemove', onMouseMove);
+    window.removeEventListener('mouseup', onMouseUp);
+  };
+
+  window.addEventListener('mousemove', onMouseMove);
+  window.addEventListener('mouseup', onMouseUp);
+};
 
 const wordCount = computed(() => {
   if (!editContent.value) return 0;
@@ -736,7 +779,10 @@ const saveAndClose = async () => {
             </div>
 
             <!-- Rich Text Editor Container -->
-            <div class="w-full h-[240px] flex flex-col rounded-lg border border-neutral-700/80 bg-[#121215] focus-within:border-neutral-500 focus-within:ring-1 focus-within:ring-neutral-500/40 transition-all overflow-hidden shadow-inner">
+            <div 
+              class="w-full flex flex-col rounded-lg border border-neutral-700/80 bg-[#121215] focus-within:border-neutral-500 focus-within:ring-1 focus-within:ring-neutral-500/40 transition-[border,box-shadow] overflow-hidden shadow-inner"
+              :style="{ height: `${editorHeight}px` }"
+            >
               <!-- Editor Toolbar Header -->
               <div class="flex items-center justify-between px-2.5 py-1.5 bg-[#1e1e24] border-b border-neutral-800 select-none flex-shrink-0">
                 <div class="flex items-center gap-0.5">
@@ -796,7 +842,7 @@ const saveAndClose = async () => {
                   </button>
                 </div>
 
-                <!-- Status & Counts -->
+                <!-- Status & Counts & Expand -->
                 <div class="flex items-center gap-2 text-[11px] text-neutral-400 font-mono">
                   <span v-if="imageCount > 0">{{ imageCount }} {{ imageCount === 1 ? 'img' : 'imgs' }}</span>
                   <span v-if="imageCount > 0 && wordCount > 0" class="text-neutral-600">•</span>
@@ -806,6 +852,16 @@ const saveAndClose = async () => {
                     :class="isEditorFocused ? 'bg-red-500 animate-pulse' : 'bg-neutral-600'"
                     :title="isEditorFocused ? 'Editing...' : 'Click to edit'"
                   ></span>
+                  <div class="w-px h-3.5 bg-neutral-700 mx-0.5"></div>
+                  <button 
+                    type="button" 
+                    @click="toggleExpand" 
+                    :title="isExpanded ? 'Collapse editor' : 'Expand editor vertically'"
+                    class="p-1 rounded text-neutral-400 hover:text-white hover:bg-neutral-700/60 active:scale-95 transition-all cursor-pointer"
+                  >
+                    <Minimize2Icon v-if="isExpanded" :size="13" />
+                    <Maximize2Icon v-else :size="13" />
+                  </button>
                 </div>
               </div>
 
@@ -831,6 +887,15 @@ const saveAndClose = async () => {
                 >
                   {{ editorPlaceholder }}
                 </div>
+              </div>
+
+              <!-- Resize Handle -->
+              <div 
+                class="h-3 w-full flex items-center justify-center cursor-row-resize bg-[#18181c] hover:bg-neutral-800 active:bg-neutral-700/80 transition-colors group select-none border-t border-neutral-800 flex-shrink-0"
+                @mousedown="startResize"
+                title="Drag to resize editor vertically"
+              >
+                <div class="w-10 h-1 rounded-full bg-neutral-600 group-hover:bg-neutral-400 group-active:bg-neutral-300 transition-colors"></div>
               </div>
             </div>
           </section>
