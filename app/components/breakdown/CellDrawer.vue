@@ -273,14 +273,31 @@ const handleSendMessage = async () => {
   
   contextString += `Context from current row/shot:\n`;
   
-  // Add active cell content
-  let activeCellContent = 'Empty';
-  if (activeCell.value?.numericValue != null) {
-    activeCellContent = String(activeCell.value.numericValue);
+  // Add Cell content as current_content
+  let currentContent = 'Empty';
+  if (editorRef.value) {
+    const text = editorRef.value.innerText?.trim();
+    const imgs = editorRef.value.querySelectorAll('img');
+    const imageCount = imgs.length;
+    const imgTag = imageCount > 1 ? `[${imageCount} Images]` : imageCount === 1 ? '[Image]' : '';
+    
+    if (text && imgTag) {
+      currentContent = `${text} ${imgTag}`;
+    } else if (text) {
+      currentContent = text;
+    } else if (imgTag) {
+      currentContent = imgTag;
+    } else if (activeCell.value?.numericValue != null) {
+      currentContent = String(activeCell.value.numericValue);
+    }
+  } else if (editContent.value?.trim()) {
+    currentContent = editContent.value.trim();
+  } else if (activeCell.value?.numericValue != null) {
+    currentContent = String(activeCell.value.numericValue);
   } else if (activeCell.value?.blocks && activeCell.value.blocks.length > 0) {
-    activeCellContent = activeCell.value.blocks.map(b => b.type === 'image' ? '[Image]' : b.content).join(' ');
+    currentContent = activeCell.value.blocks.map(b => b.type === 'image' ? '[Image]' : b.content).join(' ');
   }
-  contextString += `- ${activeColumn.value?.name || 'Current Cell'}: ${activeCellContent}\n`;
+  contextString += `- current_content: ${currentContent}\n`;
   
   // Add selected context columns
   if (currentRow.value) {
