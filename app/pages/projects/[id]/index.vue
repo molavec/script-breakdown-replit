@@ -284,58 +284,70 @@ const handleDeleteProject = async () => {
             <draggable 
               v-model="columns" 
               tag="div"
-              class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+              class="flex flex-col gap-2.5"
               item-key="id"
               handle=".card-drag-handle"
+              ghost-class="opacity-40"
               @end="updateColumnsOrder(projectId, columns)"
             >
               <template #item="{ element: col }">
                 <div 
-                  class="bg-[#1a1a1e] border border-neutral-800 hover:border-neutral-600 rounded-xl p-4 transition-all group flex flex-col justify-between"
+                  class="bg-[#1a1a1e] border border-neutral-800 hover:border-neutral-600 rounded-xl px-4 py-3 transition-all group flex flex-col sm:flex-row sm:items-center justify-between gap-3"
                 >
-                  <div>
-                    <div class="flex items-center justify-between mb-2">
-                      <div class="flex items-center gap-2">
-                        <div class="card-drag-handle cursor-grab active:cursor-grabbing text-neutral-500 hover:text-neutral-300 transition-colors" title="Drag to reorder">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="9" cy="12" r="1"></circle>
-                            <circle cx="9" cy="5" r="1"></circle>
-                            <circle cx="9" cy="19" r="1"></circle>
-                            <circle cx="15" cy="12" r="1"></circle>
-                            <circle cx="15" cy="5" r="1"></circle>
-                            <circle cx="15" cy="19" r="1"></circle>
-                          </svg>
-                        </div>
-                        <span 
-                          class="w-2.5 h-2.5 rounded-full shrink-0 shadow-sm" 
-                          :style="{ backgroundColor: col.color || '#3b82f6' }"
-                        ></span>
-                        <span v-if="col.isSystem" class="font-mono text-xs text-neutral-400 bg-neutral-800/80 px-2 py-0.5 rounded uppercase">
-                          System
-                        </span>
-                      </div>
-                      <span class="badge badge-neutral border-neutral-700 text-[10px] uppercase font-mono">
+                  <!-- Left: Drag Handle, Color Indicator, Name & Description -->
+                  <div class="flex items-center gap-3 min-w-0 flex-1">
+                    <div 
+                      class="card-drag-handle cursor-grab active:cursor-grabbing text-neutral-500 hover:text-neutral-300 p-1 -ml-1 rounded transition-colors shrink-0" 
+                      title="Drag to reorder"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="9" cy="12" r="1"></circle>
+                        <circle cx="9" cy="5" r="1"></circle>
+                        <circle cx="9" cy="19" r="1"></circle>
+                        <circle cx="15" cy="12" r="1"></circle>
+                        <circle cx="15" cy="5" r="1"></circle>
+                        <circle cx="15" cy="19" r="1"></circle>
+                      </svg>
+                    </div>
+
+                    <span 
+                      class="w-2.5 h-2.5 rounded-full shrink-0 shadow-sm" 
+                      :style="{ backgroundColor: col.color || '#3b82f6' }"
+                    ></span>
+
+                    <div class="min-w-0 flex-1 flex flex-col md:flex-row md:items-center gap-0.5 md:gap-3">
+                      <h3 class="text-sm font-semibold text-white group-hover:text-rose-400 transition-colors shrink-0">
+                        {{ col.name }}
+                      </h3>
+                      <span class="hidden md:inline text-neutral-600 text-xs">•</span>
+                      <p class="text-xs text-neutral-400 truncate flex-1" :title="col.description">
+                        {{ col.description || 'No description configured.' }}
+                      </p>
+                    </div>
+                  </div>
+
+                  <!-- Right: Badges & Settings Action -->
+                  <div class="flex items-center justify-between sm:justify-end gap-2.5 shrink-0 pl-8 sm:pl-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-neutral-800/60">
+                    <div class="flex items-center gap-1.5">
+                      <span class="badge badge-sm badge-neutral border-neutral-700 text-[10px] uppercase font-mono text-neutral-300">
                         {{ col.cellType || 'text' }}
+                      </span>
+                      <span v-if="col.isSystem" class="badge badge-sm font-mono text-[10px] uppercase text-neutral-400 bg-neutral-800/80 border-neutral-700">
+                        System
+                      </span>
+                      <span v-else class="badge badge-sm font-mono text-[10px] uppercase text-neutral-500 bg-neutral-900/60 border-neutral-800">
+                        Custom
                       </span>
                     </div>
 
-                    <h3 class="text-base font-bold text-white group-hover:text-rose-400 transition-colors mb-1">
-                      {{ col.name }}
-                    </h3>
-                    <p class="text-xs text-neutral-400 line-clamp-2 leading-relaxed">
-                      {{ col.description || 'No description configured.' }}
-                    </p>
-                  </div>
-
-                  <div class="pt-3 mt-3 border-t border-neutral-800/60 flex items-center justify-between">
-                    <span class="text-[10px] font-mono text-neutral-500">
-                      {{ col.isSystem ? 'System Column' : 'Custom Column' }}
-                    </span>
                     <NuxtLink 
                       :to="`/projects/${projectId}/columns/${col.id}`"
-                      class="btn btn-xs btn-outline border-neutral-700 text-neutral-300 hover:text-white hover:btn-error flex items-center gap-1"
+                      class="btn btn-xs btn-outline border-neutral-700 text-neutral-300 hover:text-white hover:btn-error flex items-center gap-1 shrink-0"
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                      </svg>
                       Settings
                     </NuxtLink>
                   </div>
