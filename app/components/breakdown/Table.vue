@@ -3,7 +3,7 @@ import draggable from 'vuedraggable';
 import { parseMarkdown } from '~~/utils/markdown';
 
 const { activeScene, project } = useProjectBreakdown();
-const { columns, rows, updateRowsOrder, updateColumnsOrder, confirmDeleteRow } = useSceneTable();
+const { columns, rows, updateRowsOrder, updateColumnsOrder, confirmDeleteRow, updateColumn, updateRow } = useSceneTable();
 const { activeCellId, lastSelectedRowIndex, selectCell } = useBreakdownCell();
 const { editingCellId, inlineEditValue, startInlineEdit, cancelInlineEdit, saveInlineEdit } = useCellInlineEdit();
 
@@ -51,7 +51,11 @@ const resizingColId = ref<string | null>(null);
 const startX = ref(0);
 const startWidth = ref(0);
 
-const getColWidth = (id: string) => colWidths.value[id] || 320;
+const getColWidth = (id: string) => {
+  if (colWidths.value[id]) return colWidths.value[id];
+  const col = columns.value.find(c => c.id === id);
+  return col?.options?.width || 320;
+};
 
 const startResize = (e: MouseEvent, colId: string) => {
   resizingColId.value = colId;
@@ -70,6 +74,11 @@ const onMouseMove = (e: MouseEvent) => {
 };
 
 const onMouseUp = () => {
+  if (resizingColId.value) {
+    updateColumn(resizingColId.value, { 
+      options: { width: colWidths.value[resizingColId.value] } 
+    });
+  }
   resizingColId.value = null;
   document.body.style.cursor = '';
   document.removeEventListener('mousemove', onMouseMove);
@@ -82,7 +91,11 @@ const resizingRowId = ref<string | null>(null);
 const startY = ref(0);
 const startHeight = ref(0);
 
-const getRowHeight = (id: string) => rowHeights.value[id] || 200; // default 200px
+const getRowHeight = (id: string) => {
+  if (rowHeights.value[id]) return rowHeights.value[id];
+  const row = rows.value.find(r => r.id === id);
+  return row?.options?.height || 200; // default 200px
+};
 
 const startRowResize = (e: MouseEvent, rowId: string) => {
   resizingRowId.value = rowId;
@@ -101,6 +114,11 @@ const onRowMouseMove = (e: MouseEvent) => {
 };
 
 const onRowMouseUp = () => {
+  if (resizingRowId.value) {
+    updateRow(resizingRowId.value, {
+      options: { height: rowHeights.value[resizingRowId.value] }
+    });
+  }
   resizingRowId.value = null;
   document.body.style.cursor = '';
   document.removeEventListener('mousemove', onRowMouseMove);

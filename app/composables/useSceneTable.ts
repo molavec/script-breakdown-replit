@@ -6,7 +6,7 @@ import type { Shot } from '~~/shared/types/shot';
 
 export const useSceneTable = () => {
   const { fetchColumns } = useColumnData();
-  const { fetchShots, createShot, deleteShot } = useShotData();
+  const { fetchShots, createShot, updateShot, deleteShot } = useShotData();
   const { activeScene, project } = useProjectBreakdown();
 
   const columns = useState<BreakdownColumn[]>('scene_columns', () => []);
@@ -185,6 +185,33 @@ export const useSceneTable = () => {
     }
   };
 
+  const updateRow = async (shotId: string, partial: Partial<Shot>) => {
+    const rowIndex = rows.value.findIndex(r => r.id === shotId);
+    if (rowIndex !== -1) {
+      const existing = rows.value[rowIndex];
+      if (existing) {
+        rows.value[rowIndex] = {
+          ...existing,
+          ...partial,
+          options: {
+            ...existing.options,
+            ...(partial.options || {})
+          }
+        };
+      }
+    }
+
+    const sceneId = activeScene.value?.id;
+    if (!sceneId) return;
+
+    try {
+      await updateShot(sceneId, shotId, partial);
+    } catch (error) {
+      console.error('Failed to update row:', error);
+      throw error;
+    }
+  };
+
   return {
     columns,
     rows,
@@ -199,6 +226,7 @@ export const useSceneTable = () => {
     updateColumn,
     deleteColumn,
     addColumn,
-    updateColumnsOrder
+    updateColumnsOrder,
+    updateRow
   };
 };
