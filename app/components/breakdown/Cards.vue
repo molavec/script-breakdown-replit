@@ -44,7 +44,7 @@ const getCellCurrency = (col: any, cell?: any): string => {
       ghost-class="opacity-50"
     >
       <template #item="{ element: row, index: rowIndex }">
-        <div class="bg-[#18181b] border border-neutral-700 rounded-xl p-5 shadow-lg relative group transition-colors hover:border-neutral-500 max-w-md w-full">
+        <div class="bg-[#18181b] border border-neutral-700 rounded-xl p-5 shadow-lg relative group transition-colors hover:border-neutral-500 w-full max-w-none lg:max-w-md">
           
           <!-- Card Header (Shot Number & Drag) -->
           <div class="flex items-center justify-between mb-4 pb-3 border-b border-neutral-800">
