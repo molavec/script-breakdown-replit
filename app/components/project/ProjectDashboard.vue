@@ -2,7 +2,7 @@
 import { useProjectData } from '~/composables/useProjectData'
 
 const { fetchProjects } = useProjectData()
-const { data: projects, status } = useAsyncData('projects_list', () => fetchProjects())
+const { data: projects, status } = useLazyAsyncData('projects_list', () => fetchProjects())
 
 const searchQuery = ref('')
 
