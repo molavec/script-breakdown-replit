@@ -364,13 +364,17 @@ const saveAndClose = async () => {
                     <div v-if="msg.text" class="mb-2 prose prose-sm prose-invert max-w-none" v-html="parseMarkdown(msg.text)"></div>
                     <img v-if="msg.imageUrl" :src="msg.imageUrl" alt="Generated" class="max-w-full rounded-md mt-2 border border-neutral-700" />
                   </template>
+
+                  <div v-if="msg.role === 'model' && !msg.isGenerating && (msg.text || msg.imageUrl)" class="flex justify-end mt-1">
+                    <button
+                      @click="handleAddToContent(msg.text, msg.imageUrl)"
+                      class="text-[#d97706] text-xs font-medium hover:underline">
+                      Add to content
+                    </button>
+                  </div>
+                  
                 </div>
                 
-                <button v-if="msg.role === 'model' && !msg.isGenerating && (msg.text || msg.imageUrl)"
-                  @click="handleAddToContent(msg.text, msg.imageUrl)"
-                  class="text-[#d97706] text-xs font-medium mt-1 hover:underline self-end mr-1">
-                  Add to content
-                </button>
               </div>
             </div>
 

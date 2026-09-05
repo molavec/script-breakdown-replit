@@ -1,25 +1,23 @@
 # UX
 
-## project
-* Esconder un poco más las columna para dar visualización a las escenas. Quizás como un sub conjunto de las escenas.
-
 
 ## escenas
-* Utilizar la descripción para guiar al usuario acerca de que debe ir en la columna y como el usuario debe llenar el contenido de la celda.
+* que la opción de añadir o reemplazar esté dentro de la burbuja de la IA.
 * En los campos con tag evidenciar que se debe utilizar comas para separar los tags.
 * Añadir el contenido actual al contexto.
-* Modificar la visual del asistente de IA. El usuario desea modificar el contenido. Por lo que se debe brindar la posibilidad de reemplazar el contenido o añadir el nuevo contenido.
-* Desactivar el botón guardar si el usuario no ha realizado cambios en el contenido o el asistente aún está abierto.
-* El asistente puede salir desde la parte inferior.
 * Para las imagenes añadir un ícono de X en la parte superios derecha de la imagen para facilitar su eliminación.
-* Que el input de contenido ocupe todo el largo del drawer. El asistente debe estar por encima.
-* que la opción de añadir o reemplazar esté dentro de la burbuja de la IA.
-* Evidenciar mejor el resultado que el usuario obtendrá con el asistente.
-* Añadir campos por defecto al contexto.
 * Cambiar orden de los campos a completar, para brindar contextos de forma gradual.
-* Que el contexto adicional quede evidenciado.
-* Que el input del editor de la celda se vea como un editor de parrafo para que el usuario saber que se puede editar. Un texto declarativo puede ayudar.
 * Imagen que se pueda ver en tamaño completo y poder hacer zoom.  
+
+* Que el input del editor de la celda se vea como un editor de parrafo para que el usuario saber que se puede editar. Un texto declarativo puede ayudar.
+* Añadir campos por defecto al contexto.
+* Que el input de contenido ocupe todo el largo del drawer. El asistente debe estar por encima.
+* El asistente puede salir desde la parte inferior.
+* Utilizar la descripción para guiar al usuario acerca de que debe ir en la columna y como el usuario debe llenar el contenido de la celda.
+* Desactivar el botón guardar si el usuario no ha realizado cambios en el contenido o el asistente aún está abierto.
+* Modificar la visual del asistente de IA. El usuario desea modificar el contenido. Por lo que se debe brindar la posibilidad de reemplazar el contenido o añadir el nuevo contenido.
+* Que el contexto adicional quede evidenciado.
+* Evidenciar mejor el resultado que el usuario obtendrá con el asistente.
 
 
 
