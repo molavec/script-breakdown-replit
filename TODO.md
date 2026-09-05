@@ -2,8 +2,7 @@
 
 
 ## escenas
-* Utilizar la descripción de la columna para guiar al usuario acerca de que debe ir en la columna y como el usuario debe llenar el contenido de la celda. Esto debe estar en el placeholder del editor de contenido. Al hacer clic se borra el placeholder. Si no hay contenido debe mostrarse siempre. 
-* Que el input del editor de la celda se vea como un editor de parrafo para que el usuario saber que se puede editar. Un texto declarativo puede ayudar.
+* Que el input del editor de la celda se vea como un editor de parrafo para que el usuario saber que se puede editar. Un texto declarativo bajo el titulo del campo puede ayudar.
 * Que el input de contenido ocupe todo el largo del drawer. 
 * Debe haber un icono flotante que en la esquina superior derecha del input de contenido que abra el asistente de IA.
 * El asistente debe estar por encima. El asistente puede salir desde la parte inferior con una animación y puede ocupar 75% de todo el alto del drawer.

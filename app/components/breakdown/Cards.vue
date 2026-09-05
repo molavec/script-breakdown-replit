@@ -117,19 +117,24 @@ const getCellCurrency = (col: any, cell?: any): string => {
                   <BreakdownExpandableCell :max-height="250">
                     <!-- Number Cell (Inline Input) -->
                     <div v-if="col.cellType === 'number'">
-                      <div v-if="editingCellId === row.cells[col.id].id" class="flex items-center gap-2">
-                        <input 
-                          type="number" 
-                          class="input input-sm input-bordered w-full bg-[#18181b] border-neutral-500 text-neutral-100 focus:outline-none focus:border-error" 
-                          v-model="inlineEditValue"
-                          @keydown.enter="saveInlineEdit(row.cells[col.id], 'number')"
-                        />
-                        <button @click="saveInlineEdit(row.cells[col.id], 'number')" class="btn btn-xs btn-circle btn-success text-white">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                        </button>
-                        <button @click="cancelInlineEdit" class="btn btn-xs btn-circle btn-error text-white">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                        </button>
+                      <div v-if="editingCellId === row.cells[col.id].id" class="flex flex-col gap-1.5">
+                        <p v-if="col.description" class="text-xs text-neutral-400 mb-0.5 leading-relaxed">
+                          {{ col.description }}
+                        </p>
+                        <div class="flex items-center gap-2">
+                          <input 
+                            type="number" 
+                            class="input input-sm input-bordered w-full bg-[#18181b] border-neutral-500 text-neutral-100 focus:outline-none focus:border-error" 
+                            v-model="inlineEditValue"
+                            @keydown.enter="saveInlineEdit(row.cells[col.id], 'number')"
+                          />
+                          <button @click="saveInlineEdit(row.cells[col.id], 'number')" class="btn btn-xs btn-circle btn-success text-white">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                          </button>
+                          <button @click="cancelInlineEdit" class="btn btn-xs btn-circle btn-error text-white">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                          </button>
+                        </div>
                       </div>
                       <div v-else class="flex items-center gap-1.5 font-mono">
                         <span v-if="getCellCurrency(col, row.cells[col.id])" class="text-neutral-400 select-none">
@@ -142,6 +147,9 @@ const getCellCurrency = (col: any, cell?: any): string => {
                     <!-- Tags Cell -->
                     <div v-else-if="col.cellType === 'tags'">
                       <div v-if="editingCellId === row.cells[col.id].id" class="flex flex-col gap-2">
+                        <p v-if="col.description" class="text-xs text-neutral-400 mb-0.5 leading-relaxed">
+                          {{ col.description }}
+                        </p>
                         <input 
                           type="text" 
                           class="input input-sm input-bordered w-full bg-[#18181b] border-neutral-500 text-neutral-100 focus:outline-none focus:border-error" 

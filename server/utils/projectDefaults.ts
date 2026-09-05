@@ -28,7 +28,7 @@ export async function createDefaultProjectData(projectId: string) {
       projectId,
       name: 'Cast',
       cellType: 'tags' as const,
-      description: 'List characters, actors, speaking roles, and background extras appearing in this shot.',
+      description: 'List characters, actors, speaking roles, and background extras appearing in this shot, separated by commas.',
       order: 2,
       isSystem: true,
       color: '#ef4444', // Red

@@ -68,6 +68,12 @@ const isEditorFocused = ref(false);
 const isEditorEmpty = ref(true);
 
 const editorPlaceholder = computed(() => {
+  if (activeColumn.value?.cellType === 'tags') {
+    return activeColumn.value?.options?.placeholder?.trim() || 'Item 1, Item 2, Item 3...';
+  }
+  if (activeColumn.value?.cellType === 'number') {
+    return activeColumn.value?.options?.placeholder?.trim() || '0.00';
+  }
   const desc = activeColumn.value?.description?.trim();
   if (desc) {
     return desc;
@@ -569,7 +575,15 @@ const saveAndClose = async () => {
       }
     });
 
-    updateActiveCellContent(blocks);
+    let numericVal: number | undefined;
+    if (activeColumn.value?.cellType === 'number') {
+      const parsed = parseFloat(tempDiv.textContent?.trim() || '');
+      if (!isNaN(parsed)) {
+        numericVal = parsed;
+      }
+    }
+
+    updateActiveCellContent(blocks, numericVal);
   } else {
     updateActiveCellContent([]);
   }
@@ -605,6 +619,14 @@ const saveAndClose = async () => {
                 {{ activeColumn.name }}
               </span>
             </div>
+
+            <!-- Description above input for tags and number -->
+            <p 
+              v-if="activeColumn?.description && (activeColumn.cellType === 'tags' || activeColumn.cellType === 'number')" 
+              class="text-xs text-neutral-400 mb-2 leading-relaxed"
+            >
+              {{ activeColumn.description }}
+            </p>
             <div class="relative w-full h-[250px]" @click="focusEditor">
               <div 
                 ref="editorRef"
