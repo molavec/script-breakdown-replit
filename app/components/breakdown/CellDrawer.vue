@@ -235,9 +235,7 @@ const handleSendMessage = async () => {
   }
 };
 
-const handleAddToContent = (text: string, imageUrl?: string) => {
-  if (!editorRef.value) return;
-  
+const formatContentHtml = (text: string, imageUrl?: string) => {
   let htmlToInsert = '<div class="mb-4">';
   
   if (text) {
@@ -248,8 +246,31 @@ const handleAddToContent = (text: string, imageUrl?: string) => {
     htmlToInsert += `<img src="${imageUrl}" class="max-w-full rounded-md border border-neutral-700" alt="Generated script element" />`;
   }
   htmlToInsert += '</div>';
+  return htmlToInsert;
+};
 
+const handleAddToContent = (text: string, imageUrl?: string) => {
+  if (!editorRef.value) return;
+  
+  const htmlToInsert = formatContentHtml(text, imageUrl);
   editorRef.value.insertAdjacentHTML('beforeend', htmlToInsert);
+  editContent.value = editorRef.value.innerHTML;
+  
+  // Move cursor to end
+  const range = document.createRange();
+  const sel = window.getSelection();
+  range.selectNodeContents(editorRef.value);
+  range.collapse(false);
+  sel?.removeAllRanges();
+  sel?.addRange(range);
+  editorRef.value.focus();
+};
+
+const handleReplaceContent = (text: string, imageUrl?: string) => {
+  if (!editorRef.value) return;
+  
+  const htmlToInsert = formatContentHtml(text, imageUrl);
+  editorRef.value.innerHTML = htmlToInsert;
   editContent.value = editorRef.value.innerHTML;
   
   // Move cursor to end
@@ -365,11 +386,18 @@ const saveAndClose = async () => {
                     <img v-if="msg.imageUrl" :src="msg.imageUrl" alt="Generated" class="max-w-full rounded-md mt-2 border border-neutral-700" />
                   </template>
 
-                  <div v-if="msg.role === 'model' && !msg.isGenerating && (msg.text || msg.imageUrl)" class="flex justify-end mt-1">
+                  <div v-if="msg.role === 'model' && !msg.isGenerating && (msg.text || msg.imageUrl)" class="flex justify-end gap-1.5 mt-2.5">
+                    <button
+                      @click="handleReplaceContent(msg.text, msg.imageUrl)"
+                      class="badge badge-sm py-2.5 px-2 bg-neutral-800 text-neutral-400 hover:text-white hover:bg-neutral-700 border-neutral-700 cursor-pointer transition-colors"
+                    >
+                      Replace
+                    </button>
                     <button
                       @click="handleAddToContent(msg.text, msg.imageUrl)"
-                      class="text-[#d97706] text-xs font-medium hover:underline">
-                      Add to content
+                      class="badge badge-sm py-2.5 px-2 bg-[#d97706]/15 text-[#d97706] hover:bg-[#d97706] hover:text-black border-[#d97706]/30 cursor-pointer transition-colors font-medium"
+                    >
+                      + Insert
                     </button>
                   </div>
                   
