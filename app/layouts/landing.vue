@@ -35,15 +35,14 @@ onMounted(() => {
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
         <!-- Brand Logo -->
         <NuxtLink to="/" class="flex items-center gap-2.5 group">
-          <div class="w-9 h-9 rounded-lg bg-primary flex items-center justify-center text-primary-content shadow-lg shadow-primary/30 group-hover:scale-105 transition-transform">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
-              <path d="M4.5 3.75a3 3 0 0 0-3 3v.75h21v-.75a3 3 0 0 0-3-3h-15Z" />
-              <path fill-rule="evenodd" d="M22.5 9.75h-21v7.5a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3v-7.5Zm-18 3.75a.75.75 0 0 1 .75-.75h6a.75.75 0 0 1 0 1.5h-6a.75.75 0 0 1-.75-.75Zm.75 2.25a.75.75 0 0 0 0 1.5h3a.75.75 0 0 0 0-1.5h-3Z" clip-rule="evenodd" />
-            </svg>
-          </div>
-          <div class="flex flex-col">
+          <img 
+            src="/landing/logo_transparent_bg.png" 
+            alt="Script Breakdown Logo" 
+            class="h-9 w-auto object-contain shrink-0 group-hover:scale-105 transition-transform" 
+          />
+          <div class="flex">
             <span class="text-lg font-bold tracking-tight text-base-content group-hover:text-primary transition-colors">Script Breakdown</span>
-            <span class="text-[10px] uppercase font-mono tracking-widest text-base-content/60 -mt-1">Production AI</span>
+            <span class="text-[10px] uppercase font-mono tracking-widest text-base-content/60 -mt-1">AI</span>
           </div>
         </NuxtLink>
 
@@ -91,14 +90,17 @@ onMounted(() => {
         <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
           <!-- Column 1: Info -->
           <div class="md:col-span-2 space-y-4">
-            <div class="flex items-center gap-2.5">
-              <div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-primary-content shadow-md">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
-                  <path d="M4.5 3.75a3 3 0 0 0-3 3v.75h21v-.75a3 3 0 0 0-3-3h-15Z" />
-                  <path fill-rule="evenodd" d="M22.5 9.75h-21v7.5a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3v-7.5Zm-18 3.75a.75.75 0 0 1 .75-.75h6a.75.75 0 0 1 0 1.5h-6a.75.75 0 0 1-.75-.75Zm.75 2.25a.75.75 0 0 0 0 1.5h3a.75.75 0 0 0 0-1.5h-3Z" clip-rule="evenodd" />
-                </svg>
+            <!-- Brand Logo -->
+            <div  class="flex items-center gap-2.5 group">
+              <img 
+                src="/landing/logo_transparent_bg.png" 
+                alt="Script Breakdown Logo" 
+                class="h-9 w-auto object-contain shrink-0 group-hover:scale-105 transition-transform" 
+              />
+              <div class="flex">
+                <span class="text-lg font-bold tracking-tight text-base-content group-hover:text-primary transition-colors">Script Breakdown</span>
+                <span class="text-[10px] uppercase font-mono tracking-widest text-base-content/60 -mt-1">AI</span>
               </div>
-              <span class="text-base font-bold text-base-content tracking-tight">Script Breakdown</span>
             </div>
             <p class="text-xs sm:text-sm text-base-content/70 max-w-sm leading-relaxed">
               Intelligent pre-production and script breakdown workspace for directors, producers, assistant directors, and creative film crews.

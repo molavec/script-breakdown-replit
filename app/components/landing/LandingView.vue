@@ -6,9 +6,10 @@
   <main class="w-full">
     <LandingHero />
     <LandingMockup />
-    <LandingFeatures />
-    <LandingWorkflow />
-    <LandingAiSection />
+    <!-- <LandingFeatures /> -->
+    <!-- <LandingWorkflow /> -->
+    <!-- <LandingAiSection /> -->
+    <LandingTechnologies />
     <LandingFaq />
     <LandingCta />
   </main>

@@ -1,4 +1,12 @@
 <script setup lang="ts">
+interface Props {
+  showSidebarToggle?: boolean
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  showSidebarToggle: true,
+})
+
 const { isOpen, toggle } = useSidebar()
 const { user } = useAuth()
 
@@ -10,6 +18,7 @@ const avatarInitial = computed(() => user.value?.name.charAt(0).toUpperCase() ||
     <div class="flex items-center gap-3">
       <!-- Sidebar Toggle Icon Button -->
       <button 
+        v-if="showSidebarToggle"
         type="button"
         @click="toggle"
         class="btn btn-ghost btn-square btn-sm -ml-1 text-base-content/70 hover:text-base-content"
@@ -36,7 +45,12 @@ const avatarInitial = computed(() => user.value?.name.charAt(0).toUpperCase() ||
         </svg>
       </button>
 
-      <NuxtLink to="/" class="text-xl font-semibold text-primary hover:opacity-90 transition-opacity">
+      <NuxtLink to="/" class="flex items-center gap-2.5 text-xl font-semibold text-primary hover:opacity-90 transition-opacity">
+        <img 
+          src="/logo_transparent_bg.png" 
+          alt="Script Breakdown Logo" 
+          class="h-8 w-auto object-contain shrink-0" 
+        />
         <h1>Script Breakdown</h1>
       </NuxtLink>
     </div>
