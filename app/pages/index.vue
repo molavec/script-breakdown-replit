@@ -12,7 +12,7 @@ useSeoMeta({
 </script>
 
 <template>
-  <NuxtLayout v-if="user" name="default">
+  <NuxtLayout v-if="user" name="default" :show-sidebar-toggle="false">
     <ProjectDashboard />
   </NuxtLayout>
   <NuxtLayout v-else name="landing">

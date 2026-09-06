@@ -53,14 +53,14 @@ const toggle = () => {
     <!-- Gradient overlay when compressed -->
     <div 
       v-if="isOverflowing && !isExpanded" 
-      class="absolute bottom-6 left-0 right-0 h-10 bg-gradient-to-t from-[#18181b] to-transparent pointer-events-none"
+      class="absolute bottom-6 left-0 right-0 h-10 bg-gradient-to-t from-base-200 to-transparent pointer-events-none"
     ></div>
     
     <!-- Toggle Button -->
     <div v-if="isOverflowing" class="mt-2 flex justify-start">
       <button 
         @click.stop="toggle" 
-        class="text-[11px] font-bold text-amber-400 hover:text-amber-300 transition-colors uppercase tracking-wider"
+        class="text-[11px] font-bold text-secondary hover:text-secondary/80 transition-colors uppercase tracking-wider"
       >
         {{ isExpanded ? 'Ver menos' : 'Ver más' }}
       </button>

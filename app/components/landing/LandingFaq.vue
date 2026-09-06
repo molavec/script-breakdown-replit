@@ -24,14 +24,14 @@ const faqs = [
 </script>
 
 <template>
-  <section id="faq" class="py-20 sm:py-28 relative z-10 border-t border-white/5 bg-[#0e0e12]">
+  <section id="faq" class="py-20 sm:py-28 relative z-10 border-t border-base-300/40 bg-base-100">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-16">
-        <h2 class="text-xs font-mono uppercase tracking-widest text-rose-400 font-semibold">Answers & Clarity</h2>
-        <p class="text-3xl sm:text-4xl font-extrabold text-white mt-2 tracking-tight">
+        <h2 class="text-xs font-mono uppercase tracking-widest text-primary font-semibold">Answers & Clarity</h2>
+        <p class="text-3xl sm:text-4xl font-extrabold text-base-content mt-2 tracking-tight">
           Frequently Asked Questions
         </p>
-        <p class="text-neutral-400 mt-3 text-sm sm:text-base">
+        <p class="text-base-content/70 mt-3 text-sm sm:text-base">
           Everything you need to know about our script breakdown workflow.
         </p>
       </div>
@@ -41,13 +41,13 @@ const faqs = [
         <div 
           v-for="(faq, i) in faqs" 
           :key="faq.q"
-          class="collapse collapse-plus bg-[#14141a] border border-white/5 rounded-xl hover:border-white/10 transition-colors"
+          class="collapse collapse-plus bg-base-200 border border-base-300 rounded-box hover:border-primary/30 transition-colors"
         >
           <input type="radio" name="landing-faq" :checked="i === 0" />
-          <div class="collapse-title text-base sm:text-lg font-semibold text-white">
+          <div class="collapse-title text-base sm:text-lg font-semibold text-base-content">
             {{ faq.q }}
           </div>
-          <div class="collapse-content text-neutral-300 text-xs sm:text-sm leading-relaxed pb-4">
+          <div class="collapse-content text-base-content/80 text-xs sm:text-sm leading-relaxed pb-4">
             <p>{{ faq.a }}</p>
           </div>
         </div>

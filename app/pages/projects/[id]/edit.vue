@@ -91,7 +91,7 @@ const handleSave = async () => {
 </script>
 
 <template>
-  <div class="h-screen flex flex-col bg-[#141414] font-sans overflow-hidden">
+  <div class="h-screen flex flex-col bg-base-100 text-base-content font-sans overflow-hidden">
     <!-- Header General (App) -->
     <AppHeader />
 
@@ -101,16 +101,16 @@ const handleSave = async () => {
       <BreakdownSidebar />
 
       <!-- Edit Project Main Content -->
-      <div class="flex-1 overflow-y-auto bg-[#121214] text-white p-6 md:p-10">
+      <div class="flex-1 overflow-y-auto bg-base-100 text-base-content p-6 md:p-10">
         <div class="max-w-3xl mx-auto space-y-8 pb-16">
           
           <!-- Top Navigation & Breadcrumbs Bar -->
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-800 pb-5">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-base-300 pb-5">
             <div class="flex items-center gap-3">
               <button 
                 type="button"
                 @click="handleBack"
-                class="btn btn-sm btn-outline border-neutral-700 hover:border-neutral-500 text-neutral-300 hover:text-white flex items-center gap-1.5 px-3"
+                class="btn btn-sm btn-outline border-base-300 hover:bg-base-300 text-base-content flex items-center gap-1.5 px-3"
                 title="Return to project"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -119,43 +119,45 @@ const handleSave = async () => {
                 <span>Back</span>
               </button>
 
-              <div class="flex items-center gap-2 text-xs font-mono text-neutral-400">
-                <NuxtLink to="/" class="hover:text-white transition-colors">Projects</NuxtLink>
-                <span>/</span>
-                <NuxtLink :to="`/projects/${projectId}`" class="hover:text-white transition-colors truncate max-w-[200px]">
-                  {{ project?.name || 'Project' }}
-                </NuxtLink>
-                <span>/</span>
-                <span class="text-white font-semibold">Edit</span>
+              <div class="breadcrumbs text-xs font-mono text-base-content/60 p-0">
+                <ul>
+                  <li><NuxtLink to="/" class="hover:text-primary transition-colors">Projects</NuxtLink></li>
+                  <li>
+                    <NuxtLink :to="`/projects/${projectId}`" class="hover:text-primary transition-colors truncate max-w-[200px]">
+                      {{ project?.name || 'Project' }}
+                    </NuxtLink>
+                  </li>
+                  <li class="text-base-content font-semibold">Edit</li>
+                </ul>
               </div>
             </div>
           </div>
 
           <!-- Loading state -->
           <div v-if="isProjectLoading && !project" class="flex justify-center items-center py-20">
-            <span class="loading loading-spinner loading-lg text-rose-500"></span>
+            <span class="loading loading-spinner loading-lg text-primary"></span>
           </div>
 
           <!-- Form Content -->
           <form v-else @submit.prevent="handleSave" class="space-y-8">
             <!-- Header Card -->
-            <div class="bg-[#1a1a1e] border border-neutral-800 rounded-xl p-6 flex items-center gap-4">
-              <div class="w-12 h-12 rounded-xl flex items-center justify-center text-xl shrink-0 shadow-inner bg-rose-500/20 border-2 border-rose-500 text-rose-400">
+            <div class="card bg-base-200 border border-base-300 rounded-box p-6 flex flex-row items-center gap-4 shadow-sm">
+              <div class="w-12 h-12 rounded-box flex items-center justify-center text-xl shrink-0 bg-primary/10 border border-primary/20 text-primary">
                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M12 20h9"/>
                   <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
                 </svg>
               </div>
               <div>
-                <h1 class="text-2xl font-bold text-white tracking-tight">Edit Project Details</h1>
-                <p class="text-xs text-neutral-400 mt-0.5">
+                <h1 class="text-2xl font-bold text-base-content tracking-tight">Edit Project Details</h1>
+                <p class="text-xs text-base-content/60 mt-0.5">
                   Update production metadata, format, genre, and overview.
                 </p>
               </div>
             </div>
 
             <!-- Error alert -->
-            <div v-if="errorMessage" class="alert alert-error bg-red-950/60 border-red-800 text-red-200 text-sm py-3">
+            <div v-if="errorMessage" class="alert alert-error text-sm py-3 shadow-md">
               <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
@@ -163,18 +165,18 @@ const handleSave = async () => {
             </div>
 
             <!-- Details Section -->
-            <div class="bg-[#1a1a1e] border border-neutral-800 rounded-xl p-6 space-y-6">
+            <div class="card bg-base-200 border border-base-300 rounded-box p-6 space-y-6 shadow-sm">
               <!-- Project Name / Title -->
               <div class="space-y-2">
-                <label class="text-xs font-semibold text-neutral-300 uppercase tracking-wider block">
-                  Project Title <span class="text-rose-500">*</span>
+                <label class="text-xs font-semibold text-base-content/70 uppercase tracking-wider block">
+                  Project Title <span class="text-primary">*</span>
                 </label>
                 <input 
                   type="text" 
                   v-model="formData.name" 
                   placeholder="e.g. Untitled Thriller" 
                   required
-                  class="input input-bordered w-full bg-[#121214] border-neutral-700 text-white text-sm focus:border-rose-500"
+                  class="input input-bordered w-full bg-base-100 border-base-300 text-base-content text-sm focus:border-primary"
                 />
               </div>
 
@@ -182,12 +184,12 @@ const handleSave = async () => {
               <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
                 <!-- Production Type -->
                 <div class="space-y-2">
-                  <label class="text-xs font-semibold text-neutral-300 uppercase tracking-wider block">
+                  <label class="text-xs font-semibold text-base-content/70 uppercase tracking-wider block">
                     Production Type
                   </label>
                   <select 
                     v-model="formData.type" 
-                    class="select select-bordered w-full bg-[#121214] border-neutral-700 text-white text-sm focus:border-rose-500"
+                    class="select select-bordered w-full bg-base-100 border-base-300 text-base-content text-sm focus:border-primary"
                   >
                     <option value="feature">Feature Film</option>
                     <option value="series">Series</option>
@@ -202,12 +204,12 @@ const handleSave = async () => {
 
                 <!-- Genre -->
                 <div class="space-y-2">
-                  <label class="text-xs font-semibold text-neutral-300 uppercase tracking-wider block">
+                  <label class="text-xs font-semibold text-base-content/70 uppercase tracking-wider block">
                     Primary Genre
                   </label>
                   <select 
                     v-model="formData.genre" 
-                    class="select select-bordered w-full bg-[#121214] border-neutral-700 text-white text-sm focus:border-rose-500"
+                    class="select select-bordered w-full bg-base-100 border-base-300 text-base-content text-sm focus:border-primary"
                   >
                     <option value="thriller">Thriller</option>
                     <option value="scifi">Sci-Fi</option>
@@ -224,12 +226,12 @@ const handleSave = async () => {
 
                 <!-- Status -->
                 <div class="space-y-2">
-                  <label class="text-xs font-semibold text-neutral-300 uppercase tracking-wider block">
+                  <label class="text-xs font-semibold text-base-content/70 uppercase tracking-wider block">
                     Status
                   </label>
                   <select 
                     v-model="formData.status" 
-                    class="select select-bordered w-full bg-[#121214] border-neutral-700 text-white text-sm focus:border-rose-500"
+                    class="select select-bordered w-full bg-base-100 border-base-300 text-base-content text-sm focus:border-primary"
                   >
                     <option value="draft">Draft</option>
                     <option value="in_progress">In Progress</option>
@@ -244,24 +246,24 @@ const handleSave = async () => {
 
               <!-- Cover Image URL -->
               <div class="space-y-2">
-                <label class="text-xs font-semibold text-neutral-300 uppercase tracking-wider block">
+                <label class="text-xs font-semibold text-base-content/70 uppercase tracking-wider block">
                   Cover Image URL
                 </label>
                 <input 
                   type="url" 
                   v-model="formData.coverImage" 
                   placeholder="https://images.unsplash.com/..." 
-                  class="input input-bordered w-full bg-[#121214] border-neutral-700 text-white text-sm focus:border-rose-500"
+                  class="input input-bordered w-full bg-base-100 border-base-300 text-base-content text-sm focus:border-primary"
                 />
                 <!-- Preview Thumbnail if url exists -->
-                <div v-if="formData.coverImage" class="mt-2 relative h-32 w-full rounded-lg overflow-hidden border border-neutral-800">
+                <div v-if="formData.coverImage" class="mt-2 relative h-32 w-full rounded-box overflow-hidden border border-base-300">
                   <img 
                     :src="formData.coverImage" 
                     alt="Cover preview" 
                     class="w-full h-full object-cover filter brightness-75"
                     @error="() => {}"
                   />
-                  <div class="absolute bottom-2 left-2 px-2 py-0.5 rounded bg-black/70 text-[10px] text-neutral-300 font-mono">
+                  <div class="badge badge-neutral absolute bottom-2 left-2 text-[10px] font-mono">
                     Preview
                   </div>
                 </div>
@@ -269,32 +271,32 @@ const handleSave = async () => {
 
               <!-- Logline / Synopsis -->
               <div class="space-y-2">
-                <label class="text-xs font-semibold text-neutral-300 uppercase tracking-wider block">
+                <label class="text-xs font-semibold text-base-content/70 uppercase tracking-wider block">
                   Original Story / Logline
                 </label>
                 <textarea 
                   v-model="formData.description" 
                   rows="4" 
                   placeholder="Briefly describe the premise, logline, or project summary..."
-                  class="textarea textarea-bordered w-full bg-[#121214] border-neutral-700 text-white text-sm focus:border-rose-500 resize-none"
+                  class="textarea textarea-bordered w-full bg-base-100 border-base-300 text-base-content text-sm focus:border-primary resize-none"
                 ></textarea>
               </div>
             </div>
 
             <!-- Action Buttons Footer -->
-            <div class="flex items-center justify-end gap-3 pt-4 border-t border-neutral-800">
+            <div class="flex items-center justify-end gap-3 pt-4 border-t border-base-300">
               <button 
                 type="button" 
                 @click="handleBack" 
                 :disabled="isSubmitting"
-                class="btn btn-sm btn-ghost text-neutral-400 hover:text-white"
+                class="btn btn-sm btn-ghost text-base-content/70 hover:text-base-content"
               >
                 Cancel
               </button>
               <button 
                 type="submit" 
                 :disabled="isSubmitting"
-                class="btn btn-sm btn-error text-white font-semibold flex items-center gap-2 px-5 shadow-lg shadow-rose-950/40"
+                class="btn btn-sm btn-primary font-semibold flex items-center gap-2 px-5 shadow-lg shadow-primary/20"
               >
                 <span v-if="isSubmitting" class="loading loading-spinner loading-xs"></span>
                 <svg v-else xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
