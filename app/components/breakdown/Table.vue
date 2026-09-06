@@ -142,12 +142,11 @@ onUnmounted(() => {
 });
 </script>
 
-
 <template>
   <div class="h-full overflow-auto pb-6 px-6" @scroll.passive="onContainerScroll">
     <table class="w-max text-left border-separate border-spacing-0 table-fixed mb-128">
       <!-- Table Header -->
-      <thead class="sticky top-0 z-20 bg-[#242427] text-neutral-300 text-xs font-bold font-mono">
+      <thead class="sticky top-0 z-20 bg-base-200 text-base-content text-xs font-bold font-mono">
         <draggable
           v-model="columns"
           tag="tr"
@@ -157,19 +156,18 @@ onUnmounted(() => {
         >
           <template #header>
             <th 
-              class="sticky top-0 z-30 bg-[#242427] w-16 min-w-[64px] border border-neutral-700 p-3 text-center"
-              :class="isColumnSticky ? 'left-[-24px] shadow-[1px_0_0_0_#3f3f46]' : ''"
-              
+              class="sticky top-0 z-30 bg-base-200 w-16 min-w-[64px] border border-base-300 p-3 text-center"
+              :class="isColumnSticky ? 'left-[-24px] shadow-[1px_0_0_0_var(--color-base-300)]' : ''"
             >#</th>
           </template>
           <template #item="{ element: col }">
             <th 
-              class="sticky top-0 z-20 bg-[#242427] border border-neutral-700 p-3 group/th select-none relative"
+              class="sticky top-0 z-20 bg-base-200 border border-base-300 p-3 group/th select-none relative"
               :style="{ width: `${getColWidth(col.id)}px`, minWidth: `${getColWidth(col.id)}px` }"
             >
               <div class="flex items-center justify-between gap-2">
                 <div class="flex items-center gap-2 min-w-0">
-                  <div class="col-drag-handle cursor-grab active:cursor-grabbing text-neutral-500 hover:text-neutral-300 transition-colors" title="Drag to reorder column">
+                  <div class="col-drag-handle cursor-grab active:cursor-grabbing text-base-content/40 hover:text-base-content transition-colors" title="Drag to reorder column">
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <circle cx="9" cy="12" r="1"></circle>
                       <circle cx="9" cy="5" r="1"></circle>
@@ -189,12 +187,12 @@ onUnmounted(() => {
 
               <button 
                 type="button"
-                class="btn btn-xs btn-ghost btn-square text-neutral-400 hover:text-white hover:bg-neutral-700/80 transition-colors shrink-0"
+                class="btn btn-xs btn-ghost btn-square text-base-content/60 hover:text-primary hover:bg-base-300 transition-colors shrink-0"
                 :title="`Configure ${col.name} Column`"
                 @click.stop="openColumnConfig(col.id)"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1-1-1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+                  <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
                   <circle cx="12" cy="12" r="3"/>
                 </svg>
               </button>
@@ -207,7 +205,7 @@ onUnmounted(() => {
               @mousedown.stop.prevent="startResize($event, col.id)"
             >
               <div 
-                class="w-[2px] h-1/2 rounded-full bg-neutral-500"
+                class="w-[2px] h-1/2 rounded-full bg-base-content/40"
                 :class="resizingColId === col.id ? 'bg-primary' : ''"
               ></div>
             </div>
@@ -226,20 +224,20 @@ onUnmounted(() => {
         <template #item="{ element: row, index: rowIndex }">
           <tr 
             :key="row.id"
-            :class="rowIndex === lastSelectedRowIndex ? 'bg-[#212124]' : 'bg-[#18181b]'"
+            :class="rowIndex === lastSelectedRowIndex ? 'bg-base-200/80' : 'bg-base-100'"
             class="transition-colors"
           >
             <!-- Row Number & Drag Handle -->
             <td 
-              class="z-10 border border-neutral-700 p-0 text-center text-xs text-neutral-400 font-mono align-top select-none relative group/rowheader"
+              class="z-10 border border-base-300 p-0 text-center text-xs text-base-content/70 font-mono align-top select-none relative group/rowheader"
               :class="[
-                isColumnSticky ? 'sticky left-[-24px] -shadow-[1px_0_0_0_#3f3f46] z-30' : '',
-                rowIndex === lastSelectedRowIndex ? 'bg-[#212124]' : 'bg-[#18181b]'
+                isColumnSticky ? 'sticky left-[-24px] shadow-[1px_0_0_0_var(--color-base-300)] z-30' : '',
+                rowIndex === lastSelectedRowIndex ? 'bg-base-200' : 'bg-base-100'
               ]"
             >
               <div class="w-full p-3 flex flex-col items-center justify-start overflow-hidden" :style="{ height: `${getRowHeight(row.id)}px` }">
                 <div class="flex items-center justify-center gap-1.5 pt-1">
-                  <div class="drag-handle cursor-grab active:cursor-grabbing text-neutral-500 hover:text-neutral-300 transition-colors" title="Drag to reorder">
+                  <div class="drag-handle cursor-grab active:cursor-grabbing text-base-content/40 hover:text-base-content transition-colors" title="Drag to reorder">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <circle cx="9" cy="12" r="1"></circle>
                       <circle cx="9" cy="5" r="1"></circle>
@@ -253,7 +251,7 @@ onUnmounted(() => {
                 </div>
                 
                 <button 
-                  class="mt-2 opacity-0 group-hover/rowheader:opacity-100 btn btn-xs btn-ghost btn-square text-neutral-500 hover:text-error hover:bg-error/10 transition-all scale-90"
+                  class="mt-2 opacity-0 group-hover/rowheader:opacity-100 btn btn-xs btn-ghost btn-square text-base-content/50 hover:text-error hover:bg-error/10 transition-all scale-90"
                   title="Delete Shot"
                   @click.stop="confirmDeleteRow(row.id)"
                 >
@@ -273,7 +271,7 @@ onUnmounted(() => {
                 @mousedown.stop.prevent="startRowResize($event, row.id)"
               >
                 <div 
-                  class="h-[2px] w-1/2 rounded-full bg-neutral-500"
+                  class="h-[2px] w-1/2 rounded-full bg-base-content/40"
                   :class="resizingRowId === row.id ? 'bg-primary' : ''"
                 ></div>
               </div>
@@ -285,7 +283,7 @@ onUnmounted(() => {
               :key="col.id"
               class="border align-top transition-all p-0"
               :class="[
-                activeCellId === row.cells[col.id]?.id && col.cellType !== 'number' && col.cellType !== 'tags' ? 'border-error/70 ring-1 ring-error/50 bg-[#2a2a2e]/50 z-10 relative' : 'border-neutral-700 hover:border-neutral-500',
+                activeCellId === row.cells[col.id]?.id && col.cellType !== 'number' && col.cellType !== 'tags' ? 'border-primary ring-1 ring-primary/50 bg-primary/10 z-10 relative' : 'border-base-300 hover:border-primary/40',
                 col.cellType !== 'number' && col.cellType !== 'tags' ? 'cursor-pointer' : ''
               ]"
               @click="col.cellType !== 'number' && col.cellType !== 'tags' ? selectCell(rowIndex, col.id, row.cells[col.id]?.id) : null"
@@ -298,25 +296,25 @@ onUnmounted(() => {
                   <div v-if="editingCellId === row.cells[col.id].id" class="flex items-center gap-2">
                     <input 
                       type="number" 
-                      class="input input-sm input-bordered w-full bg-[#18181b] border-neutral-500 text-neutral-100 focus:outline-none focus:border-error" 
+                      class="input input-sm input-bordered w-full bg-base-200 border-base-300 text-base-content focus:outline-none focus:border-primary" 
                       v-model="inlineEditValue"
                       @keydown.enter="saveInlineEdit(row.cells[col.id], 'number')"
                     />
-                    <button @click="saveInlineEdit(row.cells[col.id], 'number')" class="btn btn-xs btn-circle btn-success text-white">
+                    <button @click="saveInlineEdit(row.cells[col.id], 'number')" class="btn btn-xs btn-circle btn-success text-success-content">
                       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                     </button>
-                    <button @click="cancelInlineEdit" class="btn btn-xs btn-circle btn-error text-white">
+                    <button @click="cancelInlineEdit" class="btn btn-xs btn-circle btn-error text-error-content">
                       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
                     </button>
                   </div>
                   <div v-else class="cursor-pointer group flex items-center justify-end gap-2 w-full text-right" @click="startInlineEdit(row.cells[col.id], 'number')">
                     <div class="flex items-center gap-1.5 font-mono ml-auto">
-                      <span v-if="getCellCurrency(col, row.cells[col.id])" class="text-neutral-400 select-none">
+                      <span v-if="getCellCurrency(col, row.cells[col.id])" class="text-base-content/60 select-none">
                         {{ getCellCurrency(col, row.cells[col.id]) }}
                       </span>
-                      <span class="text-neutral-300">{{ row.cells[col.id].numericValue ?? 'none' }}</span>
+                      <span class="text-base-content">{{ row.cells[col.id].numericValue ?? 'none' }}</span>
                     </div>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-neutral-600 opacity-0 group-hover:opacity-100 transition-opacity shrink-0"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-base-content/40 opacity-0 group-hover:opacity-100 transition-opacity shrink-0"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
                   </div>
                 </div>
 
@@ -325,16 +323,16 @@ onUnmounted(() => {
                   <div v-if="editingCellId === row.cells[col.id].id" class="flex flex-col gap-2">
                     <input 
                       type="text" 
-                      class="input input-sm input-bordered w-full bg-[#18181b] border-neutral-500 text-neutral-100 focus:outline-none focus:border-error" 
+                      class="input input-sm input-bordered w-full bg-base-200 border-base-300 text-base-content focus:outline-none focus:border-primary" 
                       v-model="inlineEditValue"
                       placeholder="Item 1, Item 2, Item 3..."
                       @keydown.enter="saveInlineEdit(row.cells[col.id], 'tags')"
                     />
                     <div class="flex justify-end gap-1">
-                      <button @click="saveInlineEdit(row.cells[col.id], 'tags')" class="btn btn-xs btn-success text-white px-2">
+                      <button @click="saveInlineEdit(row.cells[col.id], 'tags')" class="btn btn-xs btn-success text-success-content px-2">
                         Save
                       </button>
-                      <button @click="cancelInlineEdit" class="btn btn-xs btn-error text-white px-2">
+                      <button @click="cancelInlineEdit" class="btn btn-xs btn-error text-error-content px-2">
                         Cancel
                       </button>
                     </div>
@@ -342,28 +340,28 @@ onUnmounted(() => {
                   <div v-else class="cursor-pointer group relative min-h-[24px]" @click="startInlineEdit(row.cells[col.id], 'tags')">
                     <div v-if="row.cells[col.id].blocks && row.cells[col.id].blocks.length > 0" class="flex flex-wrap gap-1 pr-6">
                       <template v-for="block in row.cells[col.id].blocks" :key="block.id">
-                        <span v-if="block.type === 'entity_tag'" class="badge badge-sm bg-neutral-200 text-neutral-800 border-neutral-400 font-medium">
+                        <span v-if="block.type === 'entity_tag'" class="badge badge-sm badge-neutral border-base-300 text-base-content/90 font-medium">
                           {{ block.content }}
                         </span>
                         <!-- fallback render for text blocks in a tag column if any -->
-                        <span v-else-if="block.type === 'text'" class="text-xs text-neutral-400">{{ block.content }}</span>
+                        <span v-else-if="block.type === 'text'" class="text-xs text-base-content/60">{{ block.content }}</span>
                       </template>
                     </div>
-                    <div v-else class="text-neutral-600 italic text-sm">none</div>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute right-0 top-0 text-neutral-600 opacity-0 group-hover:opacity-100 transition-opacity"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+                    <div v-else class="text-base-content/40 italic text-sm">none</div>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute right-0 top-0 text-base-content/40 opacity-0 group-hover:opacity-100 transition-opacity"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
                   </div>
                 </div>
 
                 <!-- Text / Mixed / Default Cell -->
                 <div v-else>
-                  <div v-if="row.cells[col.id].blocks && row.cells[col.id].blocks.length > 0" class="flex flex-col gap-1 text-sm text-neutral-300 whitespace-pre-wrap leading-relaxed">
+                  <div v-if="row.cells[col.id].blocks && row.cells[col.id].blocks.length > 0" class="flex flex-col gap-1 text-sm text-base-content/90 whitespace-pre-wrap leading-relaxed">
                     <template v-for="block in row.cells[col.id].blocks" :key="block.id">
                        <div v-if="block.type === 'text'" class="prose prose-sm prose-invert max-w-none" v-html="parseMarkdown(block.content)"></div>
                        <div v-else-if="block.type === 'image'" class="relative inline-block max-w-full group/img my-1">
-                         <img :src="block.content" class="max-w-full rounded-md border border-neutral-700 block" alt="Table cell image" />
+                         <img :src="block.content" class="max-w-full rounded-md border border-base-300 block" alt="Table cell image" />
                          <button 
                            type="button"
-                           class="absolute bottom-2 right-2 w-7 h-7 flex items-center justify-center rounded-md bg-neutral-900/85 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-700/80 shadow-lg backdrop-blur-sm transition-all hover:scale-110 active:scale-95 cursor-pointer"
+                           class="absolute bottom-2 right-2 w-7 h-7 flex items-center justify-center rounded-md bg-base-200/90 hover:bg-base-300 text-base-content border border-base-300 shadow-lg backdrop-blur-sm transition-all hover:scale-110 active:scale-95 cursor-pointer"
                            title="Ver imagen completa"
                            aria-label="Ver imagen completa"
                            @click.stop="openImagePreview(block.content)"
@@ -378,7 +376,7 @@ onUnmounted(() => {
                        </div>
                     </template>
                   </div>
-                  <div v-else class="text-neutral-600 italic text-sm">none</div>
+                  <div v-else class="text-base-content/40 italic text-sm">none</div>
                 </div>
                 
                 </div>
@@ -404,10 +402,12 @@ td .overflow-y-auto::-webkit-scrollbar-track {
   background: transparent;
 }
 td .overflow-y-auto::-webkit-scrollbar-thumb {
-  background: #3f3f46; /* neutral-700 */
+  background: var(--color-base-300);
   border-radius: 4px;
 }
 td .overflow-y-auto::-webkit-scrollbar-thumb:hover {
-  background: #52525b; /* neutral-600 */
+  background: var(--color-base-content);
+  opacity: 0.3;
 }
 </style>
+

@@ -34,7 +34,7 @@ watch(sceneIdParam, async (newSceneId) => {
 </script>
 
 <template>
-  <div class="h-screen flex flex-col bg-[#141414] font-sans overflow-hidden">
+  <div class="h-screen flex flex-col bg-base-100 text-base-content font-sans overflow-hidden">
     <!-- Header General (App) -->
     <AppHeader />
 

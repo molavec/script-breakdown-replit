@@ -387,7 +387,7 @@ watch(inputValue, () => {
 });
 
 const createImageHtml = (src: string) => {
-  return `<div class="image-wrapper not-prose mb-4 block" contenteditable="false"><div class="relative inline-block max-w-full group/img"><img src="${src}" class="max-w-full rounded-md border border-neutral-700 block m-0" alt="Cell image" /><button type="button" data-action="delete-image" class="image-delete-btn" title="Eliminar imagen" aria-label="Eliminar imagen"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button><button type="button" data-action="view-image" class="image-view-btn" title="Ver imagen completa" aria-label="Ver imagen completa"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg></button></div></div>`;
+  return `<div class="image-wrapper not-prose mb-4 block" contenteditable="false"><div class="relative inline-block max-w-full group/img"><img src="${src}" class="max-w-full rounded-md border border-base-300 block m-0" alt="Cell image" /><button type="button" data-action="delete-image" class="image-delete-btn" title="Eliminar imagen" aria-label="Eliminar imagen"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button><button type="button" data-action="view-image" class="image-view-btn" title="Ver imagen completa" aria-label="Ver imagen completa"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg></button></div></div>`;
 };
 
 const wrapRawImages = (container: HTMLElement) => {
@@ -401,7 +401,7 @@ const wrapRawImages = (container: HTMLElement) => {
       const inner = document.createElement('div');
       inner.className = 'relative inline-block max-w-full group/img';
       
-      img.className = 'max-w-full rounded-md border border-neutral-700 block m-0';
+      img.className = 'max-w-full rounded-md border border-base-300 block m-0';
       
       const btn = document.createElement('button');
       btn.type = 'button';
@@ -760,7 +760,7 @@ const formatContentHtml = (text: string, imageUrl?: string) => {
   let htmlToInsert = '';
   
   if (text) {
-    htmlToInsert += `<div class="mb-4 text-neutral-300">${parseMarkdown(text)}</div>`;
+    htmlToInsert += `<div class="mb-4 text-base-content/90">${parseMarkdown(text)}</div>`;
   }
   
   if (imageUrl) {
@@ -869,11 +869,11 @@ const handleCancel = () => {
     
     <div class="drawer-side pointer-events-auto">
       <label for="cell-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
-      <div class="w-full lg:w-[450px] h-full bg-[#18181b] border-l border-neutral-800 flex flex-col text-white shadow-2xl font-sans">
+      <div class="w-full lg:w-[450px] h-full bg-base-200 border-l border-base-300 flex flex-col text-base-content shadow-2xl font-sans">
         
         <!-- Header -->
-        <header class="flex justify-between items-center p-4 border-b border-neutral-800">
-          <h1 class="text-sm font-semibold text-neutral-300">Edit Cell</h1>
+        <header class="flex justify-between items-center p-4 border-b border-base-300">
+          <h1 class="text-sm font-semibold text-base-content">Edit Cell</h1>
         </header>
 
         <!-- Body -->
@@ -882,36 +882,36 @@ const handleCancel = () => {
           <!-- Top Section: Cell Content Editor -->
           <section class="p-4 flex-shrink-0">
             <div class="flex items-center justify-between mb-2">
-              <h2 class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">CELL CONTENT</h2>
-              <span v-if="activeColumn" class="text-xs text-neutral-400 font-medium truncate max-w-[200px]" :title="activeColumn.name">
+              <h2 class="text-[10px] font-bold text-base-content/60 uppercase tracking-wider">CELL CONTENT</h2>
+              <span v-if="activeColumn" class="text-xs text-base-content/60 font-medium truncate max-w-[200px]" :title="activeColumn.name">
                 {{ activeColumn.name }}
               </span>
             </div>
 
             <!-- Declarative text & column description -->
             <div class="mb-2.5 space-y-0.5">
-              <p v-if="activeColumn?.description" class="text-xs text-neutral-300 leading-relaxed">
+              <p v-if="activeColumn?.description" class="text-xs text-base-content/80 leading-relaxed">
                 {{ activeColumn.description }}
               </p>
-              <p class="text-[11px] text-neutral-400 leading-relaxed flex items-center gap-1.5">
-                <PencilIcon :size="12" class="text-neutral-500 shrink-0" />
+              <p class="text-[11px] text-base-content/60 leading-relaxed flex items-center gap-1.5">
+                <PencilIcon :size="12" class="text-base-content/50 shrink-0" />
                 <span>Click inside the editor below to write or edit content directly.</span>
               </p>
             </div>
 
             <!-- Rich Text Editor Container -->
             <div 
-              class="w-full flex flex-col rounded-lg border border-neutral-700/80 bg-[#121215] focus-within:border-neutral-500 focus-within:ring-1 focus-within:ring-neutral-500/40 transition-[border,box-shadow] overflow-hidden shadow-inner"
+              class="w-full flex flex-col rounded-box border border-base-300 bg-base-100 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/40 transition-[border,box-shadow] overflow-hidden shadow-inner"
               :style="{ height: `${editorHeight}px` }"
             >
               <!-- Editor Toolbar Header -->
-              <div class="flex items-center justify-between px-2.5 py-1.5 bg-[#1e1e24] border-b border-neutral-800 select-none flex-shrink-0">
+              <div class="flex items-center justify-between px-2.5 py-1.5 bg-base-200/90 border-b border-base-300 select-none flex-shrink-0">
                 <div class="flex items-center gap-0.5">
                   <button 
                     type="button" 
                     @mousedown.prevent="formatDoc('bold')" 
                     title="Bold" 
-                    class="p-1 rounded text-neutral-400 hover:text-white hover:bg-neutral-700/60 active:scale-95 transition-all cursor-pointer"
+                    class="p-1 rounded text-base-content/60 hover:text-base-content hover:bg-base-300 active:scale-95 transition-all cursor-pointer"
                   >
                     <BoldIcon :size="14" />
                   </button>
@@ -919,18 +919,18 @@ const handleCancel = () => {
                     type="button" 
                     @mousedown.prevent="formatDoc('italic')" 
                     title="Italic" 
-                    class="p-1 rounded text-neutral-400 hover:text-white hover:bg-neutral-700/60 active:scale-95 transition-all cursor-pointer"
+                    class="p-1 rounded text-base-content/60 hover:text-base-content hover:bg-base-300 active:scale-95 transition-all cursor-pointer"
                   >
                     <ItalicIcon :size="14" />
                   </button>
                   
-                  <div class="w-px h-3.5 bg-neutral-700 mx-1"></div>
+                  <div class="w-px h-3.5 bg-base-300 mx-1"></div>
 
                   <button 
                     type="button" 
                     @mousedown.prevent="formatDoc('insertUnorderedList')" 
                     title="Bullet List" 
-                    class="p-1 rounded text-neutral-400 hover:text-white hover:bg-neutral-700/60 active:scale-95 transition-all cursor-pointer"
+                    class="p-1 rounded text-base-content/60 hover:text-base-content hover:bg-base-300 active:scale-95 transition-all cursor-pointer"
                   >
                     <ListIcon :size="14" />
                   </button>
@@ -938,18 +938,18 @@ const handleCancel = () => {
                     type="button" 
                     @mousedown.prevent="formatDoc('insertOrderedList')" 
                     title="Numbered List" 
-                    class="p-1 rounded text-neutral-400 hover:text-white hover:bg-neutral-700/60 active:scale-95 transition-all cursor-pointer"
+                    class="p-1 rounded text-base-content/60 hover:text-base-content hover:bg-base-300 active:scale-95 transition-all cursor-pointer"
                   >
                     <ListOrderedIcon :size="14" />
                   </button>
 
-                  <div class="w-px h-3.5 bg-neutral-700 mx-1"></div>
+                  <div class="w-px h-3.5 bg-base-300 mx-1"></div>
 
                   <button 
                     type="button" 
                     @mousedown.prevent="formatDoc('undo')" 
                     title="Undo" 
-                    class="p-1 rounded text-neutral-400 hover:text-white hover:bg-neutral-700/60 active:scale-95 transition-all cursor-pointer"
+                    class="p-1 rounded text-base-content/60 hover:text-base-content hover:bg-base-300 active:scale-95 transition-all cursor-pointer"
                   >
                     <UndoIcon :size="13" />
                   </button>
@@ -957,28 +957,28 @@ const handleCancel = () => {
                     type="button" 
                     @mousedown.prevent="formatDoc('redo')" 
                     title="Redo" 
-                    class="p-1 rounded text-neutral-400 hover:text-white hover:bg-neutral-700/60 active:scale-95 transition-all cursor-pointer"
+                    class="p-1 rounded text-base-content/60 hover:text-base-content hover:bg-base-300 active:scale-95 transition-all cursor-pointer"
                   >
                     <RedoIcon :size="13" />
                   </button>
                 </div>
 
                 <!-- Status & Counts & Expand -->
-                <div class="flex items-center gap-2 text-[11px] text-neutral-400 font-mono">
+                <div class="flex items-center gap-2 text-[11px] text-base-content/60 font-mono">
                   <span v-if="imageCount > 0">{{ imageCount }} {{ imageCount === 1 ? 'img' : 'imgs' }}</span>
-                  <span v-if="imageCount > 0 && wordCount > 0" class="text-neutral-600">•</span>
+                  <span v-if="imageCount > 0 && wordCount > 0" class="text-base-content/30">•</span>
                   <span>{{ wordCount }} {{ wordCount === 1 ? 'word' : 'words' }}</span>
                   <span 
                     class="inline-block w-1.5 h-1.5 rounded-full transition-colors ml-0.5" 
-                    :class="isEditorFocused ? 'bg-red-500 animate-pulse' : 'bg-neutral-600'"
+                    :class="isEditorFocused ? 'bg-primary animate-pulse' : 'bg-base-content/30'"
                     :title="isEditorFocused ? 'Editing...' : 'Click to edit'"
                   ></span>
-                  <div class="w-px h-3.5 bg-neutral-700 mx-0.5"></div>
+                  <div class="w-px h-3.5 bg-base-300 mx-0.5"></div>
                   <button 
                     type="button" 
                     @click="toggleExpand" 
                     :title="isExpanded ? 'Collapse editor' : 'Expand editor vertically'"
-                    class="p-1 rounded text-neutral-400 hover:text-white hover:bg-neutral-700/60 active:scale-95 transition-all cursor-pointer"
+                    class="p-1 rounded text-base-content/60 hover:text-base-content hover:bg-base-300 active:scale-95 transition-all cursor-pointer"
                   >
                     <Minimize2Icon v-if="isExpanded" :size="13" />
                     <Maximize2Icon v-else :size="13" />
@@ -990,7 +990,7 @@ const handleCancel = () => {
               <div class="relative flex-1 min-h-0 cursor-text" @click.self="focusEditor">
                 <div 
                   ref="editorRef"
-                  class="w-full h-full overflow-y-auto p-3 bg-transparent text-sm focus:outline-none cursor-text prose prose-sm prose-invert max-w-none relative z-10 editor-scroll"
+                  class="w-full h-full overflow-y-auto p-3 bg-transparent text-sm focus:outline-none cursor-text prose prose-sm prose-invert max-w-none relative z-10 editor-scroll text-base-content"
                   contenteditable="true"
                   @input="onEditorInput"
                   @focus="onEditorFocus"
@@ -1004,7 +1004,7 @@ const handleCancel = () => {
                 <!-- Placeholder Overlay -->
                 <div
                   v-if="showPlaceholder"
-                  class="absolute inset-0 p-3 pointer-events-none text-sm text-neutral-500 select-none leading-relaxed overflow-hidden italic z-20 border border-transparent"
+                  class="absolute inset-0 p-3 pointer-events-none text-sm text-base-content/40 select-none leading-relaxed overflow-hidden italic z-20 border border-transparent"
                 >
                   {{ editorPlaceholder }}
                 </div>
@@ -1012,31 +1012,31 @@ const handleCancel = () => {
 
               <!-- Resize Handle -->
               <div 
-                class="h-3 w-full flex items-center justify-center cursor-row-resize bg-[#18181c] hover:bg-neutral-800 active:bg-neutral-700/80 transition-colors group select-none border-t border-neutral-800 flex-shrink-0"
+                class="h-3 w-full flex items-center justify-center cursor-row-resize bg-base-200 hover:bg-base-300 active:bg-base-300 transition-colors group select-none border-t border-base-300 flex-shrink-0"
                 @mousedown="startResize"
                 title="Drag to resize editor vertically"
               >
-                <div class="w-10 h-1 rounded-full bg-neutral-600 group-hover:bg-neutral-400 group-active:bg-neutral-300 transition-colors"></div>
+                <div class="w-10 h-1 rounded-full bg-base-content/30 group-hover:bg-base-content/60 transition-colors"></div>
               </div>
             </div>
           </section>
 
           <div class="px-4">
-            <hr class="border-neutral-800" />
+            <hr class="border-base-300" />
           </div>
 
           <!-- Bottom Section: AI Assistant -->
           <section class="flex-1 flex flex-col p-4 overflow-hidden">
-            <h2 class="text-[10px] font-bold text-neutral-400 mb-3 uppercase tracking-wider">AI ASSISTANT</h2>
+            <h2 class="text-[10px] font-bold text-base-content/60 mb-3 uppercase tracking-wider">AI ASSISTANT</h2>
             
             <!-- Chat History -->
             <div class="flex-1 overflow-y-auto space-y-4 pr-2" ref="chatContainerRef">
               <!-- Empty state simple message -->
               <div v-if="messages.length === 0" class="text-center text-xs mt-10 px-6 space-y-1.5 select-none leading-relaxed">
-                <p class="text-neutral-400">
+                <p class="text-base-content/70">
                   Ask me to generate {{ aiExample.description }}.
                 </p>
-                <p class="text-neutral-500 italic">
+                <p class="text-base-content/50 italic">
                   Try: "{{ aiExample.promptExample }}" to receive {{ aiExample.resultSummary }}.
                 </p>
               </div>
@@ -1045,21 +1045,21 @@ const handleCancel = () => {
                 class="flex flex-col max-w-[85%]" 
                 :class="msg.role === 'user' ? 'ml-auto items-end' : 'mr-auto items-start'">
                 
-                <div class="p-3 rounded-lg text-sm"
-                  :class="msg.role === 'user' ? 'bg-[#333333] text-neutral-200 rounded-tr-none' : 'bg-[#262626] text-neutral-300 rounded-tl-none border border-neutral-700'">
+                <div class="p-3 rounded-box text-sm"
+                  :class="msg.role === 'user' ? 'bg-primary/20 text-base-content rounded-tr-none border border-primary/30' : 'bg-base-300/80 text-base-content rounded-tl-none border border-base-300'">
                   
-                  <div v-if="msg.isGenerating" class="flex items-center space-x-2 text-neutral-400">
+                  <div v-if="msg.isGenerating" class="flex items-center space-x-2 text-base-content/60">
                     <Loader2Icon :size="16" class="animate-spin" />
                     <span>Generating...</span>
                   </div>
                   
                   <template v-else>
-                    <div v-if="msg.text" class="mb-2 prose prose-sm prose-invert max-w-none" v-html="parseMarkdown(msg.text)"></div>
+                    <div v-if="msg.text" class="mb-2 prose prose-sm prose-invert max-w-none text-base-content" v-html="parseMarkdown(msg.text)"></div>
                     <div v-if="msg.imageUrl" class="relative inline-block max-w-full group/msg-img mt-2">
-                      <img :src="msg.imageUrl" alt="Generated" class="max-w-full rounded-md border border-neutral-700 block" />
+                      <img :src="msg.imageUrl" alt="Generated" class="max-w-full rounded-box border border-base-300 block" />
                       <button 
                         type="button"
-                        class="absolute bottom-2 right-2 w-7 h-7 flex items-center justify-center rounded-md bg-neutral-900/85 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-700/80 shadow-lg backdrop-blur-sm transition-all hover:scale-110 active:scale-95 cursor-pointer"
+                        class="absolute bottom-2 right-2 w-7 h-7 flex items-center justify-center rounded-md bg-base-200/90 hover:bg-base-300 text-base-content border border-base-300 shadow-lg backdrop-blur-sm transition-all hover:scale-110 active:scale-95 cursor-pointer"
                         title="Ver imagen completa"
                         aria-label="Ver imagen completa"
                         @click.stop="openImagePreview(msg.imageUrl)"
@@ -1077,13 +1077,13 @@ const handleCancel = () => {
                   <div v-if="msg.role === 'model' && !msg.isGenerating && (msg.text || msg.imageUrl)" class="flex justify-end gap-1.5 mt-2.5">
                     <button
                       @click="handleReplaceContent(msg.text, msg.imageUrl)"
-                      class="badge badge-sm py-2.5 px-2 bg-neutral-800 text-neutral-400 hover:text-white hover:bg-neutral-700 border-neutral-700 cursor-pointer transition-colors"
+                      class="badge badge-sm py-2.5 px-2 bg-base-200 text-base-content/70 hover:text-base-content hover:bg-base-300 border-base-300 cursor-pointer transition-colors"
                     >
                       Replace
                     </button>
                     <button
                       @click="handleAddToContent(msg.text, msg.imageUrl)"
-                      class="badge badge-sm py-2.5 px-2 bg-[#d97706]/15 text-[#d97706] hover:bg-[#d97706] hover:text-black border-[#d97706]/30 cursor-pointer transition-colors font-medium"
+                      class="badge badge-sm py-2.5 px-2 bg-secondary/15 text-secondary hover:bg-secondary hover:text-secondary-content border-secondary/30 cursor-pointer transition-colors font-medium"
                     >
                       + Insert
                     </button>
@@ -1097,12 +1097,12 @@ const handleCancel = () => {
           </section>
 
         </div>
-        <div v-else class="p-6 text-center text-neutral-500 text-sm flex-1 flex items-center justify-center">
+        <div v-else class="p-6 text-center text-base-content/50 text-sm flex-1 flex items-center justify-center">
            No cell selected
         </div>
 
         <!-- Footer -->
-        <footer class="p-4 bg-[#18181b] border-t border-neutral-800 flex flex-col gap-4 flex-shrink-0">
+        <footer class="p-4 bg-base-200 border-t border-base-300 flex flex-col gap-4 flex-shrink-0">
           <div v-if="activeCell" class="flex flex-col gap-3">
             
             <div class="flex items-center justify-between">
@@ -1147,16 +1147,16 @@ const handleCancel = () => {
 
               <!-- Context Selection Dropdown -->
               <div class="dropdown dropdown-top dropdown-end" v-if="availableColumns.length > 0">
-                <div tabindex="0" role="button" class="btn btn-xs btn-warning text-black flex items-center gap-1">
+                <div tabindex="0" role="button" class="btn btn-xs btn-secondary text-secondary-content font-medium flex items-center gap-1">
                   <PlusCircleIcon :size="14" />
                   Context ({{ selectedContextColumns.length }})
                 </div>
-                <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-[#262626] border border-neutral-700 rounded-box w-72 mb-2 max-h-60 overflow-y-auto">
-                  <li class="menu-title px-2 py-1 text-[10px] text-neutral-500 font-bold uppercase tracking-wider">Include in Context</li>
+                <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-200 border border-base-300 rounded-box w-72 mb-2 max-h-60 overflow-y-auto">
+                  <li class="menu-title px-2 py-1 text-[10px] text-base-content/50 font-bold uppercase tracking-wider">Include in Context</li>
                   <li v-for="col in availableColumns" :key="col.id">
-                    <label class="label cursor-pointer flex justify-start gap-2 py-1.5 px-2 hover:bg-[#333333] rounded-md">
-                      <input type="checkbox" :value="col.id" v-model="selectedContextColumns" class="checkbox checkbox-xs checkbox-warning border-neutral-500 rounded-sm" />
-                      <span class="label-text text-neutral-300 text-xs truncate">{{ col.name }}</span>
+                    <label class="label cursor-pointer flex justify-start gap-2 py-1.5 px-2 hover:bg-base-300 rounded-md">
+                      <input type="checkbox" :value="col.id" v-model="selectedContextColumns" class="checkbox checkbox-xs checkbox-secondary border-base-300 rounded-sm" />
+                      <span class="label-text text-base-content text-xs truncate">{{ col.name }}</span>
                     </label>
                   </li>
                 </ul>
@@ -1172,13 +1172,13 @@ const handleCancel = () => {
                 @keydown="handleKeyDown"
                 @input="adjustTextareaHeight"
                 :placeholder="chatInputPlaceholder"
-                class="w-full bg-[#2a2a2a] border border-neutral-700 rounded-2xl py-2.5 pl-4 pr-12 text-sm text-neutral-200 focus:outline-none focus:border-neutral-500 placeholder-neutral-500 resize-none overflow-y-auto min-h-[42px] max-h-[300px] leading-relaxed block"
+                class="w-full bg-base-100 border border-base-300 rounded-2xl py-2.5 pl-4 pr-12 text-sm text-base-content focus:outline-none focus:border-primary placeholder:text-base-content/40 resize-none overflow-y-auto min-h-[42px] max-h-[300px] leading-relaxed block"
                 :disabled="isGenerating"
               ></textarea>
               <button 
                 @click="handleSendMessage"
                 :disabled="!inputValue.trim() || isGenerating"
-                class="absolute right-2 bottom-1.5 p-2 text-neutral-400 hover:text-neutral-200 disabled:opacity-50 disabled:hover:text-neutral-400 transition-colors rounded-lg"
+                class="absolute right-2 bottom-1.5 p-2 text-base-content/40 hover:text-primary disabled:opacity-30 transition-colors rounded-lg"
               >
                 <SendIcon :size="18" />
               </button>
@@ -1190,7 +1190,7 @@ const handleCancel = () => {
               type="button" 
               @click="handleCancel" 
               :disabled="isUploading" 
-              class="flex-1 flex justify-center items-center py-3 px-4 rounded-md border border-neutral-700 hover:border-neutral-600 bg-neutral-800/40 hover:bg-neutral-800 text-neutral-300 hover:text-white font-medium transition-colors text-sm cursor-pointer disabled:opacity-50"
+              class="btn btn-outline border-base-300 text-base-content hover:bg-base-300 font-medium flex-1"
             >
               Cancel
             </button>
@@ -1198,7 +1198,7 @@ const handleCancel = () => {
               type="button" 
               @click="saveAndClose" 
               :disabled="isUploading" 
-              class="flex-[2] flex justify-center items-center gap-2 bg-[#e53e3e] hover:bg-red-600 disabled:opacity-50 disabled:hover:bg-[#e53e3e] text-white font-bold py-3 px-4 rounded-md transition-colors text-sm cursor-pointer shadow-md shadow-red-950/20"
+              class="btn btn-primary font-bold flex-[2] shadow-md shadow-primary/20"
             >
               <Loader2Icon v-if="isUploading" :size="16" class="animate-spin" />
               <span>{{ isUploading ? 'Uploading & Saving...' : 'Save Changes' }}</span>

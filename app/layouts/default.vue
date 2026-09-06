@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-[#141414] text-white font-sans selection:bg-rose-500/30">
+  <div class="min-h-screen bg-base-100 text-base-content font-sans selection:bg-primary/30">
     <AppHeader />
     <slot />
   </div>

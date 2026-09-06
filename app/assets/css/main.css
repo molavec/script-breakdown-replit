@@ -2,14 +2,48 @@
 @plugin "@tailwindcss/typography";
 @plugin "daisyui";
 
+@plugin "daisyui/theme" {
+  name: "abyss";
+  default: true;
+  prefersdark: true;
+  color-scheme: "dark";
+  --color-base-100: oklch(13% 0.028 261.692);
+  --color-base-200: oklch(21% 0.034 264.665);
+  --color-base-300: oklch(27% 0.033 256.848);
+  --color-base-content: oklch(96% 0.003 264.542);
+  --color-primary: #D32B41;
+  --color-primary-content: oklch(97% 0 0);
+  --color-secondary: #F38927;
+  --color-secondary-content: oklch(28% 0.109 3.907);
+  --color-accent: oklch(53% 0.157 131.589);
+  --color-accent-content: oklch(97% 0.001 106.424);
+  --color-neutral: oklch(27% 0.033 256.848);
+  --color-neutral-content: oklch(98% 0.002 247.839);
+  --color-info: oklch(58% 0.158 241.966);
+  --color-info-content: oklch(98% 0.019 200.873);
+  --color-success: oklch(62% 0.194 149.214);
+  --color-success-content: oklch(98% 0.014 180.72);
+  --color-warning: oklch(83% 0.128 66.29);
+  --color-warning-content: oklch(20% 0 0);
+  --color-error: oklch(63% 0.237 25.331);
+  --color-error-content: oklch(97% 0.013 17.38);
+  --radius-selector: 0.5rem;
+  --radius-field: 0.5rem;
+  --radius-box: 0.5rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 0;
+  --noise: 0;
+}
+
 .prose {
-  color: white;
+  color: var(--color-base-content);
 }
 
 .prose :where(strong):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  color: white;
+  color: var(--color-base-content);
 }
-
 
 .prose-sm {
   :where(p):not(:where([class~="not-prose"], [class~="not-prose"] *)) {

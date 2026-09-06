@@ -66,7 +66,7 @@ const handleNavigateOverview = () => {
 
     <!-- Sidebar Aside -->
     <aside 
-      class="fixed inset-y-0 left-0 z-40 bg-[#1c1c1f] text-white flex flex-col h-full transition-all duration-300 ease-in-out lg:static lg:z-auto shrink-0 overflow-hidden"
+      class="fixed inset-y-0 left-0 z-40 bg-base-200 text-base-content flex flex-col h-full transition-all duration-300 ease-in-out lg:static lg:z-auto shrink-0 overflow-hidden"
       :class="[
         // Mobile / Tablet: slide in/out overlay
         isOpen 
@@ -74,7 +74,7 @@ const handleNavigateOverview = () => {
           : '-translate-x-full lg:translate-x-0',
         // Desktop: in-flow collapsible width
         isOpen 
-          ? 'lg:w-64 lg:border-r border-neutral-800 lg:opacity-100' 
+          ? 'lg:w-64 lg:border-r border-base-300 lg:opacity-100' 
           : 'lg:w-0 lg:border-r-0 lg:opacity-0'
       ]"
     >
@@ -85,7 +85,7 @@ const handleNavigateOverview = () => {
           <div class="flex items-center justify-between mb-4">
             <NuxtLink 
               to="/" 
-              class="text-xs text-neutral-400 hover:text-white flex items-center gap-2 transition-colors"
+              class="text-xs text-base-content/60 hover:text-base-content flex items-center gap-2 transition-colors"
               @click="handleNavigateOverview"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
@@ -95,7 +95,7 @@ const handleNavigateOverview = () => {
             <!-- Close button for Mobile / Tablet screens -->
             <button 
               type="button" 
-              class="lg:hidden text-neutral-400 hover:text-white p-1 rounded-md hover:bg-neutral-800 transition-colors"
+              class="lg:hidden text-base-content/60 hover:text-base-content p-1 rounded-md hover:bg-base-300 transition-colors"
               @click="close"
               aria-label="Close sidebar"
             >
@@ -106,13 +106,13 @@ const handleNavigateOverview = () => {
           </div>
           
           <div class="space-y-1.5" v-if="project">
-            <h2 class="text-xl font-bold truncate px-1">{{ project.name }}</h2>
+            <h2 class="text-xl font-bold truncate px-1 text-base-content">{{ project.name }}</h2>
             <NuxtLink 
               :to="`/projects/${project.id}`" 
               class="text-xs flex items-center gap-2 py-1.5 px-2.5 rounded-lg transition-colors group"
               :class="isProjectOverview 
-                ? 'bg-neutral-800 text-rose-400 font-semibold border border-neutral-700' 
-                : 'text-neutral-400 hover:text-rose-300 hover:bg-neutral-800/40'"
+                ? 'bg-primary/10 text-primary font-semibold border border-primary/30' 
+                : 'text-base-content/60 hover:text-primary hover:bg-base-300/50'"
               @click="handleNavigateOverview"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
@@ -121,15 +121,15 @@ const handleNavigateOverview = () => {
             </NuxtLink>
           </div>
           <div v-else class="h-10 flex items-center px-1">
-             <span class="loading loading-spinner loading-sm text-neutral-500"></span>
+             <span class="loading loading-spinner loading-sm text-base-content/50"></span>
           </div>
         </div>
 
         <!-- Search -->
         <div class="mb-4">
-          <label class="input input-sm input-bordered flex items-center gap-2 bg-[#121214] border-neutral-700 text-sm">
+          <label class="input input-sm input-bordered flex items-center gap-2 bg-base-100 border-base-300 text-sm focus-within:border-primary">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4 opacity-70"><path fill-rule="evenodd" d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z" clip-rule="evenodd" /></svg>
-            <input type="text" class="grow" placeholder="Search scenes..." v-model="searchQuery" />
+            <input type="text" class="grow bg-transparent text-base-content" placeholder="Search scenes..." v-model="searchQuery" />
           </label>
         </div>
 
@@ -137,13 +137,13 @@ const handleNavigateOverview = () => {
         <NuxtLink 
           v-if="project"
           :to="`/projects/${project.id}/scenes/create`" 
-          class="btn btn-sm btn-error w-full mb-6"
+          class="btn btn-sm btn-primary w-full mb-6 shadow-sm"
           @click="isTabletOrMobile() ? close() : null"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
           Add Scene
         </NuxtLink>
-        <button v-else class="btn btn-sm btn-error w-full mb-6" disabled>
+        <button v-else class="btn btn-sm btn-primary w-full mb-6" disabled>
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
           Add Scene
         </button>

@@ -83,7 +83,7 @@ const handleDelete = async () => {
 </script>
 
 <template>
-  <div class="h-screen flex flex-col bg-[#141414] font-sans overflow-hidden">
+  <div class="h-screen flex flex-col bg-base-100 text-base-content font-sans overflow-hidden">
     <!-- Header General (App) -->
     <AppHeader />
 
@@ -93,16 +93,16 @@ const handleDelete = async () => {
       <BreakdownSidebar />
 
       <!-- Edit Scene Main Content -->
-      <div class="flex-1 overflow-y-auto bg-[#121214] text-white p-6 md:p-10">
+      <div class="flex-1 overflow-y-auto bg-base-100 text-base-content p-6 md:p-10">
         <div class="max-w-3xl mx-auto space-y-8 pb-16">
           
           <!-- Top Navigation & Breadcrumbs Bar -->
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-800 pb-5">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-base-300 pb-5">
             <div class="flex items-center gap-3">
               <button 
                 type="button"
                 @click="handleBack"
-                class="btn btn-sm btn-outline border-neutral-700 hover:border-neutral-500 text-neutral-300 hover:text-white flex items-center gap-1.5 px-3"
+                class="btn btn-sm btn-outline border-base-300 hover:bg-base-300 text-base-content flex items-center gap-1.5 px-3"
                 title="Return to previous view"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -111,14 +111,13 @@ const handleDelete = async () => {
                 <span>Back</span>
               </button>
 
-              <div class="flex items-center gap-2 text-xs font-mono text-neutral-400">
-                <NuxtLink to="/" class="hover:text-white transition-colors">Projects</NuxtLink>
-                <span>/</span>
-                <NuxtLink :to="`/projects/${projectId}`" class="hover:text-white transition-colors">{{ project?.name || 'Project' }}</NuxtLink>
-                <span>/</span>
-                <span class="text-neutral-500">Scenes</span>
-                <span>/</span>
-                <span class="text-white font-semibold">{{ scene ? `Scene ${scene.order}` : 'Not Found' }}</span>
+              <div class="breadcrumbs text-xs font-mono text-base-content/60 p-0">
+                <ul>
+                  <li><NuxtLink to="/" class="hover:text-primary transition-colors">Projects</NuxtLink></li>
+                  <li><NuxtLink :to="`/projects/${projectId}`" class="hover:text-primary transition-colors">{{ project?.name || 'Project' }}</NuxtLink></li>
+                  <li class="text-base-content/50">Scenes</li>
+                  <li class="text-base-content font-semibold">{{ scene ? `Scene ${scene.order}` : 'Not Found' }}</li>
+                </ul>
               </div>
             </div>
 
@@ -128,7 +127,7 @@ const handleDelete = async () => {
                 v-if="scene"
                 type="button" 
                 @click="handleDelete" 
-                class="btn btn-sm btn-ghost text-red-400 hover:bg-red-950/40 hover:text-red-300"
+                class="btn btn-sm btn-ghost text-error hover:bg-error/10"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-1"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
                 Delete
@@ -138,7 +137,7 @@ const handleDelete = async () => {
                 v-if="scene"
                 type="button" 
                 @click="handleSave"
-                class="btn btn-sm btn-error text-white font-semibold px-5 shadow-lg shadow-rose-950/40 flex items-center gap-1.5"
+                class="btn btn-sm btn-primary font-semibold px-5 shadow-lg shadow-primary/20 flex items-center gap-1.5"
                 :disabled="isSubmitting"
               >
                 <span v-if="isSubmitting" class="loading loading-spinner loading-xs"></span>
@@ -149,22 +148,22 @@ const handleDelete = async () => {
           </div>
 
           <!-- Toast Notification -->
-          <div v-if="showToast" class="alert alert-success bg-emerald-950/80 border border-emerald-500/50 text-emerald-200 text-sm py-2.5 px-4 shadow-lg transition-all flex items-center justify-between">
+          <div v-if="showToast" class="alert alert-success text-sm py-2.5 px-4 shadow-lg flex items-center justify-between">
             <div class="flex items-center gap-2">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
               <span>Scene updated successfully</span>
             </div>
-            <button @click="showToast = false" class="text-xs text-emerald-400 hover:text-white">✕</button>
+            <button @click="showToast = false" class="btn btn-ghost btn-xs">✕</button>
           </div>
 
           <!-- Not Found State -->
-          <div v-if="!scene" class="bg-[#1a1a1e] border border-neutral-800 rounded-xl p-12 text-center space-y-4">
-            <div class="w-12 h-12 rounded-full bg-neutral-800 flex items-center justify-center mx-auto text-neutral-400">
+          <div v-if="!scene" class="card bg-base-200 border border-base-300 rounded-box p-12 text-center space-y-4 shadow-sm">
+            <div class="w-12 h-12 rounded-full bg-base-300 flex items-center justify-center mx-auto text-base-content/60">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
             </div>
-            <h2 class="text-xl font-bold text-white">Scene not found</h2>
-            <p class="text-sm text-neutral-400">The scene identifier "{{ sceneId }}" does not exist in this project.</p>
-            <button @click="handleBack" class="btn btn-sm btn-outline border-neutral-700 text-neutral-300">
+            <h2 class="text-xl font-bold text-base-content">Scene not found</h2>
+            <p class="text-sm text-base-content/60">The scene identifier "{{ sceneId }}" does not exist in this project.</p>
+            <button @click="handleBack" class="btn btn-sm btn-outline border-base-300 text-base-content hover:bg-base-300">
               Return to Project
             </button>
           </div>
@@ -172,56 +171,56 @@ const handleDelete = async () => {
           <!-- Form Content -->
           <div v-else class="space-y-8">
             <!-- Title Card -->
-            <div class="bg-[#1a1a1e] border border-neutral-800 rounded-xl p-6 flex items-center gap-4">
-              <div class="w-12 h-12 rounded-xl flex items-center justify-center text-xl shrink-0 shadow-inner bg-rose-500/20 border-2 border-rose-500">
+            <div class="card bg-base-200 border border-base-300 rounded-box p-6 flex flex-row items-center gap-4 shadow-sm">
+              <div class="w-12 h-12 rounded-box flex items-center justify-center text-xl shrink-0 bg-primary/10 border border-primary/20 text-primary">
                 <span>🎬</span>
               </div>
               <div>
-                <h1 class="text-2xl font-bold text-white tracking-tight">Edit Scene {{ scene.order }}</h1>
-                <p class="text-xs text-neutral-400 mt-0.5">
+                <h1 class="text-2xl font-bold text-base-content tracking-tight">Edit Scene {{ scene.order }}</h1>
+                <p class="text-xs text-base-content/60 mt-0.5">
                   Update scene information and order.
                 </p>
               </div>
             </div>
 
             <!-- Details Section -->
-            <div class="bg-[#1a1a1e] border border-neutral-800 rounded-xl p-6 space-y-6">
+            <div class="card bg-base-200 border border-base-300 rounded-box p-6 space-y-6 shadow-sm">
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Scene Order -->
                 <div class="space-y-2">
-                  <label class="text-xs font-semibold text-neutral-300 uppercase tracking-wider block">
+                  <label class="text-xs font-semibold text-base-content/70 uppercase tracking-wider block">
                     Scene Order
                   </label>
                   <input 
                     type="number" 
                     v-model="formData.order" 
                     placeholder="e.g. 1" 
-                    class="input input-bordered w-full bg-[#121214] border-neutral-700 text-white text-sm focus:border-rose-500"
+                    class="input input-bordered w-full bg-base-100 border-base-300 text-base-content text-sm focus:border-primary"
                   />
-                  <span class="text-[10px] text-neutral-500 font-mono">Determines the order of the scene in the breakdown.</span>
+                  <span class="text-[10px] text-base-content/50 font-mono">Determines the order of the scene in the breakdown.</span>
                 </div>
               </div>
 
               <!-- Synopsis -->
               <div class="space-y-2">
-                <label class="text-xs font-semibold text-neutral-300 uppercase tracking-wider block">
+                <label class="text-xs font-semibold text-base-content/70 uppercase tracking-wider block">
                   Synopsis
                 </label>
                 <textarea 
                   v-model="formData.synopsis" 
                   rows="4" 
                   placeholder="Describe the action taking place in the scene..." 
-                  class="textarea textarea-bordered w-full bg-[#121214] border-neutral-700 text-white text-sm focus:border-rose-500 leading-relaxed"
+                  class="textarea textarea-bordered w-full bg-base-100 border-base-300 text-base-content text-sm focus:border-primary leading-relaxed"
                 ></textarea>
               </div>
             </div>
 
             <!-- Bottom Actions -->
-            <div class="flex items-center justify-between pt-4">
+            <div class="flex items-center justify-between pt-4 border-t border-base-300">
               <button 
                 type="button" 
                 @click="handleBack"
-                class="btn btn-outline border-neutral-700 text-neutral-300 hover:text-white"
+                class="btn btn-outline border-base-300 text-base-content hover:bg-base-300"
                 :disabled="isSubmitting"
               >
                 Back
@@ -230,7 +229,7 @@ const handleDelete = async () => {
               <button 
                 type="button" 
                 @click="handleSave"
-                class="btn btn-error text-white font-semibold px-8 shadow-xl shadow-rose-950/50"
+                class="btn btn-primary font-semibold px-8 shadow-lg shadow-primary/20"
                 :disabled="isSubmitting"
               >
                 <span v-if="isSubmitting" class="loading loading-spinner loading-xs"></span>

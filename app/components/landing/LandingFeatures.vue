@@ -5,55 +5,55 @@ const features = [
     description: 'Deconstruct entire scripts into clean scene cards. Categorize by Interior/Exterior, Day/Night, location, and page count automatically.',
     icon: 'film',
     badge: 'Core Workflow',
-    badgeColor: 'text-rose-400 bg-rose-500/10 border-rose-500/20',
+    badgeClass: 'badge-primary badge-outline',
   },
   {
     title: 'Technical Shot Lists',
     description: 'Map out camera framing (Wide, Medium, Close-Up), angles (High, Low, Dutch), and movements (Dolly, Steadicam, Handheld) with zero friction.',
     icon: 'camera',
     badge: 'Cinematography',
-    badgeColor: 'text-amber-400 bg-amber-500/10 border-amber-500/20',
+    badgeClass: 'badge-secondary badge-outline',
   },
   {
     title: 'Gemini AI Assistant',
     description: 'Harness Google Gemini AI directly inside your breakdown table. Generate creative shot suggestions, scene breakdowns, and visual prompts.',
     icon: 'sparkles',
     badge: 'AI Engine',
-    badgeColor: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20',
+    badgeClass: 'badge-success badge-outline',
   },
   {
     title: 'Customizable Production Columns',
     description: 'Add, reorder, and customize breakdown columns for Cast, Wardrobe, Props, SFX, Stunts, Sound, and Visual Effects.',
     icon: 'columns',
     badge: 'Customizable',
-    badgeColor: 'text-blue-400 bg-blue-500/10 border-blue-500/20',
+    badgeClass: 'badge-info badge-outline',
   },
   {
     title: 'Real-Time Shoot Metrics',
     description: 'Keep track of total page counts, estimated setups, shot counts, and production readiness so your crew stays on schedule.',
     icon: 'bar-chart',
     badge: 'Analytics',
-    badgeColor: 'text-purple-400 bg-purple-500/10 border-purple-500/20',
+    badgeClass: 'badge-accent badge-outline',
   },
   {
     title: 'Isolated & Secure Storage',
     description: 'Your scripts, production stills, and storyboards are scoped strictly to your account with enterprise security standards.',
     icon: 'shield',
     badge: 'Security',
-    badgeColor: 'text-cyan-400 bg-cyan-500/10 border-cyan-500/20',
+    badgeClass: 'badge-warning badge-outline',
   },
 ]
 </script>
 
 <template>
-  <section id="features" class="py-20 sm:py-28 relative z-10 border-t border-white/5 bg-[#0d0d10]">
+  <section id="features" class="py-20 sm:py-28 relative z-10 border-t border-base-300/40 bg-base-100">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center max-w-3xl mx-auto mb-16">
-        <h2 class="text-xs font-mono uppercase tracking-widest text-rose-400 font-semibold">Features Built for Film Crews</h2>
-        <p class="text-3xl sm:text-4xl font-extrabold text-white mt-2 tracking-tight">
+        <h2 class="text-xs font-mono uppercase tracking-widest text-primary font-semibold">Features Built for Film Crews</h2>
+        <p class="text-3xl sm:text-4xl font-extrabold text-base-content mt-2 tracking-tight">
           Everything You Need Before Calling "Action"
         </p>
-        <p class="text-neutral-400 mt-3 text-sm sm:text-base leading-relaxed">
+        <p class="text-base-content/70 mt-3 text-sm sm:text-base leading-relaxed">
           From first script draft to principal photography, Script Breakdown equips every department head with clear, structured technical breakdowns.
         </p>
       </div>
@@ -63,11 +63,11 @@ const features = [
         <div 
           v-for="feat in features" 
           :key="feat.title"
-          class="p-6 sm:p-8 rounded-2xl bg-[#131318] border border-white/5 hover:border-white/15 transition-all duration-300 hover:shadow-2xl hover:shadow-black/50 group flex flex-col justify-between"
+          class="card p-6 sm:p-8 bg-base-200 border border-base-300 hover:border-primary/40 transition-all duration-300 hover:shadow-2xl hover:shadow-base-content/5 group flex flex-col justify-between"
         >
           <div>
             <div class="flex items-center justify-between gap-2 mb-5">
-              <div class="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white group-hover:scale-110 group-hover:bg-[#ff0033]/20 group-hover:text-[#ff0033] transition-all">
+              <div class="w-12 h-12 rounded-xl bg-base-300/50 border border-base-300 flex items-center justify-center text-base-content group-hover:scale-110 group-hover:bg-primary/20 group-hover:text-primary transition-all">
                 <!-- Film Icon -->
                 <svg v-if="feat.icon === 'film'" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <rect width="20" height="20" x="2" y="2" rx="2.18" ry="2.18"/><line x1="7" x2="7" y1="2" y2="22"/><line x1="17" x2="17" y1="2" y2="22"/><line x1="2" x2="22" y1="12" y2="12"/><line x1="2" x2="7" y1="7" y2="7"/><line x1="2" x2="7" y1="17" y2="17"/><line x1="17" x2="22" y1="17" y2="17"/><line x1="17" x2="22" y1="7" y2="7"/>
@@ -94,20 +94,20 @@ const features = [
                 </svg>
               </div>
 
-              <span :class="['badge badge-sm border font-mono text-[11px]', feat.badgeColor]">
+              <span :class="['badge badge-sm font-mono text-[11px]', feat.badgeClass]">
                 {{ feat.badge }}
               </span>
             </div>
 
-            <h3 class="text-lg font-bold text-white tracking-tight group-hover:text-rose-200 transition-colors">
+            <h3 class="text-lg font-bold text-base-content tracking-tight group-hover:text-primary transition-colors">
               {{ feat.title }}
             </h3>
-            <p class="text-neutral-400 text-xs sm:text-sm mt-2 leading-relaxed">
+            <p class="text-base-content/70 text-xs sm:text-sm mt-2 leading-relaxed">
               {{ feat.description }}
             </p>
           </div>
 
-          <div class="mt-6 pt-4 border-t border-white/5 flex items-center gap-1.5 text-xs font-medium text-neutral-400 group-hover:text-rose-400 transition-colors">
+          <div class="mt-6 pt-4 border-t border-base-300/60 flex items-center gap-1.5 text-xs font-medium text-base-content/60 group-hover:text-primary transition-colors">
             <span>Learn more</span>
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
           </div>

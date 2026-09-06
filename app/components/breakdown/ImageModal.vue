@@ -46,15 +46,15 @@ watch(() => props.src, (newVal) => {
       class="modal modal-open modal-middle z-[99999]"
       @click.self="emit('close')"
     >
-      <div class="modal-box max-w-5xl w-auto p-4 bg-neutral-900 border border-neutral-700/80 rounded-2xl shadow-2xl flex flex-col items-center justify-center relative overflow-hidden my-auto mx-4">
+      <div class="modal-box max-w-5xl w-auto p-4 bg-base-200 border border-base-300 rounded-box shadow-2xl flex flex-col items-center justify-center relative overflow-hidden my-auto mx-4">
         
         <!-- Header Controls -->
-        <div class="absolute top-3 right-3 flex items-center gap-1.5 z-20 bg-neutral-900/80 backdrop-blur-sm p-1 rounded-full border border-neutral-700/60 shadow-md">
+        <div class="absolute top-3 right-3 flex items-center gap-1.5 z-20 bg-base-300/80 backdrop-blur-sm p-1 rounded-full border border-base-300 shadow-md">
           <a 
             :href="src" 
             target="_blank" 
             rel="noopener noreferrer" 
-            class="btn btn-xs btn-circle btn-ghost text-neutral-400 hover:text-white"
+            class="btn btn-xs btn-circle btn-ghost text-base-content/70 hover:text-base-content"
             title="Abrir imagen en pestaña nueva"
             aria-label="Abrir imagen en pestaña nueva"
           >
@@ -66,7 +66,7 @@ watch(() => props.src, (newVal) => {
           </a>
           <button 
             type="button" 
-            class="btn btn-xs btn-circle btn-ghost text-neutral-400 hover:text-white"
+            class="btn btn-xs btn-circle btn-ghost text-base-content/70 hover:text-base-content"
             title="Cerrar"
             aria-label="Cerrar modal"
             @click="emit('close')"
@@ -83,7 +83,7 @@ watch(() => props.src, (newVal) => {
           <img 
             :src="src" 
             :alt="alt || 'Vista previa completa'" 
-            class="max-h-[80vh] max-w-full object-contain rounded-xl shadow-2xl border border-neutral-800 select-none transition-transform" 
+            class="max-h-[80vh] max-w-full object-contain rounded-box shadow-2xl border border-base-300 select-none transition-transform" 
           />
         </div>
       </div>

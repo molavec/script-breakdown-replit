@@ -44,38 +44,38 @@ const budgetCurrencySymbol = computed(() => {
 </script>
 
 <template>
-  <div class="flex flex-col h-full bg-[#121214] text-white">
+  <div class="flex flex-col h-full bg-base-100 text-base-content">
     <!-- Scene Header -->
-    <div class="px-6 py-5 flex flex-wrap gap-2 items-start justify-between shrink-0">
+    <div class="px-6 py-4 flex flex-wrap gap-2 items-start justify-between shrink-0 border-b border-base-300 bg-base-100">
       <div v-if="activeScene">
         <div class="flex items-center gap-2 mb-1">
-          <h1 class="text-2xl font-bold">Scene {{ activeScene?.order }}</h1>
+          <h1 class="text-2xl font-bold text-base-content">Scene {{ activeScene?.order }}</h1>
           <NuxtLink 
             :to="`/projects/${project?.id}/scenes/${activeScene.id}`"
-            class="btn btn-xs btn-ghost btn-square text-neutral-400 hover:text-white hover:bg-neutral-700/80 transition-colors"
+            class="btn btn-xs btn-ghost btn-square text-base-content/60 hover:text-primary hover:bg-base-300 transition-colors"
             title="Configure Scene"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1-1-1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+              <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
               <circle cx="12" cy="12" r="3"/>
             </svg>
           </NuxtLink>
         </div>
         <div :class="['transition-all duration-300', isSceneInfoExpanded ? 'block' : 'hidden']">
-          <p class="text-xs font-bold text-neutral-300 font-mono tracking-wider">
+          <p class="text-xs font-bold text-base-content/80 font-mono tracking-wider">
             Shots: {{ sceneShotsCount }} - Budget: {{ budgetCurrencySymbol }}{{ sceneBudget }}
           </p>
-          <p v-if="activeScene.synopsis" class="text-xs text-neutral-400 font-mono tracking-wider mt-1">{{ activeScene.synopsis }}</p>
+          <p v-if="activeScene.synopsis" class="text-xs text-base-content/60 font-mono tracking-wider mt-1">{{ activeScene.synopsis }}</p>
         </div>
       </div>
       <div v-else>
-        <h1 class="text-2xl font-bold text-neutral-500">No scene selected</h1>
+        <h1 class="text-2xl font-bold text-base-content/40">No scene selected</h1>
       </div>
       
-      <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2.5">
         <button 
           v-if="activeScene"
-          class="btn btn-sm btn-ghost btn-square text-neutral-400 hover:text-white" 
+          class="btn btn-sm btn-ghost btn-square text-base-content/60 hover:text-base-content" 
           @click="isSceneInfoExpanded = !isSceneInfoExpanded"
         >
           <svg v-if="!isSceneInfoExpanded" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
@@ -87,7 +87,7 @@ const budgetCurrencySymbol = computed(() => {
         </button>
 
         <!-- View Toggle -->
-        <label class="swap swap-rotate btn btn-sm btn-ghost btn-square text-neutral-400 hover:text-white" title="Toggle View">
+        <label class="swap swap-rotate btn btn-sm btn-ghost btn-square text-base-content/60 hover:text-base-content" title="Toggle View">
           <input type="checkbox" :checked="view === 'card'" @change="view = view === 'table' ? 'card' : 'table'" />
           
           <!-- Table Icon -->
@@ -97,10 +97,10 @@ const budgetCurrencySymbol = computed(() => {
           <svg class="swap-on fill-current w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 5v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2zm2 0h14v5H5V5zm0 14v-7h14v7H5z"/></svg>
         </label>
 
-        <button @click="addRow" class="btn btn-sm btn-outline border-neutral-700 text-neutral-300 hover:text-white">
+        <button @click="addRow" class="btn btn-sm btn-primary font-semibold shadow-sm">
           Add Shot
         </button>
-        <button class="btn btn-sm btn-outline border-neutral-700 text-neutral-300 hover:text-white" @click="addColumn()">
+        <button class="btn btn-sm btn-outline border-base-300 text-base-content hover:bg-base-300" @click="addColumn()">
           Add Column
         </button>
       </div>
@@ -113,3 +113,4 @@ const budgetCurrencySymbol = computed(() => {
     </div>
   </div>
 </template>
+
