@@ -1,8 +1,5 @@
 # UX
 
-Fix: aumentar el tamaño de los textos en un 20% en tamaños iguales y menores a tablet para el card
-Fix: aumentar el tamaño de los textos en un 20% en tamaños iguales y menores a tablet para el CellDrawer.
-
 Fix: Ajustar mensaje para cuando se acaben los creditos.
 
 Fix: Separar en componentes los contenidos de Cell Drawer, para tener mejor mantenibilidad.

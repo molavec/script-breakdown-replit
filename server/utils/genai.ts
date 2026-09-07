@@ -1,8 +1,8 @@
 import { GoogleGenAI } from "@google/genai";
 import { checkAndConsumeTokens } from "./tokens";
 
-export const TOKEN_COST_IMAGE = 5;
-export const TOKEN_COST_TEXT = 1;
+export const TOKEN_COST_IMAGE = parseInt(process.env.TOKEN_COST_IMAGE || '5', 10);
+export const TOKEN_COST_TEXT = parseInt(process.env.TOKEN_COST_TEXT || '1', 10);
 
 let _ai: GoogleGenAI | null = null;
 

@@ -740,13 +740,14 @@ const handleSendMessage = async () => {
          msg.isGenerating = false;
        }
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error generating content:", error);
     const msgIndex = messages.value.findIndex(m => m.id === loadingMsgId);
     if (msgIndex !== -1) {
        const msg = messages.value[msgIndex];
        if (msg) {
-         msg.text = "Sorry, I encountered an error generating the content.";
+         const errorMessage = error?.data?.statusMessage || error?.statusMessage || error?.message || "Sorry, I encountered an error generating the content.";
+         msg.text = errorMessage;
          msg.isGenerating = false;
        }
     }

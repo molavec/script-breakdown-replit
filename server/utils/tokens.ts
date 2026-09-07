@@ -52,9 +52,11 @@ export async function checkAndConsumeTokens(userId: string, tokensToConsume: num
   newMonthly += tokensToConsume;
 
   if (newDaily > dailyLimit || newMonthly > monthlyLimit) {
+    const textCost = process.env.TOKEN_COST_TEXT || '1';
+    const imageCost = process.env.TOKEN_COST_IMAGE || '5';
     throw createError({
       statusCode: 429,
-      statusMessage: `Token limit exceeded. Daily usage: ${newDaily}/${dailyLimit}. Monthly usage: ${newMonthly}/${monthlyLimit}.`,
+      statusMessage: `You have run out of tokens. Remember that text generation requires ${textCost} credit(s) and image generation requires ${imageCost} credits. Please check your billing to upgrade your plan. (Daily: ${newDaily}/${dailyLimit}, Monthly: ${newMonthly}/${monthlyLimit})`,
     });
   }
 

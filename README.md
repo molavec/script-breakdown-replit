@@ -74,6 +74,8 @@ database and AI-backed features:
 | `PRO_PLAN_MONTHLY_TOKEN_LIMIT` | Maximum monthly AI token consumption allowed for users on the Pro plan (default: `7500`). |
 | `TEAM_PLAN_DAILY_TOKEN_LIMIT` | Maximum daily AI token consumption allowed for users on the Team plan (default: `1000`). |
 | `TEAM_PLAN_MONTHLY_TOKEN_LIMIT` | Maximum monthly AI token consumption allowed for users on the Team plan (default: `30000`). |
+| `TOKEN_COST_IMAGE` | AI token cost for generating an image (default: `5`). |
+| `TOKEN_COST_TEXT` | AI token cost for generating text (default: `1`). |
 
 Do not commit secret values. The repository contains no credentials. The
 database and AI endpoints will not be fully usable until these values are
