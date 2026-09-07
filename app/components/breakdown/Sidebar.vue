@@ -136,7 +136,7 @@ const handleNavigateOverview = () => {
         <!-- Add Scene -->
         <NuxtLink 
           v-if="project"
-          :to="`/projects/${project.id}/scenes/create`" 
+          :to="`/projects/${project.id}/scenes/new`" 
           class="btn btn-sm btn-primary w-full mb-6 shadow-sm"
           @click="isTabletOrMobile() ? close() : null"
         >

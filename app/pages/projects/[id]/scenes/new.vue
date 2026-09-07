@@ -12,6 +12,7 @@ const router = useRouter();
 const projectId = computed(() => (route.params.id as string) || '1');
 
 const { project, addScene } = useProjectBreakdown();
+const { createShot } = useShotData();
 
 const formData = reactive({
   order: 1,
@@ -37,6 +38,9 @@ const handleCreate = async () => {
       order: formData.order,
       synopsis: formData.synopsis
     });
+    
+    // Automatically create an initial shot for the new scene
+    await createShot(newScene.id, {});
     
     // Redirect to the newly created scene
     navigateTo(`/projects/${projectId.value}/scene/${newScene.id}`);
@@ -107,10 +111,10 @@ const handleCreate = async () => {
             <!-- Details Section -->
             <div class="card bg-base-200 border border-base-300 rounded-box p-6 space-y-6 shadow-sm">
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Scene Order -->
+                <!-- Scene Number -->
                 <div class="space-y-2">
                   <label class="text-xs font-semibold text-base-content/70 uppercase tracking-wider block">
-                    Scene Order
+                    Scene Number
                   </label>
                   <input 
                     type="number" 

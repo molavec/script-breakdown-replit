@@ -1,30 +1,23 @@
 # UX
 
-
-Fix: auto scroll en la creación de nuevo shot
-
-Fix: añadir en la landing la gestión de presupuesto.
-
-Fix: en la gihub y landing añadir la gestión de tokens
-
-fix: en la landing añadir sección de pricing
+Fix: cuando se cree una nueva escena que se cree un nuevo shot por defecto.
 
 Fix: en la versión reponsive mejora la visual del header para que ocupe una línea en vez de dos.
 
-Fix: bloque cell content más largo
-
-Fix: colocar el botón de salvar y cancelar arriba, para evitar que se presione accidentalmente.
-
-Fix: cuando se añade nuevo contenido al cell content que haga un autoscroll al final para evidenciar el cambio.
-
-Fix: auto ajustar el alto de las fila en función del contenido hasta un máximo cuando se guarde nuevo contenido.
-
-Fix: cambiar la leyenda de orden de la escena por número de la escena en la creación de escena.
-Fix: cuando se cree una nueva escena que se cree un nuevo shot por defecto.
 Fix: Ajustar mensaje para cuando se acaben los creditos.
-Fix: Aumentar el tamaño de la fuente en el CellDrawer. 
-
 Fix: Añadir un collapse en la card.
+
+Fix: Aumentar el tamaño de la fuente en el CellDrawer. 
+Fix: colocar el botón de salvar y cancelar arriba, para evitar que se presione accidentalmente.
+Fix: cuando se añade nuevo contenido al cell content que haga un autoscroll al final para evidenciar el cambio.
+Fix: bloque cell content más largo.
+
+Fix: en la gihub y landing añadir la gestión de tokens.
+Fix: añadir en la landing la gestión de presupuesto.
+fix: en la landing añadir sección de pricing.
+
+Fix: auto scroll en la creación de nuevo shot.
+Fix: auto ajustar el alto de las fila en función del contenido hasta un máximo cuando se guarde nuevo contenido.
 
 
 ## escenas
