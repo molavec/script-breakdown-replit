@@ -41,6 +41,27 @@ const getCellCurrency = (col: any, cell?: any): string => {
   return getCurrencySymbol(code);
 };
 
+const collapsedCards = ref<string[]>([]);
+
+const toggleCollapse = (id: string) => {
+  const index = collapsedCards.value.indexOf(id);
+  if (index > -1) {
+    collapsedCards.value.splice(index, 1);
+  } else {
+    collapsedCards.value.push(id);
+  }
+};
+
+const getScriptSnippet = (row: any) => {
+  const scriptCol = columns.value.find((c: any) => c.name.toLowerCase() === 'script');
+  if (!scriptCol) return '';
+  const cell = row.cells[scriptCol.id];
+  if (!cell || !cell.blocks || cell.blocks.length === 0) return '';
+  const textBlock = cell.blocks.find((b: any) => b.type === 'text');
+  if (!textBlock) return '';
+  return textBlock.content.replace(/<[^>]+>/g, '').trim();
+};
+
 </script>
 
 <template>
@@ -57,7 +78,7 @@ const getCellCurrency = (col: any, cell?: any): string => {
         <div class="card bg-base-200 border border-base-300 rounded-box p-5 shadow-lg relative group transition-colors hover:border-primary/40 w-full max-w-none lg:max-w-md">
           
           <!-- Card Header (Shot Number & Drag) -->
-          <div class="flex items-center justify-between mb-4 pb-3 border-b border-base-300">
+          <div class="flex items-center justify-between transition-all" :class="collapsedCards.includes(row.id) ? 'mb-2' : 'mb-4 pb-3 border-b border-base-300'">
             <div class="flex items-center gap-2">
               <div class="drag-handle cursor-grab active:cursor-grabbing text-base-content/40 hover:text-base-content transition-colors p-1" title="Drag to reorder">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -69,23 +90,24 @@ const getCellCurrency = (col: any, cell?: any): string => {
                 SHOT {{ activeScene?.order ?? '?' }}.{{ row.order }}
               </span>
             </div>
+            
             <button 
-              class="btn btn-xs btn-ghost btn-square text-base-content/40 hover:text-error hover:bg-error/10 transition-colors"
-              title="Delete Shot"
-              @click="confirmDeleteRow(row.id)"
+              class="btn btn-xs btn-ghost btn-square text-base-content/40 hover:text-base-content transition-colors"
+              :title="collapsedCards.includes(row.id) ? 'Expand Shot' : 'Collapse Shot'"
+              @click="toggleCollapse(row.id)"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 6h18"></path>
-                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
-                <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-                <line x1="10" y1="11" x2="10" y2="17"></line>
-                <line x1="14" y1="11" x2="14" y2="17"></line>
-              </svg>
+              <svg v-if="collapsedCards.includes(row.id)" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              <svg v-else xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
             </button>
           </div>
 
+          <!-- Collapsed State Snippet -->
+          <div v-if="collapsedCards.includes(row.id)" class="text-sm text-base-content/60 italic line-clamp-3 px-1 mb-1">
+             {{ getScriptSnippet(row) || 'No script available...' }}
+          </div>
+
           <!-- Card Fields -->
-          <div class="flex flex-col gap-5">
+          <div v-show="!collapsedCards.includes(row.id)" class="flex flex-col gap-5">
             <div 
               v-for="col in columns" 
               :key="col.id" 
@@ -218,6 +240,24 @@ const getCellCurrency = (col: any, cell?: any): string => {
                 </div>
               </div>
             </div>
+          </div>
+
+          <!-- Card Footer (Delete Shot) -->
+          <div v-show="!collapsedCards.includes(row.id)" class="mt-4 pt-3 border-t border-base-300 flex justify-start">
+            <button 
+              class="btn btn-xs btn-ghost text-error/70 hover:text-error hover:bg-error/10 transition-colors gap-2"
+              title="Delete Shot"
+              @click="confirmDeleteRow(row.id)"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 6h18"></path>
+                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                <line x1="10" y1="11" x2="10" y2="17"></line>
+                <line x1="14" y1="11" x2="14" y2="17"></line>
+              </svg>
+              Delete Shot
+            </button>
           </div>
         </div>
       </template>
