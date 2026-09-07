@@ -5,11 +5,12 @@
 <template>
   <main class="w-full">
     <LandingHero />
+    <LandingTechnologies />
     <LandingMockup />
     <!-- <LandingFeatures /> -->
     <!-- <LandingWorkflow /> -->
     <!-- <LandingAiSection /> -->
-    <LandingTechnologies />
+    <LandingPricing />
     <LandingFaq />
     <LandingCta />
   </main>

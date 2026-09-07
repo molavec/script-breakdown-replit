@@ -1,12 +1,4 @@
 <script setup lang="ts">
-const navLinks = [
-  { label: 'Features', href: '#features' },
-  { label: 'Mockup', href: '#preview' },
-  { label: 'Workflow', href: '#workflow' },
-  { label: 'AI Studio', href: '#ai' },
-  { label: 'FAQ', href: '#faq' },
-]
-
 const isScrolled = ref(false)
 
 onMounted(() => {
@@ -46,17 +38,7 @@ onMounted(() => {
           </div>
         </NuxtLink>
 
-        <!-- Center Links (Desktop) -->
-        <nav class="hidden md:flex items-center gap-7 text-sm font-medium text-base-content/80">
-          <a 
-            v-for="link in navLinks" 
-            :key="link.href" 
-            :href="link.href" 
-            class="hover:text-primary transition-colors py-1"
-          >
-            {{ link.label }}
-          </a>
-        </nav>
+
 
         <!-- Right Action Buttons -->
         <div class="flex items-center gap-3">
@@ -87,7 +69,7 @@ onMounted(() => {
     <!-- Public Landing Footer -->
     <footer class="border-t border-base-300 bg-base-200 z-10 relative text-base-content/70 text-sm">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
           <!-- Column 1: Info -->
           <div class="md:col-span-2 space-y-4">
             <!-- Brand Logo -->
@@ -105,26 +87,9 @@ onMounted(() => {
             <p class="text-xs sm:text-sm text-base-content/70 max-w-sm leading-relaxed">
               Intelligent pre-production and script breakdown workspace for directors, producers, assistant directors, and creative film crews.
             </p>
-            <div class="flex items-center gap-2 pt-2">
-              <span class="badge badge-sm badge-neutral border-base-300 text-base-content/80 font-mono text-[11px]">
-                Powered by Gemini AI
-              </span>
-              <span class="badge badge-sm badge-neutral border-base-300 text-base-content/80 font-mono text-[11px]">
-                Nuxt 4 & Tailwind
-              </span>
-            </div>
           </div>
 
-          <!-- Column 2: Product -->
-          <div>
-            <h4 class="text-xs font-semibold uppercase tracking-wider text-base-content mb-4">Platform</h4>
-            <ul class="space-y-2.5 text-xs sm:text-sm">
-              <li><a href="#features" class="hover:text-primary transition-colors">Scene Breakdown</a></li>
-              <li><a href="#features" class="hover:text-primary transition-colors">Shot Lists & Storyboard</a></li>
-              <li><a href="#ai" class="hover:text-primary transition-colors">Gemini AI Assistant</a></li>
-              <li><a href="#workflow" class="hover:text-primary transition-colors">Production Columns</a></li>
-            </ul>
-          </div>
+
 
           <!-- Column 3: Access -->
           <div>

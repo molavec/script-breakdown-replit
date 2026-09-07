@@ -2,15 +2,9 @@
 
 
 Fix: Separar en componentes los contenidos de Cell Drawer, para tener mejor mantenibilidad.
-Fix: Aumentar el tamaño de la fuente en el CellDrawer. 
 Fix: colocar el botón de salvar y cancelar arriba, para evitar que se presione accidentalmente.
 Fix: cuando se añade nuevo contenido al cell content que haga un autoscroll al final para evidenciar el cambio.
 Fix: bloque cell content más largo.
-
-
-Fix: en la gihub y landing añadir la gestión de tokens.
-Fix: añadir en la landing la gestión de presupuesto.
-fix: en la landing añadir sección de pricing.
 
 Fix: auto scroll en la creación de nuevo shot.
 Fix: auto ajustar el alto de las fila en función del contenido hasta un máximo cuando se guarde nuevo contenido.

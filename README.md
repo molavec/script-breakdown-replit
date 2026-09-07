@@ -30,7 +30,83 @@ This SDK is used with Google Enterprise Agent Platform APIkey.
 You can find relevant code in:
 
 * [chat.post.ts](./server/api/chat.post.ts)
+
+Used to manage the API calls to Google GenAI.
+
+```javascript
+if (generationType === 'image') {
+      return await generateAiImage(user.id, prompt, systemInstruction);
+    }
+
+return await generateAiText(user.id, prompt, systemInstruction);
+```
+
 * [genai.ts](./server/utils/genai.ts)
+
+Used to manage the image, text generation and token consumption.
+
+```javascript
+export async function generateAiImage(
+  userId: string,
+  prompt: string,
+  systemInstruction?: string,
+) {
+  // Consume tokens per image
+  await checkAndConsumeTokens(userId, TOKEN_COST_IMAGE);
+
+  const ai = useGenAI();
+  const response = await ai.models.generateContent({
+    model: "gemini-3.1-flash-lite-image",
+    contents: prompt,
+    config: {
+      responseModalities: ["TEXT", "IMAGE"],
+      systemInstruction: `The style should resemble a storyboard drawn on paper with a graphite pencil. ${systemInstruction}`,
+    },
+  });
+
+  let imageUrl = "";
+  if (response.candidates && response.candidates.length > 0) {
+    const candidate = response.candidates[0];
+    for (const part of candidate?.content?.parts || []) {
+      if (part && part.inlineData) {
+        imageUrl = `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
+        break;
+      }
+    }
+  }
+  return { type: "image" as const, imageUrl };
+}
+
+export async function generateAiText(
+  userId: string,
+  prompt: string,
+  systemInstruction?: string,
+) {
+  // Consume tokens per text
+  await checkAndConsumeTokens(userId, TOKEN_COST_TEXT);
+
+  const ai = useGenAI();
+  const response = await ai.models.generateContent({
+    model: "gemini-3.5-flash-lite",
+    contents: prompt,
+    config: {
+      responseModalities: ["TEXT"],
+      systemInstruction: [
+        "Return strictly the requested content directly, with no preamble, greetings, explanations, or closing remarks.",
+        "Formatting: Use only bold (**text**) and italics (*text*) for emphasis. Strictly do not use headings, bullet points, numbered lists, or other markdown elements.",
+        "Spacing: Keep text compact. Avoid blank lines or excessive identation or vertical spacing between paragraphs.",
+        systemInstruction?.trim(),
+      ]
+        .filter(Boolean)
+        .join("\n\n"),
+    },
+  });
+  return {
+    type: "text" as const,
+    text: response.text || "No AI text response generated.",
+  };
+}
+```
 
 
 ## Setup
