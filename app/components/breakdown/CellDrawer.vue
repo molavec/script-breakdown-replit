@@ -873,7 +873,7 @@ const handleCancel = () => {
         
         <!-- Header -->
         <header class="flex justify-between items-center p-4 border-b border-base-300">
-          <h1 class="text-sm font-semibold text-base-content">Edit Cell</h1>
+          <h1 class="text-base lg:text-sm font-semibold text-base-content">Edit Cell</h1>
         </header>
 
         <!-- Body -->
@@ -882,18 +882,18 @@ const handleCancel = () => {
           <!-- Top Section: Cell Content Editor -->
           <section class="p-4 flex-shrink-0">
             <div class="flex items-center justify-between mb-2">
-              <h2 class="text-[10px] font-bold text-base-content/60 uppercase tracking-wider">CELL CONTENT</h2>
-              <span v-if="activeColumn" class="text-xs text-base-content/60 font-medium truncate max-w-[200px]" :title="activeColumn.name">
+              <h2 class="text-xs lg:text-[10px] font-bold text-base-content/60 uppercase tracking-wider">CELL CONTENT</h2>
+              <span v-if="activeColumn" class="text-sm lg:text-xs text-base-content/60 font-medium truncate max-w-[200px]" :title="activeColumn.name">
                 {{ activeColumn.name }}
               </span>
             </div>
 
             <!-- Declarative text & column description -->
             <div class="mb-2.5 space-y-0.5">
-              <p v-if="activeColumn?.description" class="text-xs text-base-content/80 leading-relaxed">
+              <p v-if="activeColumn?.description" class="text-sm lg:text-xs text-base-content/80 leading-relaxed">
                 {{ activeColumn.description }}
               </p>
-              <p class="text-[11px] text-base-content/60 leading-relaxed flex items-center gap-1.5">
+              <p class="text-xs lg:text-[11px] text-base-content/60 leading-relaxed flex items-center gap-1.5">
                 <PencilIcon :size="12" class="text-base-content/50 shrink-0" />
                 <span>Click inside the editor below to write or edit content directly.</span>
               </p>
@@ -964,7 +964,7 @@ const handleCancel = () => {
                 </div>
 
                 <!-- Status & Counts & Expand -->
-                <div class="flex items-center gap-2 text-[11px] text-base-content/60 font-mono">
+                <div class="flex items-center gap-2 text-xs lg:text-[11px] text-base-content/60 font-mono">
                   <span v-if="imageCount > 0">{{ imageCount }} {{ imageCount === 1 ? 'img' : 'imgs' }}</span>
                   <span v-if="imageCount > 0 && wordCount > 0" class="text-base-content/30">•</span>
                   <span>{{ wordCount }} {{ wordCount === 1 ? 'word' : 'words' }}</span>
@@ -990,7 +990,7 @@ const handleCancel = () => {
               <div class="relative flex-1 min-h-0 cursor-text" @click.self="focusEditor">
                 <div 
                   ref="editorRef"
-                  class="w-full h-full overflow-y-auto p-3 bg-transparent text-sm focus:outline-none cursor-text prose prose-sm prose-invert max-w-none relative z-10 editor-scroll text-base-content"
+                  class="w-full h-full overflow-y-auto p-3 bg-transparent text-base lg:text-sm focus:outline-none cursor-text prose lg:prose-sm prose-invert max-w-none relative z-10 editor-scroll text-base-content"
                   contenteditable="true"
                   @input="onEditorInput"
                   @focus="onEditorFocus"
@@ -1004,7 +1004,7 @@ const handleCancel = () => {
                 <!-- Placeholder Overlay -->
                 <div
                   v-if="showPlaceholder"
-                  class="absolute inset-0 p-3 pointer-events-none text-sm text-base-content/40 select-none leading-relaxed overflow-hidden italic z-20 border border-transparent"
+                  class="absolute inset-0 p-3 pointer-events-none text-base lg:text-sm text-base-content/40 select-none leading-relaxed overflow-hidden italic z-20 border border-transparent"
                 >
                   {{ editorPlaceholder }}
                 </div>
@@ -1027,12 +1027,12 @@ const handleCancel = () => {
 
           <!-- Bottom Section: AI Assistant -->
           <section class="flex-1 flex flex-col p-4 overflow-hidden">
-            <h2 class="text-[10px] font-bold text-base-content/60 mb-3 uppercase tracking-wider">AI ASSISTANT</h2>
+            <h2 class="text-xs lg:text-[10px] font-bold text-base-content/60 mb-3 uppercase tracking-wider">AI ASSISTANT</h2>
             
             <!-- Chat History -->
             <div class="flex-1 overflow-y-auto space-y-4 pr-2" ref="chatContainerRef">
               <!-- Empty state simple message -->
-              <div v-if="messages.length === 0" class="text-center text-xs mt-10 px-6 space-y-1.5 select-none leading-relaxed">
+              <div v-if="messages.length === 0" class="text-center text-sm lg:text-xs mt-10 px-6 space-y-1.5 select-none leading-relaxed">
                 <p class="text-base-content/70">
                   Ask me to generate {{ aiExample.description }}.
                 </p>
@@ -1045,7 +1045,7 @@ const handleCancel = () => {
                 class="flex flex-col max-w-[85%]" 
                 :class="msg.role === 'user' ? 'ml-auto items-end' : 'mr-auto items-start'">
                 
-                <div class="p-3 rounded-box text-sm"
+                <div class="p-3 rounded-box text-base lg:text-sm"
                   :class="msg.role === 'user' ? 'bg-primary/20 text-base-content rounded-tr-none border border-primary/30' : 'bg-base-300/80 text-base-content rounded-tl-none border border-base-300'">
                   
                   <div v-if="msg.isGenerating" class="flex items-center space-x-2 text-base-content/60">
@@ -1054,7 +1054,7 @@ const handleCancel = () => {
                   </div>
                   
                   <template v-else>
-                    <div v-if="msg.text" class="mb-2 prose prose-sm prose-invert max-w-none text-base-content" v-html="parseMarkdown(msg.text)"></div>
+                    <div v-if="msg.text" class="mb-2 prose lg:prose-sm prose-invert max-w-none text-base-content" v-html="parseMarkdown(msg.text)"></div>
                     <div v-if="msg.imageUrl" class="relative inline-block max-w-full group/msg-img mt-2">
                       <img :src="msg.imageUrl" alt="Generated" class="max-w-full rounded-box border border-base-300 block" />
                       <button 
@@ -1097,7 +1097,7 @@ const handleCancel = () => {
           </section>
 
         </div>
-        <div v-else class="p-6 text-center text-base-content/50 text-sm flex-1 flex items-center justify-center">
+        <div v-else class="p-6 text-center text-base-content/50 text-base lg:text-sm flex-1 flex items-center justify-center">
            No cell selected
         </div>
 
@@ -1152,11 +1152,11 @@ const handleCancel = () => {
                   Context ({{ selectedContextColumns.length }})
                 </div>
                 <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-200 border border-base-300 rounded-box w-72 mb-2 max-h-60 overflow-y-auto">
-                  <li class="menu-title px-2 py-1 text-[10px] text-base-content/50 font-bold uppercase tracking-wider">Include in Context</li>
+                  <li class="menu-title px-2 py-1 text-xs lg:text-[10px] text-base-content/50 font-bold uppercase tracking-wider">Include in Context</li>
                   <li v-for="col in availableColumns" :key="col.id">
                     <label class="label cursor-pointer flex justify-start gap-2 py-1.5 px-2 hover:bg-base-300 rounded-md">
                       <input type="checkbox" :value="col.id" v-model="selectedContextColumns" class="checkbox checkbox-xs checkbox-secondary border-base-300 rounded-sm" />
-                      <span class="label-text text-base-content text-xs truncate">{{ col.name }}</span>
+                      <span class="label-text text-base-content text-sm lg:text-xs truncate">{{ col.name }}</span>
                     </label>
                   </li>
                 </ul>
@@ -1172,7 +1172,7 @@ const handleCancel = () => {
                 @keydown="handleKeyDown"
                 @input="adjustTextareaHeight"
                 :placeholder="chatInputPlaceholder"
-                class="w-full bg-base-100 border border-base-300 rounded-2xl py-2.5 pl-4 pr-12 text-sm text-base-content focus:outline-none focus:border-primary placeholder:text-base-content/40 resize-none overflow-y-auto min-h-[42px] max-h-[300px] leading-relaxed block"
+                class="w-full bg-base-100 border border-base-300 rounded-2xl py-2.5 pl-4 pr-12 text-base lg:text-sm text-base-content focus:outline-none focus:border-primary placeholder:text-base-content/40 resize-none overflow-y-auto min-h-[42px] max-h-[300px] leading-relaxed block"
                 :disabled="isGenerating"
               ></textarea>
               <button 

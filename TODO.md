@@ -1,16 +1,15 @@
 # UX
 
-Fix: Ajustar mensaje para cuando se acaben los creditos.
-
 Fix: aumentar el tamaño de los textos en un 20% en tamaños iguales y menores a tablet para el card
+Fix: aumentar el tamaño de los textos en un 20% en tamaños iguales y menores a tablet para el CellDrawer.
 
+Fix: Ajustar mensaje para cuando se acaben los creditos.
 
 Fix: Separar en componentes los contenidos de Cell Drawer, para tener mejor mantenibilidad.
 Fix: Aumentar el tamaño de la fuente en el CellDrawer. 
 Fix: colocar el botón de salvar y cancelar arriba, para evitar que se presione accidentalmente.
 Fix: cuando se añade nuevo contenido al cell content que haga un autoscroll al final para evidenciar el cambio.
 Fix: bloque cell content más largo.
-Fix: aumentar el tamaño de los textos en un 20% en tamaños iguales y menores a tablet para el CellDrawer..
 
 
 Fix: en la gihub y landing añadir la gestión de tokens.
