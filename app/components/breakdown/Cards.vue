@@ -86,7 +86,7 @@ const getScriptSnippet = (row: any) => {
                   <line x1="4" y1="15" x2="20" y2="15"></line>
                 </svg>
               </div>
-              <span class="text-sm font-bold text-primary font-mono tracking-wider">
+              <span class="text-base lg:text-sm font-bold text-primary font-mono tracking-wider">
                 SHOT {{ activeScene?.order ?? '?' }}.{{ row.order }}
               </span>
             </div>
@@ -102,7 +102,7 @@ const getScriptSnippet = (row: any) => {
           </div>
 
           <!-- Collapsed State Snippet -->
-          <div v-if="collapsedCards.includes(row.id)" class="text-sm text-base-content/60 italic line-clamp-3 px-1 mb-1">
+          <div v-if="collapsedCards.includes(row.id)" class="text-base lg:text-sm text-base-content/60 italic line-clamp-3 px-1 mb-1">
              {{ getScriptSnippet(row) || 'No script available...' }}
           </div>
 
@@ -121,7 +121,7 @@ const getScriptSnippet = (row: any) => {
                     class="w-2 h-2 rounded-full shrink-0 shadow-sm" 
                     :style="{ backgroundColor: col.color }"
                   ></span>
-                  <span class="text-xs font-mono font-semibold text-base-content/60 uppercase">{{ col.name }}</span>
+                  <span class="text-sm lg:text-xs font-mono font-semibold text-base-content/60 uppercase">{{ col.name }}</span>
                 </div>
                 
                 <!-- Edit Button -->
@@ -153,7 +153,7 @@ const getScriptSnippet = (row: any) => {
                     <!-- Number Cell (Inline Input) -->
                     <div v-if="col.cellType === 'number'">
                       <div v-if="editingCellId === row.cells[col.id].id" class="flex flex-col gap-1.5">
-                        <p v-if="col.description" class="text-xs text-base-content/60 mb-0.5 leading-relaxed">
+                        <p v-if="col.description" class="text-sm lg:text-xs text-base-content/60 mb-0.5 leading-relaxed">
                           {{ col.description }}
                         </p>
                         <div class="flex items-center gap-2">
@@ -175,14 +175,14 @@ const getScriptSnippet = (row: any) => {
                         <span v-if="getCellCurrency(col, row.cells[col.id])" class="text-base-content/60 select-none">
                           {{ getCellCurrency(col, row.cells[col.id]) }}
                         </span>
-                        <span class="text-base-content text-sm">{{ row.cells[col.id].numericValue ?? 'none' }}</span>
+                        <span class="text-base-content text-base lg:text-sm">{{ row.cells[col.id].numericValue ?? 'none' }}</span>
                       </div>
                     </div>
 
                     <!-- Tags Cell -->
                     <div v-else-if="col.cellType === 'tags'">
                       <div v-if="editingCellId === row.cells[col.id].id" class="flex flex-col gap-2">
-                        <p v-if="col.description" class="text-xs text-base-content/60 mb-0.5 leading-relaxed">
+                        <p v-if="col.description" class="text-sm lg:text-xs text-base-content/60 mb-0.5 leading-relaxed">
                           {{ col.description }}
                         </p>
                         <input 
@@ -203,18 +203,18 @@ const getScriptSnippet = (row: any) => {
                             <span v-if="block.type === 'entity_tag'" class="badge badge-sm badge-neutral border-base-300 text-base-content/90 font-medium px-2 py-3 rounded-md">
                               {{ block.content }}
                             </span>
-                            <span v-else-if="block.type === 'text'" class="text-xs text-base-content/60">{{ block.content }}</span>
+                            <span v-else-if="block.type === 'text'" class="text-sm lg:text-xs text-base-content/60">{{ block.content }}</span>
                           </template>
                         </div>
-                        <div v-else class="text-base-content/40 italic text-sm">none</div>
+                        <div v-else class="text-base-content/40 italic text-base lg:text-sm">none</div>
                       </div>
                     </div>
 
                     <!-- Text / Mixed / Default Cell -->
                     <div v-else>
-                      <div v-if="row.cells[col.id].blocks && row.cells[col.id].blocks.length > 0" class="flex flex-col gap-2 text-sm text-base-content/90 whitespace-pre-wrap leading-relaxed">
+                      <div v-if="row.cells[col.id].blocks && row.cells[col.id].blocks.length > 0" class="flex flex-col gap-2 text-base lg:text-sm text-base-content/90 whitespace-pre-wrap leading-relaxed">
                         <template v-for="block in row.cells[col.id].blocks" :key="block.id">
-                          <div v-if="block.type === 'text'" class="prose prose-sm prose-invert max-w-none text-base-content/90" v-html="parseMarkdown(block.content)"></div>
+                          <div v-if="block.type === 'text'" class="prose lg:prose-sm prose-invert max-w-none text-base-content/90" v-html="parseMarkdown(block.content)"></div>
                           <div v-else-if="block.type === 'image'" class="relative inline-block max-w-full group/img my-1">
                             <img :src="block.content" class="max-w-full rounded-box border border-base-300 block" alt="Card image" />
                             <button 
@@ -234,7 +234,7 @@ const getScriptSnippet = (row: any) => {
                           </div>
                         </template>
                       </div>
-                      <div v-else class="text-base-content/40 italic text-sm">none</div>
+                      <div v-else class="text-base-content/40 italic text-base lg:text-sm">none</div>
                     </div>
                   </BreakdownExpandableCell>
                 </div>
