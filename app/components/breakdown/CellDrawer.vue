@@ -189,8 +189,13 @@ const handleCancel = () => {
       <div class="w-full lg:w-[450px] h-full bg-base-200 border-l border-base-300 flex flex-col text-base-content shadow-2xl font-sans">
         
         <!-- Header -->
-        <header class="flex justify-between items-center p-4 border-b border-base-300">
-          <h1 class="text-base lg:text-sm font-semibold text-base-content">Edit Cell</h1>
+        <header class="p-4 border-b border-base-300">
+          <h1 class="text-base lg:text-sm font-semibold text-base-content">Edit Cell {{ activeColumn?.name }}</h1>
+          <div class="my-1 space-y-0.5">
+            <p v-if="activeColumn?.description" class="text-sm lg:text-xs text-base-content/80 leading-relaxed">
+              {{ activeColumn.description }}
+            </p>
+          </div>
         </header>
 
         <!-- Body -->

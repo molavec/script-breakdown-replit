@@ -25,7 +25,7 @@ const editorRef = ref<HTMLDivElement | null>(null);
 const isEditorFocused = ref(false);
 const isEditorEmpty = ref(true);
 
-const editorHeight = ref(240);
+const editorHeight = ref(450);
 const isExpanded = ref(false);
 const savedHeight = ref(240);
 const isResizing = ref(false);
@@ -452,20 +452,6 @@ defineExpose({
 
 <template>
   <section class="p-4 flex-shrink-0">
-    <div class="flex items-center justify-between mb-2">
-      <h2 class="text-xs lg:text-[10px] font-bold text-base-content/60 uppercase tracking-wider">CELL CONTENT</h2>
-      <span v-if="column" class="text-sm lg:text-xs text-base-content/60 font-medium truncate max-w-[200px]" :title="column.name">
-        {{ column.name }}
-      </span>
-    </div>
-
-    <!-- Declarative text & column description -->
-    <div class="mb-2.5 space-y-0.5">
-      <p v-if="column?.description" class="text-sm lg:text-xs text-base-content/80 leading-relaxed">
-        {{ column.description }}
-      </p>
-    </div>
-
     <!-- Rich Text Editor Container -->
     <div 
       class="w-full flex flex-col rounded-box border border-base-300 bg-base-100 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/40 transition-[border,box-shadow] overflow-hidden shadow-inner"
