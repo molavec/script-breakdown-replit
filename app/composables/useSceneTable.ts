@@ -41,8 +41,8 @@ export const useSceneTable = () => {
     }
   };
 
-  const shotToDelete = ref<string | null>(null);
-  const isDeletingRow = ref(false);
+  const shotToDelete = useState<string | null>('scene_shot_to_delete', () => null);
+  const isDeletingRow = useState<boolean>('scene_is_deleting_row', () => false);
 
   const confirmDeleteRow = (shotId: string) => {
     shotToDelete.value = shotId;

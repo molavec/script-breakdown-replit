@@ -1,13 +1,42 @@
 # UX
 
 
+Fix: eliminar shot
+
+Fix: ajustar el ir a la escena 1 en la primera.
+En la vista del proyecto, asegura que el currentActiveSceneId pertenezca al proyecto ya que está pasando que cuando se cambia de proyecto el activeSceneId parece mantenerse el del proyecto anterior lo que provoca al presionar el boton "Go to scene X", envia a una escena que no pertenece al proyecto actual, provocando un resultado incierto.
+
+Fix: auto scroll en la creación de nuevo shot
+
+Fix: cambiar el orden de los botones en la inserción de tags
+
+Fix: añadir en la landing la gestión de presupuesto.
+
+Fix: en la gihub y landing añadir la gestión de tokens
+
+fix: en la landing añadir sección de pricing
+
+Fix: en la versión reponsive mejora la visual del header para que ocupe una línea en vez de dos.
+
+Fix: bloque cell content más largo
+
+Fix: colocar el botón de salvar y cancelar arriba, para evitar que se presione accidentalmente.
+
+Fix: cuando se añade nuevo contenido al cell content que haga un autoscroll al final para evidenciar el cambio.
+
+Fix: auto ajustar el alto de las fila en función del contenido hasta un máximo cuando se guarde nuevo contenido.
+
+Fix: cambiar la leyenda de orden de la escena por número de la escena en la creación de escena.
+Fix: cuando se cree una nueva escena que se cree un nuevo shot por defecto.
+Fix: Ajustar mensaje para cuando se acaben los creditos.
+Fix: Aumentar el tamaño de la fuente en el CellDrawer. 
+
+
 ## escenas
 * Evidenciar mejor el resultado que el usuario obtendrá con el asistente corto en el placeholder, con un ejemplo de lo que el usuario puede escribir y lo que pueede recibir. Considera el tipo de contenido habilitado para la columna.
 * Desactivar el botón guardar si el usuario no ha realizado cambios en el contenido o el asistente aún está abierto.
 
-
 * Ajusta la creación de una nueva columna.
-
 
 * Persistir el alto en los shots y el ancho en las columnas. En los shots utiliza una propiedad options, al igual que en las columns. Crea un plan.
 
