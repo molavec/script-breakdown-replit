@@ -1,6 +1,5 @@
 # UX
 
-Fix: Ajustar mensaje para cuando se acaben los creditos.
 
 Fix: Separar en componentes los contenidos de Cell Drawer, para tener mejor mantenibilidad.
 Fix: Aumentar el tamaño de la fuente en el CellDrawer. 
