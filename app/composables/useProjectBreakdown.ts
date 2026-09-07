@@ -31,9 +31,12 @@ export const useProjectBreakdown = () => {
         const fetchedScenes = await fetchScenes(id);
         scenes.value = fetchedScenes;
         
-        // Set initial active scene if not set
-        if (!activeSceneId.value && fetchedScenes.length > 0) {
+        // Ensure active scene is valid for the loaded project
+        const isValidScene = fetchedScenes.some(s => s.id === activeSceneId.value);
+        if (!isValidScene && fetchedScenes.length > 0) {
           activeSceneId.value = fetchedScenes[0]?.id || '';
+        } else if (fetchedScenes.length === 0) {
+          activeSceneId.value = '';
         }
       }
     } catch (err: any) {

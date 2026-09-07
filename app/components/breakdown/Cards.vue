@@ -171,8 +171,8 @@ const getCellCurrency = (col: any, cell?: any): string => {
                           @keydown.enter="saveInlineEdit(row.cells[col.id], 'tags')"
                         />
                         <div class="flex justify-end gap-1">
-                          <button @click="saveInlineEdit(row.cells[col.id], 'tags')" class="btn btn-xs btn-success text-success-content px-2">Save</button>
                           <button @click="cancelInlineEdit" class="btn btn-xs btn-error text-error-content px-2">Cancel</button>
+                          <button @click="saveInlineEdit(row.cells[col.id], 'tags')" class="btn btn-xs btn-success text-success-content px-2">Save</button>
                         </div>
                       </div>
                       <div v-else>

@@ -29,7 +29,12 @@ onMounted(async () => {
 // Escena inicial para el botón de desglose
 const firstSceneId = computed(() => scenes.value[0]?.id || 's1');
 const currentActiveSceneId = computed({
-  get: () => activeSceneId.value || firstSceneId.value,
+  get: () => {
+    if (activeSceneId.value && scenes.value.some(s => s.id === activeSceneId.value)) {
+      return activeSceneId.value;
+    }
+    return firstSceneId.value;
+  },
   set: (val) => { activeSceneId.value = val; }
 });
 const activeSceneName = computed(() => scenes.value.find((s) => s.id === currentActiveSceneId.value)?.order || 1);

@@ -1,14 +1,7 @@
 # UX
 
 
-Fix: eliminar shot
-
-Fix: ajustar el ir a la escena 1 en la primera.
-En la vista del proyecto, asegura que el currentActiveSceneId pertenezca al proyecto ya que está pasando que cuando se cambia de proyecto el activeSceneId parece mantenerse el del proyecto anterior lo que provoca al presionar el boton "Go to scene X", envia a una escena que no pertenece al proyecto actual, provocando un resultado incierto.
-
 Fix: auto scroll en la creación de nuevo shot
-
-Fix: cambiar el orden de los botones en la inserción de tags
 
 Fix: añadir en la landing la gestión de presupuesto.
 
@@ -30,6 +23,8 @@ Fix: cambiar la leyenda de orden de la escena por número de la escena en la cre
 Fix: cuando se cree una nueva escena que se cree un nuevo shot por defecto.
 Fix: Ajustar mensaje para cuando se acaben los creditos.
 Fix: Aumentar el tamaño de la fuente en el CellDrawer. 
+
+Fix: Añadir un collapse en la card.
 
 
 ## escenas
