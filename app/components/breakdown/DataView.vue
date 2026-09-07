@@ -46,9 +46,9 @@ const budgetCurrencySymbol = computed(() => {
 <template>
   <div class="flex flex-col h-full bg-base-100 text-base-content">
     <!-- Scene Header -->
-    <div class="px-6 py-4 flex flex-wrap gap-2 items-start justify-between shrink-0 border-b border-base-300 bg-base-100">
-      <div v-if="activeScene">
-        <div class="flex items-center gap-2 mb-1">
+    <div class="p-4 flex flex-col gap-2 shrink-0 border-b border-base-300 bg-base-100">
+      <div class="flex flex-wrap items-center justify-between w-full">
+        <div v-if="activeScene" class="flex items-center gap-2">
           <h1 class="text-2xl font-bold text-base-content">Scene {{ activeScene?.order }}</h1>
           <NuxtLink 
             :to="`/projects/${project?.id}/scenes/${activeScene.id}`"
@@ -61,48 +61,49 @@ const budgetCurrencySymbol = computed(() => {
             </svg>
           </NuxtLink>
         </div>
-        <div :class="['transition-all duration-300', isSceneInfoExpanded ? 'block' : 'hidden']">
-          <p class="text-xs font-bold text-base-content/80 font-mono tracking-wider">
-            Shots: {{ sceneShotsCount }} - Budget: {{ budgetCurrencySymbol }}{{ sceneBudget }}
-          </p>
-          <p v-if="activeScene.synopsis" class="text-xs text-base-content/60 font-mono tracking-wider mt-1">{{ activeScene.synopsis }}</p>
+        <div v-else>
+          <h1 class="text-2xl font-bold text-base-content/40">No scene selected</h1>
+        </div>
+        
+        <div class="flex items-center gap-1">
+          <!-- View Toggle -->
+          <label class="swap swap-rotate btn btn-sm btn-ghost btn-square text-base-content/60 hover:text-base-content" title="Toggle View">
+            <input type="checkbox" :checked="view === 'card'" @change="view = view === 'table' ? 'card' : 'table'" />
+            
+            <!-- Table Icon -->
+            <svg class="swap-off fill-current w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2zm0 2v4h6V6H4zm8 0v4h8V6h-8zm8 6h-8v6h8v-6zm-10 6v-6H4v6h6z"/></svg>
+  
+            <!-- Card Icon -->
+            <svg class="swap-on fill-current w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 5v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2zm2 0h14v5H5V5zm0 14v-7h14v7H5z"/></svg>
+          </label>
+  
+          <button @click="addRow" class="btn btn-sm btn-primary font-semibold shadow-sm">
+            Add Shot
+          </button>
+          <button class="btn btn-sm btn-outline border-base-300 text-base-content hover:bg-base-300" @click="addColumn()">
+            Add Column
+          </button>
+
+          <button 
+            v-if="activeScene"
+            class="btn btn-sm btn-ghost btn-square text-base-content/60 hover:text-base-content" 
+            @click="isSceneInfoExpanded = !isSceneInfoExpanded"
+          >
+            <svg v-if="!isSceneInfoExpanded" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+            </svg>
+            <svg v-else xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+            </svg>
+          </button>
         </div>
       </div>
-      <div v-else>
-        <h1 class="text-2xl font-bold text-base-content/40">No scene selected</h1>
-      </div>
-      
-      <div class="flex items-center gap-2.5">
-        <button 
-          v-if="activeScene"
-          class="btn btn-sm btn-ghost btn-square text-base-content/60 hover:text-base-content" 
-          @click="isSceneInfoExpanded = !isSceneInfoExpanded"
-        >
-          <svg v-if="!isSceneInfoExpanded" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-          </svg>
-          <svg v-else xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-          </svg>
-        </button>
 
-        <!-- View Toggle -->
-        <label class="swap swap-rotate btn btn-sm btn-ghost btn-square text-base-content/60 hover:text-base-content" title="Toggle View">
-          <input type="checkbox" :checked="view === 'card'" @change="view = view === 'table' ? 'card' : 'table'" />
-          
-          <!-- Table Icon -->
-          <svg class="swap-off fill-current w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2zm0 2v4h6V6H4zm8 0v4h8V6h-8zm8 6h-8v6h8v-6zm-10 6v-6H4v6h6z"/></svg>
-
-          <!-- Card Icon -->
-          <svg class="swap-on fill-current w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 5v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2zm2 0h14v5H5V5zm0 14v-7h14v7H5z"/></svg>
-        </label>
-
-        <button @click="addRow" class="btn btn-sm btn-primary font-semibold shadow-sm">
-          Add Shot
-        </button>
-        <button class="btn btn-sm btn-outline border-base-300 text-base-content hover:bg-base-300" @click="addColumn()">
-          Add Column
-        </button>
+      <div v-if="activeScene" :class="['transition-all duration-300 w-full', isSceneInfoExpanded ? 'block' : 'hidden']">
+        <p class="text-xs font-bold text-base-content/80 font-mono tracking-wider">
+          Shots: {{ sceneShotsCount }} - Budget: {{ budgetCurrencySymbol }}{{ sceneBudget }}
+        </p>
+        <p v-if="activeScene.synopsis" class="text-xs text-base-content/60 font-mono tracking-wider mt-1">{{ activeScene.synopsis }}</p>
       </div>
     </div>
 

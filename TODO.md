@@ -1,11 +1,12 @@
 # UX
 
-Fix: cuando se cree una nueva escena que se cree un nuevo shot por defecto.
-
 Fix: en la versión reponsive mejora la visual del header para que ocupe una línea en vez de dos.
+Fix: Añadir un collapse en la card de los shots y cambia el icono de elimina el shot al final del card a la izquierda. Cuando el card este collapsado que se ve debajo del título solo un fragmento del texto de la columna Script.
+
+
 
 Fix: Ajustar mensaje para cuando se acaben los creditos.
-Fix: Añadir un collapse en la card.
+
 
 Fix: Aumentar el tamaño de la fuente en el CellDrawer. 
 Fix: colocar el botón de salvar y cancelar arriba, para evitar que se presione accidentalmente.
