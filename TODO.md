@@ -1,3 +1,10 @@
+Fix: Añadir el default prompt tambien en la generación de columnas. el default prompt de la columna script debe ser: Write the screenplay action lines, narrative scene description, or dialogue for this shot. 
+When an actor speaks in the shot, write it in dialogue format.
+The output must be in English.
+Para el resto de las columnas definelo tu.
+Como referencia el default prompt es el prompt que se se añádirá cuando un usuario realice una solicitud a la IA para crear o modificar el contenido de una columna. 
+
+
 # Include a demonstration video of your Project. The video portion of the submission must meet the following criteria:
 * Should include footage that shows the Project functioning on the platform(s) for which it was built.
 * No parts of the submission can be  derogatory, offensive, threatening, defamatory, disparaging, libelous or contain any content that is inappropriate, indecent, sexual, profane, indecent, tortuous, slanderous, discriminatory in any way, or that promotes hatred or harm against any group or person, or otherwise does not comply with the theme and spirit of the Contest.

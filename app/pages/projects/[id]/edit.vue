@@ -191,14 +191,9 @@ const handleSave = async () => {
                     v-model="formData.type" 
                     class="select select-bordered w-full bg-base-100 border-base-300 text-base-content text-sm focus:border-primary"
                   >
-                    <option value="feature">Feature Film</option>
-                    <option value="series">Series</option>
-                    <option value="short">Short Film</option>
-                    <option value="documentary">Documentary</option>
-                    <option value="commercial">Commercial</option>
-                    <option value="music_video">Music Video</option>
-                    <option value="animation">Animation</option>
-                    <option value="other">Other</option>
+                    <option v-for="type in productionTypes" :key="type.value" :value="type.value">
+                      {{ type.label }}
+                    </option>
                   </select>
                 </div>
 
@@ -211,16 +206,9 @@ const handleSave = async () => {
                     v-model="formData.genre" 
                     class="select select-bordered w-full bg-base-100 border-base-300 text-base-content text-sm focus:border-primary"
                   >
-                    <option value="thriller">Thriller</option>
-                    <option value="scifi">Sci-Fi</option>
-                    <option value="drama">Drama</option>
-                    <option value="comedy">Comedy</option>
-                    <option value="horror">Horror</option>
-                    <option value="action">Action</option>
-                    <option value="adventure">Adventure</option>
-                    <option value="fantasy">Fantasy</option>
-                    <option value="documentary">Documentary</option>
-                    <option value="other">Other</option>
+                    <option v-for="genre in genres" :key="genre.value" :value="genre.value">
+                      {{ genre.label }}
+                    </option>
                   </select>
                 </div>
 
