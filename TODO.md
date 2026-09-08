@@ -1,10 +1,10 @@
 # UX
 
-fix: al reemplazar o  insertar a la celda que se cierre la vista del asistente para que el usuario pueda ver inmediatamente el editor.
-
 fix: Mejorar la visual para que el usuario sepa que tiene que ir al Script Breakdown.
 
-Fix: Problema al crear una nueva Columna y auto scroll cuando se crea una Columna 
+Fix: Problema al crear una nueva Columna y 
+Fix: cuando se crea una columna nueva que el scroll horizontal de la tabla llegue al final.
+Fix: cuando se crea un Shot nuevo que el scroll vertical de la tabla y del Card vayan al final.
 Fix: auto scroll en la creación de nuevo shot.
 Fix: auto ajustar el alto de las fila en función del contenido hasta un máximo cuando se guarde nuevo contenido.
 

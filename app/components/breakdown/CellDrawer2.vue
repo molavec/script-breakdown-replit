@@ -144,6 +144,8 @@ const handleAddToContent = (text: string, imageUrl?: string) => {
       editorEl.scrollTop = editorEl.scrollHeight;
     });
   }
+  
+  showAiOverlay.value = false;
 };
 
 // Manejador para "Replace Cell" (Sobrescribir todo el contenido)
@@ -164,6 +166,8 @@ const handleReplaceContent = (text: string, imageUrl?: string) => {
       editorEl.scrollTop = editorEl.scrollHeight;
     });
   }
+  
+  showAiOverlay.value = false;
 };
 
 const saveAndClose = async () => {

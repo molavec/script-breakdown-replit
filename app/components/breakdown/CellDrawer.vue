@@ -168,6 +168,8 @@ const handleAddToContent = (text: string, imageUrl?: string) => {
     // que haga scroll una vez que vuelva a aparecer en la pantalla.
     pendingScrollToBottom.value = true;
   }
+  
+  showAiMode.value = false;
 };
 
 // Manejador para "Replace Cell" (Sobrescribir todo el contenido)
@@ -190,6 +192,8 @@ const handleReplaceContent = (text: string, imageUrl?: string) => {
     // 2b. Si el editor está oculto (Opción 1), marcamos para hacer scroll luego
     pendingScrollToBottom.value = true;
   }
+  
+  showAiMode.value = false;
 };
 
 const saveAndClose = async () => {
