@@ -197,6 +197,16 @@ const handleDeleteProject = async () => {
                     </div>
                   </div>
 
+                  <div class="my-4">
+                    <NuxtLink 
+                      :to="`/projects/${projectId}/scene/${currentActiveSceneId}`"
+                      class="btn btn-primary btn-xl btn-wide text-primary-content font-semibold px-6 shadow-md"
+                    >
+                      Go to Scene {{ activeSceneName }}
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                    </NuxtLink>
+                  </div>
+
                   <!-- Original Story / Logline -->
                   <div class="pt-1">
                     <span class="text-[10px] font-bold uppercase tracking-wider text-base-content/60 block mb-1">
@@ -222,14 +232,6 @@ const handleDeleteProject = async () => {
                       <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
                     </svg>
                     <span>Edit Project</span>
-                  </NuxtLink>
-
-                  <NuxtLink 
-                    :to="`/projects/${projectId}/scene/${currentActiveSceneId}`"
-                    class="btn btn-primary text-primary-content font-semibold px-6 shadow-md"
-                  >
-                    Go to Scene {{ activeSceneName }}
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
                   </NuxtLink>
                 </div>
               </div>
