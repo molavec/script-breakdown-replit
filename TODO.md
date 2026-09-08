@@ -1,21 +1,14 @@
 # UX
 
-fix: Mejorar la visual para que el usuario sepa que tiene que ir al Script Breakdown.
-
-
-Fix: cuando se crea una columna nueva que el scroll horizontal de la tabla llegue al final.
-Fix: cuando se crea un Shot nuevo que el scroll vertical de la tabla y del Card vayan al final.
-Fix: auto scroll en la creación de nuevo shot.
-Fix: auto ajustar el alto de las fila en función del contenido hasta un máximo cuando se guarde nuevo contenido.
-
 
 Fix: que al momento de presionar en la celda se active el cambio del estado del edición del elemento y no al presionar el elemento en sí.
+Fix: En el modo de edición de tag colocar una leyenda que indique que se aceptan textos separados por comas en inglés.
+Fix: En el modo de edición de number colocar una leyenda que indique que solo se aceptan numeros.
 
 
 
 Fix: hablar que se parten con datos de prueba para que el usuario pueda probar inmediatamente, cosa que se cambiará en el futuro obteniendo datos desde importación de un script o desde la descripción del proyecto.
 
-Fix: En tag y number colocar una leyenda que indique que separan los valores por comas y el tipo de dato aceptados solo numeros o textos, separados por comas.
 
 Fix:
 Landing y postulación: Hablar del contexto Gradual

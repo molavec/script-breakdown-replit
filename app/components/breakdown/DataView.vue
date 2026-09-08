@@ -1,8 +1,30 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, nextTick } from 'vue';
 
 const { activeScene, project } = useProjectBreakdown();
 const { columns, rows, addRow, addColumn } = useSceneTable();
+
+const viewContainer = ref<HTMLElement | null>(null);
+
+const handleAddRow = async () => {
+  await addRow();
+  setTimeout(() => {
+    if (viewContainer.value && viewContainer.value.firstElementChild) {
+      const el = viewContainer.value.firstElementChild as HTMLElement;
+      el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
+    }
+  }, 100);
+};
+
+const handleAddColumn = async () => {
+  await addColumn();
+  setTimeout(() => {
+    if (viewContainer.value && viewContainer.value.firstElementChild) {
+      const el = viewContainer.value.firstElementChild as HTMLElement;
+      el.scrollTo({ left: el.scrollWidth, behavior: 'smooth' });
+    }
+  }, 100);
+};
 
 const isSceneInfoExpanded = ref(false);
 const view = ref<'table' | 'card'>('card');
@@ -79,13 +101,13 @@ const budgetCurrencySymbol = computed(() => {
   
           <button 
             class="btn btn-sm btn-primary font-semibold shadow-sm"
-            @click="addRow()" 
+            @click="handleAddRow" 
           >
             Add Shot
           </button>
           <button
             class="btn btn-sm btn-outline border-base-300 text-base-content   hover:bg-base-300" 
-            @click="addColumn()"
+            @click="handleAddColumn"
           >
             Add Column
           </button>
@@ -114,7 +136,7 @@ const budgetCurrencySymbol = computed(() => {
     </div>
 
     <!-- Main Content Area -->
-    <div class="flex-1 overflow-auto relative">
+    <div class="flex-1 overflow-auto relative" ref="viewContainer">
       <BreakdownTable v-if="view === 'table'" />
       <BreakdownCards v-else />
     </div>
