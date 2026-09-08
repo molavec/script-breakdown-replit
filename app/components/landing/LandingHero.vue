@@ -37,7 +37,7 @@
 
           <!-- Subtitle Description -->
           <p class="mt-6 sm:mt-8 text-lg sm:text-xl text-base-content/80 max-w-2xl font-normal leading-relaxed">
-            Elimina la fragmentación. Integra tu guion, storyboards, cámara, props y cast en un solo workspace impulsado por IA. Visualiza cada toma antes de llegar al set y ahorra semanas de preproducción.
+            Integrate your script, storyboards, camera, props, and cast into a single AI-powered workspace. Visualize every shot before arriving on set and save weeks of pre-production.
           </p>
 
           <!-- Primary CTA Buttons -->
@@ -88,27 +88,27 @@
       <!-- Proof Badges / User Benefits -->
       <div class="mt-20 pt-8 border-t border-base-300/50 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-left">
         <div class="card p-4 rounded-box bg-base-200/60 border border-base-300 backdrop-blur-sm shadow-sm hover:border-primary/50 transition-colors">
-          <div class="text-xs font-bold uppercase tracking-wider text-primary">Directores Indie</div>
-          <div class="text-sm font-semibold text-base-content mt-1">Visualiza antes del set</div>
-          <div class="text-xs text-base-content/60 mt-1">Storyboards con IA sin presupuesto extra.</div>
+          <div class="text-xs font-bold uppercase tracking-wider text-primary">Indie Directors</div>
+          <div class="text-sm font-semibold text-base-content mt-1">Visualize before set</div>
+          <div class="text-xs text-base-content/60 mt-1">AI storyboards with no extra budget.</div>
         </div>
 
         <div class="card p-4 rounded-box bg-base-200/60 border border-base-300 backdrop-blur-sm shadow-sm hover:border-secondary/50 transition-colors">
-          <div class="text-xs font-bold uppercase tracking-wider text-secondary">ADs & Productores</div>
-          <div class="text-sm font-semibold text-base-content mt-1">Cero sorpresas</div>
-          <div class="text-xs text-base-content/60 mt-1">Cada departamento sabe qué necesita.</div>
+          <div class="text-xs font-bold uppercase tracking-wider text-secondary">ADs & Producers</div>
+          <div class="text-sm font-semibold text-base-content mt-1">Zero surprises</div>
+          <div class="text-xs text-base-content/60 mt-1">Every department knows what they need.</div>
         </div>
 
         <div class="card p-4 rounded-box bg-base-200/60 border border-base-300 backdrop-blur-sm shadow-sm hover:border-success/50 transition-colors">
-          <div class="text-xs font-bold uppercase tracking-wider text-success">Estudiantes de Cine</div>
-          <div class="text-sm font-semibold text-base-content mt-1">Preproducción Pro</div>
-          <div class="text-xs text-base-content/60 mt-1">Aprende con herramientas profesionales.</div>
+          <div class="text-xs font-bold uppercase tracking-wider text-success">Film Students</div>
+          <div class="text-sm font-semibold text-base-content mt-1">Pro Pre-production</div>
+          <div class="text-xs text-base-content/60 mt-1">Learn with professional tools.</div>
         </div>
 
         <div class="card p-4 rounded-box bg-base-200/60 border border-base-300 backdrop-blur-sm shadow-sm hover:border-info/50 transition-colors">
-          <div class="text-xs font-bold uppercase tracking-wider text-info">Creadores de Contenido</div>
-          <div class="text-sm font-semibold text-base-content mt-1">Eleva tu narrativa</div>
-          <div class="text-xs text-base-content/60 mt-1">Lleva tus videos al siguiente nivel.</div>
+          <div class="text-xs font-bold uppercase tracking-wider text-info">Content Creators</div>
+          <div class="text-sm font-semibold text-base-content mt-1">Elevate your narrative</div>
+          <div class="text-xs text-base-content/60 mt-1">Take your videos to the next level.</div>
         </div>
       </div>
     </div>

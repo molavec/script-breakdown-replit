@@ -102,12 +102,12 @@ onMounted(() => {
           </div>
         </div>
 
-        <div class="mt-12 pt-8 border-t border-base-300 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-base-content/50">
-          <p>© {{ new Date().getFullYear() }} Script Breakdown. Designed for cinematic workflows.</p>
-          <div class="flex items-center gap-6">
-            <span>Enterprise-grade isolation</span>
-            <span>Cloud media storage</span>
-          </div>
+        <div class="mt-12 pt-8 border-t border-base-300 flex flex-col items-center justify-center text-xs text-base-content/50 text-center">
+          <p>
+            © {{ new Date().getFullYear() }} Script Breakdown. Designed for cinematic workflows by 
+            <a href="https://devpost.com/molavec" target="_blank" rel="noopener noreferrer" class="font-medium hover:text-primary transition-colors underline decoration-transparent hover:decoration-primary">Miguel Olave</a> & 
+            <a href="https://www.instagram.com/carosalas.digital/" target="_blank" rel="noopener noreferrer" class="font-medium hover:text-primary transition-colors underline decoration-transparent hover:decoration-primary">Carolina Salas</a>.
+          </p>
         </div>
       </div>
     </footer>

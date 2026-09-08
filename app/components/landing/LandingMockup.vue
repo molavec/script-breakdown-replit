@@ -2,20 +2,20 @@
 const steps = [
   {
     id: 1,
-    title: 'Estructura tu escena',
-    description: 'Visualiza todo tu desglose en una tabla técnica personalizable. Selecciona cualquier celda vacía para comenzar a añadir detalles creativos o técnicos.',
+    title: 'Structure your scene',
+    description: 'Visualize your entire breakdown in a customizable technical table. Select any empty cell to start adding creative or technical details.',
     image: '/landing/demo_scene_1c.png',
   },
   {
     id: 2,
-    title: 'Co-crea con Gemini AI',
-    description: 'Abre el asistente inteligente. Usa un prompt sencillo para generar storyboards, encuadres precisos o redacciones técnicas. La IA entiende el contexto de tu toma automáticamente.',
+    title: 'Co-create with Gemini AI',
+    description: 'Open the smart assistant. Use a simple prompt to generate storyboards, precise framing, or technical copy. The AI automatically understands the context of your shot.',
     image: '/landing/edit_cell_1b.png',
   },
   {
     id: 3,
-    title: 'Resultados en tu shot',
-    description: 'El contenido generado se inserta directamente en tu celda. Listo para ser guardado, compartido con el equipo o iterado de nuevo si lo necesitas.',
+    title: 'Results in your shot',
+    description: 'Generated content is inserted directly into your cell. Ready to be saved, shared with the team, or iterated again if needed.',
     image: '/landing/edit_result.png',
   }
 ]
@@ -26,12 +26,12 @@ const steps = [
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       
       <div class="text-center max-w-3xl mx-auto mb-20">
-        <h2 class="text-xs font-mono uppercase tracking-widest text-primary font-semibold">Workflow Inteligente</h2>
+        <h2 class="text-xs font-mono uppercase tracking-widest text-primary font-semibold">Smart Workflow</h2>
         <p class="text-3xl sm:text-4xl font-extrabold text-base-content mt-2 tracking-tight">
-          Preproducción a la velocidad de tu imaginación
+          Pre-production at the speed of your imagination
         </p>
         <p class="text-base-content/70 mt-3 text-sm sm:text-base leading-relaxed">
-          Descubre cómo el asistente de IA se integra fluidamente en tu proceso de desglose. Sin fricción, sin salir de tu espacio de trabajo.
+          Discover how the AI assistant seamlessly integrates into your breakdown process. Frictionless, without leaving your workspace.
         </p>
       </div>
 

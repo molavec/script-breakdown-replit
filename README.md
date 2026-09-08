@@ -12,8 +12,6 @@ License [GNU GPLv3](./LICENSE.md)
 
 [Live Demo](https://script-breakdown.replit.app)
 
-[![Demo](https://img.youtube.com/vi/-wFqC2Gq_2g/hqdefault.jpg)](https://www.youtube.com/watch?v=-wFqC2Gq_2g)
-
 
 ## Tech Stack
 

@@ -44,10 +44,10 @@ const technologies: Tech[] = [
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
       <div class="text-center max-w-xl mx-auto mb-10">
         <p class="text-xs uppercase tracking-widest font-semibold text-primary mb-2">
-          Tecnologías
+          Technologies
         </p>
         <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-base-content">
-          Construido con tecnología moderna y confiable
+          Built with modern and reliable technology
         </h2>
       </div>
 

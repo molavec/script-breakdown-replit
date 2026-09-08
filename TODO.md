@@ -1,41 +1,35 @@
-# UX
+# Postulación
 
-
-Fix: que al momento de presionar en la celda se active el cambio del estado del edición del elemento y no al presionar el elemento en sí.
-Fix: En el modo de edición de tag colocar una leyenda que indique que se aceptan textos separados por comas en inglés.
-Fix: En el modo de edición de number colocar una leyenda que indique que solo se aceptan numeros.
-
-* En las celdas de tipo tag y number no funcionan los botones de cancelar en el modo edición
-
-* En el modo de edición de tag colocar una leyenda que indique que se aceptan textos separados por comas en inglés.
-* En el modo de edición de number colocar una leyenda que indique que solo se aceptan numeros.
-
-
-Fix: hablar que se parten con datos de prueba para que el usuario pueda probar inmediatamente, cosa que se cambiará en el futuro obteniendo datos desde importación de un script o desde la descripción del proyecto.
-
-
-Fix:
+Landing y postulación: hablar que se parten con datos de prueba para que el usuario pueda probar inmediatamente, cosa que se cambiará en el futuro obteniendo datos desde importación de un script o desde la descripción del proyecto.
 Landing y postulación: Hablar del contexto Gradual
-Landing y postulación: Hablar del presupuesto
-
-
-## escenas
-* Evidenciar mejor el resultado que el usuario obtendrá con el asistente corto en el placeholder, con un ejemplo de lo que el usuario puede escribir y lo que pueede recibir. Considera el tipo de contenido habilitado para la columna.
-* Desactivar el botón guardar si el usuario no ha realizado cambios en el contenido o el asistente aún está abierto.
-
-* Ajusta la creación de una nueva columna.
-
-* Persistir el alto en los shots y el ancho en las columnas. En los shots utiliza una propiedad options, al igual que en las columns. Crea un plan.
+Landing y postulación: Hablar de la gestión por créditos.
+Landing y postulación: Hablar del presupuesto del proyecto
+Landing y postulación: UX es primer ciudadano. Hablar de los se privilegio ajustar bien la UI/UX de las zonas en las que era más importante el uso de la IA y donde más tiempo pasaría en la aplicación (scenes and shots), evitando de lado utilizarla en todos lados de forma excesiva y crando UI/UX que fuesen un dolor de cabeza para el usuario. También resolver bien los aspectos técnicos que resultan importante para cumplir con las bases y requerimientos solicitados de la hackathon.
 
 
 
-# Github README.md
-* Indicar donde se puede ver el uso de GenIA.
-* Beneficios de utilizar Replit. Ventajas, depliegue, git, storage, bbdd e IA para resolver depliegue, desarrollo estrachamente vinculado a la arquitectura, resolver bugs de arquitectura y seguridad. Capacidad de mantener desarrollo local, que se puede mejorar para no tener que solo depender de la interfaz web.
-* Hablar de UX y responsive. Si vamos a ahorrar tiempo la UX es primer ciudadano.
-* Hablar de la contabilización por créditos.
-* hablar de los features dejado de lado para potenciar los aspectos técnicos solicitados por la hackaton. 
-* The repository must be public and open source, with an open-source license file detectable at the top of the repository page (About section).
+## Hackathon Prioritization
+
+To deliver a polished and highly functional product within the deadline, we fiercely prioritized:
+
+* **UX as a First-Class Citizen:** User experience was our top priority. Rather than forcing AI into every corner of the app just for the sake of it, we hyper-focused our UI/UX refinement on the most critical workflows: scene and shot management. We ensured the Google AI tools feel natural, integrated, and genuinely helpful. By prioritizing a clean, frictionless interface over unnecessary gimmicks, we avoided user fatigue while strictly fulfilling the hackathon's technical and design requirements.
+[UX as a First-Class Citizen](./public/landing/feature_1.png)
+
+
+* **Zero-Friction Onboarding:** The application currently loads with pre-populated test data so users can instantly test the AI and experience the platform's value. In future iterations, this will be dynamically populated via automated script imports (FDX/PDF) or project descriptions.
+[Zero-Friction Onboarding](./public/landing/feature_2.png)
+
+
+* **Gradual AI Context:** We prioritized intelligent, context-aware generation. The AI assistant receives gradual context by reading the previously filled columns of the exact same shot, ensuring that generated storyboards and technical text remain highly coherent and aligned with the director's vision.
+[Gradual AI Context](./public/landing/feature_3.png)
+
+
+* **Transparent Credit Management:** We built a visible token consumption system. Users can easily monitor their daily and monthly AI usage via progress bars, ensuring they always have full control over their limits without any billing surprises.
+[Transparent Credit Management](./public/landing/feature_4.png)
+
+* **Built-in Budget & Metadata Tracking:** We implemented a project-level dashboard that automatically calculates and displays essential statistics, allowing creators to track their estimated production budget alongside their total scenes and shot counts.
+[Built-in Budget & Metadata Tracking](./public/landing/feature_5.png)
+
 
 
 

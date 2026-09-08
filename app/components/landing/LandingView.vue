@@ -7,7 +7,7 @@
     <LandingHero />
     <LandingTechnologies />
     <LandingMockup />
-    <!-- <LandingFeatures /> -->
+    <LandingFeatures /> 
     <!-- <LandingWorkflow /> -->
     <!-- <LandingAiSection /> -->
     <LandingPricing />
