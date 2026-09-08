@@ -1,13 +1,22 @@
 # UX
 
 
-Fix: Separar en componentes los contenidos de Cell Drawer, para tener mejor mantenibilidad.
-Fix: colocar el botón de salvar y cancelar arriba, para evitar que se presione accidentalmente.
-Fix: cuando se añade nuevo contenido al cell content que haga un autoscroll al final para evidenciar el cambio.
-Fix: bloque cell content más largo.
+Fix: Añadir categorias y otro y revisar si está bien genre.
+fix: al insertar a la celda que se cierre la vista del asistente y cambie al editor.
 
+fix: Mejorar la visual para que el usuario sepa que tiene que ir al Script Breakdown.
+
+Fix: Problema al crear una nueva Columna y auto scroll cuando se crea una Columna 
 Fix: auto scroll en la creación de nuevo shot.
 Fix: auto ajustar el alto de las fila en función del contenido hasta un máximo cuando se guarde nuevo contenido.
+
+Fix: hablar que se parten con datos de prueba para que el usuario pueda probar inmediatamente, cosa que se cambiará en el futuro obteniendo datos desde importación de un script o desde la descripción del proyecto.
+
+Fix: En tag y number colocar una leyenda que indique que separan los valores por comas y el tipo de dato aceptados solo numeros o textos, separados por comas.
+
+Fix:
+Landing y postulación: Hablar del contexto Gradual
+Landing y postulación: Hablar del presupuesto
 
 
 ## escenas

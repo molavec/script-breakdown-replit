@@ -144,7 +144,7 @@ onUnmounted(() => {
 
 <template>
   <div class="h-full overflow-auto pb-6 px-6" @scroll.passive="onContainerScroll">
-    <table class="w-max text-left border-separate border-spacing-0 table-fixed mb-128">
+    <table class="w-max text-left border-separate border-spacing-0 table-fixed mb-128 mr-64">
       <!-- Table Header -->
       <thead class="sticky top-0 z-20 bg-base-200 text-base-content text-xs font-bold font-mono">
         <draggable
