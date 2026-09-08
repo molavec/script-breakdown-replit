@@ -12,13 +12,20 @@ const isProjectOverview = computed(() => {
   return !route.params.sceneId && !route.params['scene-id'];
 });
 
-const filteredScenes = computed(() => {
-  if (!searchQuery.value) return scenes.value;
-  const lowerQ = searchQuery.value.toLowerCase();
-  return scenes.value.filter((s: Scene) => 
-    s.synopsis?.toLowerCase().includes(lowerQ) || 
-    s.id.toLowerCase().includes(lowerQ)
-  );
+const filteredScenes = computed({
+  get: () => {
+    if (!searchQuery.value) return scenes.value;
+    const lowerQ = searchQuery.value.toLowerCase();
+    return scenes.value.filter((s: Scene) => 
+      s.synopsis?.toLowerCase().includes(lowerQ) || 
+      s.id.toLowerCase().includes(lowerQ)
+    );
+  },
+  set: (newScenes) => {
+    if (!searchQuery.value) {
+      updateScenesOrder(newScenes);
+    }
+  }
 });
 
 const handleSelectScene = (sceneId: string) => {
@@ -144,11 +151,10 @@ const handleNavigateOverview = () => {
         <!-- Scene List -->
         <div class="flex-1 overflow-y-auto min-h-0 pr-1 -mr-1">
           <draggable 
-            :list="filteredScenes" 
+            v-model="filteredScenes" 
             item-key="id" 
             handle=".drag-handle"
             ghost-class="opacity-50"
-            @end="!searchQuery ? updateScenesOrder([...filteredScenes]) : null"
           >
             <template #item="{ element }">
               <BreakdownSceneItem 

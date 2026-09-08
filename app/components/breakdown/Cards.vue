@@ -18,6 +18,12 @@ const closeImagePreview = () => {
   previewImageUrl.value = null;
 };
 
+const tableRows = computed({
+  get: () => rows.value,
+  set: (newRows) => {
+    updateRowsOrder(newRows);
+  }
+});
 
 const getCurrencySymbol = (code?: string): string => {
   if (!code) return '';
@@ -61,13 +67,12 @@ const getScriptSnippet = (row: any) => {
 <template>
   <div class="w-full h-full p-4 overflow-y-auto">
     <draggable
-      :list="rows"
+      v-model="tableRows"
       tag="div"
       class="flex flex-wrap gap-4"
       item-key="id"
       handle=".drag-handle"
       ghost-class="opacity-50"
-      @end="updateRowsOrder([...rows])"
     >
       <template #item="{ element: row, index: rowIndex }">
         <div class="card bg-base-200 border border-base-300 rounded-box p-5 shadow-lg relative group transition-colors hover:border-primary/40 w-full max-w-none lg:max-w-md">
