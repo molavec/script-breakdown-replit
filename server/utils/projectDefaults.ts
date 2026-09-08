@@ -19,7 +19,7 @@ export async function createDefaultProjectData(projectId: string) {
       isSystem: true,
       color: '#f3f4f6',
       options: {
-        defaultPrompt: 'Write concise screenplay action lines and narrative descriptions for this shot.',
+        defaultPrompt: 'Write the screenplay action lines, narrative scene description, or dialogue for this shot. When an actor speaks in the shot, write it in dialogue format.',
         width: 300,
       },
     },
