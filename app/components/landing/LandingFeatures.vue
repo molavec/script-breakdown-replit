@@ -7,7 +7,7 @@ const features = [
   },
   {
     title: 'Zero-Friction Onboarding',
-    description: "The application currently loads with pre-populated test data so users can instantly test the AI and experience the platform's value. In future iterations, this will be dynamically populated via automated script imports (FDX/PDF) or project descriptions.",
+    description: "New projects instantly load with pre-populated cinematic data so users can immediately experience the platform's capabilities. In upcoming releases, initial breakdown data will be dynamically generated directly from your scene's logline.",
     image: '/landing/feature_2.png',
   },
   {

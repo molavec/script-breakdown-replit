@@ -1,34 +1,3 @@
-# Postulación
-
-Landing y postulación: hablar que se parten con datos de prueba para que el usuario pueda probar inmediatamente, cosa que se cambiará en el futuro obteniendo datos desde importación de un script o desde la descripción del proyecto.
-Landing y postulación: Hablar del contexto Gradual
-Landing y postulación: Hablar de la gestión por créditos.
-Landing y postulación: Hablar del presupuesto del proyecto
-Landing y postulación: UX es primer ciudadano. Hablar de los se privilegio ajustar bien la UI/UX de las zonas en las que era más importante el uso de la IA y donde más tiempo pasaría en la aplicación (scenes and shots), evitando de lado utilizarla en todos lados de forma excesiva y crando UI/UX que fuesen un dolor de cabeza para el usuario. También resolver bien los aspectos técnicos que resultan importante para cumplir con las bases y requerimientos solicitados de la hackathon.
-
-
-
-## Hackathon Prioritization
-
-To deliver a polished and highly functional product within the deadline, we fiercely prioritized:
-
-* **UX as a First-Class Citizen:** User experience was our top priority. Rather than forcing AI into every corner of the app just for the sake of it, we hyper-focused our UI/UX refinement on the most critical workflows: scene and shot management. We ensured the Google AI tools feel natural, integrated, and genuinely helpful. By prioritizing a clean, frictionless interface over unnecessary gimmicks, we avoided user fatigue while strictly fulfilling the hackathon's technical and design requirements.
-[UX as a First-Class Citizen](./public/landing/feature_1.png)
-
-
-* **Zero-Friction Onboarding:** The application currently loads with pre-populated test data so users can instantly test the AI and experience the platform's value. In future iterations, this will be dynamically populated via automated script imports (FDX/PDF) or project descriptions.
-[Zero-Friction Onboarding](./public/landing/feature_2.png)
-
-
-* **Gradual AI Context:** We prioritized intelligent, context-aware generation. The AI assistant receives gradual context by reading the previously filled columns of the exact same shot, ensuring that generated storyboards and technical text remain highly coherent and aligned with the director's vision.
-[Gradual AI Context](./public/landing/feature_3.png)
-
-
-* **Transparent Credit Management:** We built a visible token consumption system. Users can easily monitor their daily and monthly AI usage via progress bars, ensuring they always have full control over their limits without any billing surprises.
-[Transparent Credit Management](./public/landing/feature_4.png)
-
-* **Built-in Budget & Metadata Tracking:** We implemented a project-level dashboard that automatically calculates and displays essential statistics, allowing creators to track their estimated production budget alongside their total scenes and shot counts.
-[Built-in Budget & Metadata Tracking](./public/landing/feature_5.png)
 
 
 
