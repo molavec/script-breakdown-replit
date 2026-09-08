@@ -6,6 +6,38 @@ const form = ref({
   description: ''
 })
 
+const productionTypes = [
+  { value: 'feature', label: 'Feature Film' },
+  { value: 'series', label: 'Series' },
+  { value: 'short', label: 'Short Film' },
+  { value: 'documentary', label: 'Documentary' },
+  { value: 'commercial', label: 'Commercial' },
+  { value: 'music_video', label: 'Music Video' },
+  { value: 'youtube', label: 'YouTube Video' },
+  { value: 'social_reel', label: 'Social Media Reel / TikTok' },
+  { value: 'podcast', label: 'Podcast / Vodcast' },
+  { value: 'vlog', label: 'Vlog' },
+  { value: 'other', label: 'Other' }
+]
+
+const genres = [
+  { value: 'action', label: 'Action' },
+  { value: 'comedy', label: 'Comedy' },
+  { value: 'drama', label: 'Drama' },
+  { value: 'fantasy', label: 'Fantasy' },
+  { value: 'horror', label: 'Horror' },
+  { value: 'mystery', label: 'Mystery' },
+  { value: 'romance', label: 'Romance' },
+  { value: 'scifi', label: 'Sci-Fi' },
+  { value: 'thriller', label: 'Thriller' },
+  { value: 'western', label: 'Western' },
+  { value: 'educational', label: 'Educational / Tutorial' },
+  { value: 'review', label: 'Review / Unboxing' },
+  { value: 'gaming', label: 'Gaming / Stream' },
+  { value: 'variety', label: 'Entertainment / Variety' },
+  { value: 'other', label: 'Other' }
+]
+
 const isLoading = ref(false)
 
 const createProject = async () => {
@@ -60,19 +92,18 @@ const createProject = async () => {
             <label class="block text-xs font-bold text-base-content/70 uppercase tracking-widest mb-2">Production Type</label>
             <select v-model="form.type" class="select select-bordered w-full bg-base-100 text-base-content focus:border-primary">
               <option value="" disabled selected>Select format...</option>
-              <option value="feature">Feature Film</option>
-              <option value="series">Series</option>
-              <option value="short">Short Film</option>
+              <option v-for="type in productionTypes" :key="type.value" :value="type.value">
+                {{ type.label }}
+              </option>
             </select>
           </div>
           <div>
             <label class="block text-xs font-bold text-base-content/70 uppercase tracking-widest mb-2">Primary Genre</label>
             <select v-model="form.genre" class="select select-bordered w-full bg-base-100 text-base-content focus:border-primary">
               <option value="" disabled selected>Select genre...</option>
-              <option value="thriller">Thriller</option>
-              <option value="scifi">Sci-Fi</option>
-              <option value="drama">Drama</option>
-              <option value="comedy">Comedy</option>
+              <option v-for="genre in genres" :key="genre.value" :value="genre.value">
+                {{ genre.label }}
+              </option>
             </select>
           </div>
         </div>

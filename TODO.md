@@ -1,8 +1,6 @@
 # UX
 
-
-Fix: Añadir categorias y otro y revisar si está bien genre.
-fix: al insertar a la celda que se cierre la vista del asistente y cambie al editor.
+fix: al reemplazar o  insertar a la celda que se cierre la vista del asistente para que el usuario pueda ver inmediatamente el editor.
 
 fix: Mejorar la visual para que el usuario sepa que tiene que ir al Script Breakdown.
 
