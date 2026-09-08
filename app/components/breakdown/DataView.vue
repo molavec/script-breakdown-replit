@@ -77,10 +77,16 @@ const budgetCurrencySymbol = computed(() => {
             <svg class="swap-on fill-current w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 5v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2zm2 0h14v5H5V5zm0 14v-7h14v7H5z"/></svg>
           </label>
   
-          <button @click="addRow" class="btn btn-sm btn-primary font-semibold shadow-sm">
+          <button 
+            class="btn btn-sm btn-primary font-semibold shadow-sm"
+            @click="addRow()" 
+          >
             Add Shot
           </button>
-          <button class="btn btn-sm btn-outline border-base-300 text-base-content hover:bg-base-300" @click="addColumn()">
+          <button
+            class="btn btn-sm btn-outline border-base-300 text-base-content   hover:bg-base-300" 
+            @click="addColumn()"
+          >
             Add Column
           </button>
 

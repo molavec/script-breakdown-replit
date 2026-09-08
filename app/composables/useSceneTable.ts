@@ -134,7 +134,7 @@ export const useSceneTable = () => {
     }
   };
 
-  const addColumn = (initialData?: Partial<BreakdownColumn>) => {
+  const addColumn = async (initialData?: Partial<BreakdownColumn>) => {
     const newColId = initialData?.id || `col_${Date.now()}`;
     const newCol: BreakdownColumn = {
       id: newColId,
@@ -161,6 +161,18 @@ export const useSceneTable = () => {
         blocks: []
       };
     });
+
+    const projectId = project.value?.id;
+    if (projectId) {
+      try {
+        await $fetch(`/api/projects/${projectId}/columns`, {
+          method: 'POST',
+          body: newCol
+        });
+      } catch (error) {
+        console.error('Failed to create column on server:', error);
+      }
+    }
 
     return newColId;
   };
