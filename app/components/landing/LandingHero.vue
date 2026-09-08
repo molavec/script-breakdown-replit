@@ -53,7 +53,7 @@
             </NuxtLink>
 
             <a
-              href="#preview"
+              href="#how-it-works"
               class="btn btn-outline border-base-300 bg-base-200/50 hover:bg-base-200 text-base-content btn-lg rounded-box font-medium transition-all flex items-center justify-center gap-2 px-7 w-full sm:w-auto"
             >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 text-base-content/60">
