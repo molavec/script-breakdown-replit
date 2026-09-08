@@ -43,9 +43,8 @@ const availableColumns = computed(() => {
 
 const editContent = ref('');
 const previewImageUrl = ref<string | null>(null);
-const showAiMode = ref(false);
+const showAiOverlay = ref(false);
 const initialContextCols = ref<string[]>([]);
-const pendingScrollToBottom = ref(false);
 
 const editorComponentRef = ref<InstanceType<typeof CellDrawerEditor> | null>(null);
 const aiChatComponentRef = ref<InstanceType<typeof CellDrawerAiChat> | null>(null);
@@ -64,7 +63,6 @@ const createImageHtml = (src: string) => {
 
 watch([() => activeCell.value, () => isDrawerOpen.value], async ([newCell, isOpen]) => {
   if (isOpen && newCell) {
-    showAiMode.value = false;
     let initialContent = '';
     
     if (newCell.blocks && newCell.blocks.length > 0) {
@@ -92,7 +90,7 @@ watch([() => activeCell.value, () => isDrawerOpen.value], async ([newCell, isOpe
           .map(c => c.id);
       }
     }
-    
+
     initialContextCols.value = calculatedContextCols;
 
     await nextTick();
@@ -101,34 +99,16 @@ watch([() => activeCell.value, () => isDrawerOpen.value], async ([newCell, isOpe
   }
 });
 
-watch(showAiMode, (val) => {
+watch(showAiOverlay, (val) => {
   // Logic handled by component ref watchers now
 });
 
 // Observador (Watcher) para el Componente del Chat de IA
-// NOTA: Como usamos <Transition mode="out-in">, el Chat de IA tarda 200ms en montarse
-// después de que showAiMode cambia a true (espera a que el editor desaparezca).
-// Por eso vigilamos (watch) la referencia del componente en sí, para pasarle
-// los contextos iniciales EXACTAMENTE en el momento en que se monta en el DOM.
+// Asegura que al montarse (cuando aparece el overlay deslizante),
+// le inyectamos exactamente los contextos de columnas iniciales que calculamos.
 watch(() => aiChatComponentRef.value, (newRef) => {
-  if (newRef && showAiMode.value) {
+  if (newRef && showAiOverlay.value) {
     newRef.resetChat(initialContextCols.value);
-  }
-});
-
-// Observador (Watcher) para el Componente del Editor
-// Similar al chat, el editor se monta con un retraso al cerrar la IA.
-// Si el usuario insertó contenido usando IA (pendingScrollToBottom = true), 
-// esperamos a que el editor se vuelva a renderizar en la pantalla y hacemos scroll hasta abajo.
-watch(() => editorComponentRef.value, (newRef) => {
-  if (newRef && pendingScrollToBottom.value) {
-    // Wait an extra tick to ensure innerHTML is fully rendered by onMounted
-    setTimeout(() => {
-      if (newRef.editorRef) {
-        newRef.editorRef.scrollTop = newRef.editorRef.scrollHeight + 1000;
-      }
-      pendingScrollToBottom.value = false;
-    }, 50);
   }
 });
 
@@ -149,12 +129,12 @@ const formatContentHtml = (text: string, imageUrl?: string) => {
 // Manejador para "+ Insert to Cell" (Añadir al contenido existente)
 const handleAddToContent = (text: string, imageUrl?: string) => {
   const htmlToInsert = formatContentHtml(text, imageUrl);
-  // 1. Actualizamos la variable de estado principal
+  // 1. Añadimos el nuevo HTML a la variable de estado principal
   editContent.value = editContent.value + htmlToInsert;
   
   if (editorComponentRef.value?.editorRef) {
-    // 2a. Si el editor ESTÁ visible (Opción 2), actualizamos el DOM directamente 
-    // y hacemos scroll hasta abajo de forma inmediata.
+    // 2. Como el editor siempre está visible en la Opción 2, 
+    // actualizamos el DOM de inmediato y aplicamos el scroll.
     const editorEl = editorComponentRef.value.editorRef;
     editorEl.insertAdjacentHTML('beforeend', htmlToInsert);
     editContent.value = editorEl.innerHTML;
@@ -163,21 +143,18 @@ const handleAddToContent = (text: string, imageUrl?: string) => {
     nextTick(() => {
       editorEl.scrollTop = editorEl.scrollHeight;
     });
-  } else {
-    // 2b. Si el editor NO ESTÁ visible (Opción 1), le decimos al componente
-    // que haga scroll una vez que vuelva a aparecer en la pantalla.
-    pendingScrollToBottom.value = true;
   }
 };
 
 // Manejador para "Replace Cell" (Sobrescribir todo el contenido)
 const handleReplaceContent = (text: string, imageUrl?: string) => {
   const htmlToInsert = formatContentHtml(text, imageUrl);
-  // 1. Sobrescribimos la variable de estado principal
+  // 1. Sobrescribimos completamente la variable de estado principal
   editContent.value = htmlToInsert;
   
   if (editorComponentRef.value?.editorRef) {
-    // 2a. Si el editor ESTÁ visible, reemplazamos el HTML y hacemos scroll
+    // 2. Como el editor siempre está visible en la Opción 2, 
+    // reemplazamos el HTML del DOM y aplicamos el scroll hacia abajo.
     const editorEl = editorComponentRef.value.editorRef;
     editorEl.innerHTML = htmlToInsert;
     editContent.value = editorEl.innerHTML;
@@ -186,18 +163,12 @@ const handleReplaceContent = (text: string, imageUrl?: string) => {
     nextTick(() => {
       editorEl.scrollTop = editorEl.scrollHeight;
     });
-  } else {
-    // 2b. Si el editor está oculto (Opción 1), marcamos para hacer scroll luego
-    pendingScrollToBottom.value = true;
   }
 };
 
 const saveAndClose = async () => {
-  if (activeCell.value) {
-    let content = editContent.value;
-    if (editorComponentRef.value?.editorRef) {
-      content = editorComponentRef.value.editorRef.innerHTML;
-    }
+  if (activeCell.value && editorComponentRef.value?.editorRef) {
+    let content = editorComponentRef.value.editorRef.innerHTML;
     
     // Subir imágenes incrustadas (base64, blob) a Replit App Storage
     content = await processHtmlAndUploadImages(content);
@@ -258,15 +229,15 @@ const handleCancel = () => {
           <div>
             <h1 class="text-base lg:text-sm font-semibold text-base-content">Edit Cell {{ activeColumn?.name }}</h1>
             <div class="my-1 space-y-0.5">
-              <!-- <p v-if="activeColumn?.description" class="text-sm lg:text-xs text-base-content/80 leading-relaxed">
+              <p v-if="activeColumn?.description" class="text-sm lg:text-xs text-base-content/80 leading-relaxed">
                 {{ activeColumn.description }}
-              </p> -->
+              </p>
             </div>
           </div>
           <button 
-            v-if="!showAiMode"
-            @click="showAiMode = true"
-            class="btn btn-sm btn-ghost text-secondary bg-secondary/10 flex-shrink-0"
+            v-if="!showAiOverlay"
+            @click="showAiOverlay = true"
+            class="btn btn-sm btn-ghost text-secondary hover:bg-secondary/10 flex-shrink-0"
             title="Mejorar con IA"
           >
             <SparklesIcon :size="16" />
@@ -274,40 +245,51 @@ const handleCancel = () => {
           </button>
           <button 
             v-else
-            @click="showAiMode = false"
-            class="btn btn-sm btn-ghost bg-base-300 flex-shrink-0"
+            @click="showAiOverlay = false"
+            class="btn btn-sm btn-ghost hover:bg-base-300 flex-shrink-0"
             title="Volver al Editor"
           >
-            <XIcon :size="16" />
-            <span class="hidden sm:inline">Close AI</span>
+            Cerrar IA
           </button>
         </header>
 
         <!-- Body -->
         <div class="flex-1 flex flex-col overflow-hidden relative" v-if="activeCell">
-          <Transition name="fade" mode="out-in">
-            <CellDrawerEditor 
-              v-if="!showAiMode"
-              ref="editorComponentRef"
-              v-model="editContent"
-              :column="activeColumn"
-              @open-image-preview="openImagePreview"
-              class="h-full"
-            />
-            
-            <CellDrawerAiChat 
-              v-else
-              ref="aiChatComponentRef"
-              :project="project"
-              :activeColumn="activeColumn"
-              :availableColumns="availableColumns"
-              :currentRow="currentRow"
-              :currentContent="editContent"
-              @insert-content="handleAddToContent"
-              @replace-content="handleReplaceContent"
-              @open-image-preview="openImagePreview"
-              class="h-full"
-            />
+          
+          <CellDrawerEditor 
+            ref="editorComponentRef"
+            v-model="editContent"
+            :column="activeColumn"
+            @open-image-preview="openImagePreview"
+            class="h-full"
+          />
+
+          <!-- Overlay for AI Chat -->
+          <Transition name="slide-up">
+            <div v-show="showAiOverlay" class="absolute bottom-0 left-0 w-full h-[90%] z-20 bg-base-200 shadow-[0_-10px_40px_rgba(0,0,0,0.3)] rounded-t-2xl flex flex-col overflow-hidden border-t border-base-300">
+              <!-- Close Button for Overlay -->
+              <div class="absolute top-2 right-2 z-30">
+                <button 
+                  @click="showAiOverlay = false"
+                  class="btn btn-circle btn-sm btn-ghost hover:bg-base-300"
+                >
+                  <XIcon :size="16" />
+                </button>
+              </div>
+              
+              <CellDrawerAiChat 
+                ref="aiChatComponentRef"
+                :project="project"
+                :activeColumn="activeColumn"
+                :availableColumns="availableColumns"
+                :currentRow="currentRow"
+                :currentContent="editContent"
+                @insert-content="handleAddToContent"
+                @replace-content="handleReplaceContent"
+                @open-image-preview="openImagePreview"
+                class="h-full pt-4"
+              />
+            </div>
           </Transition>
         </div>
         <div v-else class="p-6 text-center text-base-content/50 text-base lg:text-sm flex-1 flex items-center justify-center">
@@ -315,7 +297,7 @@ const handleCancel = () => {
         </div>
 
         <!-- Footer -->
-        <footer class="p-4 bg-base-200 border-t border-base-300 flex flex-col gap-4 flex-shrink-0" v-show="!showAiMode">
+        <footer class="p-4 bg-base-200 border-t border-base-300 flex flex-col gap-4 flex-shrink-0">
           <div class="flex items-center gap-3 w-full">
             <button 
               type="button" 
@@ -350,16 +332,12 @@ const handleCancel = () => {
   will-change: auto !important;
 }
 
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.2s ease, transform 0.2s ease;
+.slide-up-enter-active,
+.slide-up-leave-active {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.fade-enter-from {
-  opacity: 0;
-  transform: translateY(10px);
-}
-.fade-leave-to {
-  opacity: 0;
-  transform: translateY(-10px);
+.slide-up-enter-from,
+.slide-up-leave-to {
+  transform: translateY(100%);
 }
 </style>

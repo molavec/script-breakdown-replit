@@ -233,7 +233,7 @@ defineExpose({
       <h2 class="text-xs lg:text-[10px] font-bold text-base-content/60 mb-3 uppercase tracking-wider">AI ASSISTANT</h2>
       
       <div class="flex-1 overflow-y-auto space-y-4 pr-2" ref="chatContainerRef">
-        <div v-if="messages.length === 0" class="text-center text-sm lg:text-xs mt-10 px-6 space-y-1.5 select-none leading-relaxed">
+        <div v-if="messages.length === 0" class="text-center text-sm mt-10 px-6 space-y-1.5 select-none leading-relaxed">
           <p class="text-base-content/70">
             Ask me to generate {{ aiExample.description }}.
           </p>
@@ -280,13 +280,13 @@ defineExpose({
                 @click="emit('replace-content', msg.text, msg.imageUrl)"
                 class="badge badge-sm py-2.5 px-2 bg-base-200 text-base-content/70 hover:text-base-content hover:bg-base-300 border-base-300 cursor-pointer transition-colors"
               >
-                Replace
+                Replace Cell
               </button>
               <button
                 @click="emit('insert-content', msg.text, msg.imageUrl)"
                 class="badge badge-sm py-2.5 px-2 bg-secondary/15 text-secondary hover:bg-secondary hover:text-secondary-content border-secondary/30 cursor-pointer transition-colors font-medium"
               >
-                + Insert
+                + Insert To Cell
               </button>
             </div>
           </div>
@@ -352,7 +352,7 @@ defineExpose({
           </div>
         </div>
 
-        <div class="relative flex items-end">
+        <div class="relative flex items-end mb-4">
           <textarea
             ref="chatInputRef"
             rows="1"
@@ -360,13 +360,13 @@ defineExpose({
             @keydown="handleKeyDown"
             @input="adjustTextareaHeight"
             :placeholder="chatInputPlaceholder"
-            class="w-full bg-base-100 border border-base-300 rounded-2xl py-2.5 pl-4 pr-12 text-base lg:text-sm text-base-content focus:outline-none focus:border-primary placeholder:text-base-content/40 resize-none overflow-y-auto min-h-[42px] max-h-[300px] leading-relaxed block"
+            class="w-full bg-base-100 border border-base-300 rounded-2xl py-2.5 pl-4 pr-12 text-base lg:text-sm text-base-content focus:outline-none focus:border-primary placeholder:text-base-content/40 resize-none overflow-y-auto min-h-[80px] max-h-[300px] leading-relaxed block"
             :disabled="isGenerating"
           ></textarea>
           <button 
             @click="handleSendMessage"
             :disabled="!inputValue.trim() || isGenerating"
-            class="absolute right-2 bottom-1.5 p-2 text-base-content/40 hover:text-primary disabled:opacity-30 transition-colors rounded-lg"
+            class="absolute right-2 bottom-1.5 p-2 text-base-content/70 hover:text-primary disabled:opacity-30 transition-colors rounded-lg"
           >
             <SendIcon :size="18" />
           </button>

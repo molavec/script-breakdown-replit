@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch, nextTick } from 'vue';
+import { computed, ref, watch, nextTick, onMounted } from 'vue';
 import { 
   Bold as BoldIcon,
   Italic as ItalicIcon,
@@ -24,47 +24,6 @@ const emit = defineEmits<{
 const editorRef = ref<HTMLDivElement | null>(null);
 const isEditorFocused = ref(false);
 const isEditorEmpty = ref(true);
-
-const editorHeight = ref(450);
-const isExpanded = ref(false);
-const savedHeight = ref(240);
-const isResizing = ref(false);
-
-const toggleExpand = () => {
-  if (isExpanded.value) {
-    editorHeight.value = savedHeight.value || 240;
-    isExpanded.value = false;
-  } else {
-    savedHeight.value = editorHeight.value;
-    const maxH = typeof window !== 'undefined' ? Math.max(300, window.innerHeight - 360) : 480;
-    editorHeight.value = Math.min(maxH, 500);
-    isExpanded.value = true;
-  }
-};
-
-const startResize = (e: MouseEvent) => {
-  e.preventDefault();
-  isResizing.value = true;
-  const startY = e.clientY;
-  const startHeight = editorHeight.value;
-
-  const onMouseMove = (moveEvent: MouseEvent) => {
-    const deltaY = moveEvent.clientY - startY;
-    const maxH = typeof window !== 'undefined' ? Math.max(260, window.innerHeight - 340) : 600;
-    const newHeight = Math.min(Math.max(160, startHeight + deltaY), maxH);
-    editorHeight.value = newHeight;
-    isExpanded.value = newHeight > 380;
-  };
-
-  const onMouseUp = () => {
-    isResizing.value = false;
-    window.removeEventListener('mousemove', onMouseMove);
-    window.removeEventListener('mouseup', onMouseUp);
-  };
-
-  window.addEventListener('mousemove', onMouseMove);
-  window.addEventListener('mouseup', onMouseUp);
-};
 
 const wordCount = computed(() => {
   if (!props.modelValue) return 0;
@@ -444,6 +403,10 @@ const resetEditor = () => {
   }
 };
 
+onMounted(() => {
+  resetEditor();
+});
+
 defineExpose({
   resetEditor,
   editorRef
@@ -451,11 +414,10 @@ defineExpose({
 </script>
 
 <template>
-  <section class="p-4 flex-shrink-0">
+  <section class="p-4 flex-1 flex flex-col min-h-0">
     <!-- Rich Text Editor Container -->
     <div 
-      class="w-full flex flex-col rounded-box border border-base-300 bg-base-100 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/40 transition-[border,box-shadow] overflow-hidden shadow-inner"
-      :style="{ height: `${editorHeight}px` }"
+      class="w-full flex-1 flex flex-col rounded-box border border-base-300 bg-base-100 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/40 transition-[border,box-shadow] overflow-hidden shadow-inner min-h-0"
     >
       <!-- Editor Toolbar Header -->
       <div class="flex items-center justify-between px-2.5 py-1.5 bg-base-200/90 border-b border-base-300 select-none flex-shrink-0">
@@ -526,16 +488,6 @@ defineExpose({
             :class="isEditorFocused ? 'bg-primary animate-pulse' : 'bg-base-content/30'"
             :title="isEditorFocused ? 'Editing...' : 'Click to edit'"
           ></span>
-          <div class="w-px h-3.5 bg-base-300 mx-0.5"></div>
-          <button 
-            type="button" 
-            @click="toggleExpand" 
-            :title="isExpanded ? 'Collapse editor' : 'Expand editor vertically'"
-            class="p-1 rounded text-base-content/60 hover:text-base-content hover:bg-base-300 active:scale-95 transition-all cursor-pointer"
-          >
-            <Minimize2Icon v-if="isExpanded" :size="13" />
-            <Maximize2Icon v-else :size="13" />
-          </button>
         </div>
       </div>
 
@@ -554,22 +506,13 @@ defineExpose({
         >
         </div>
 
-        <!-- Placeholder Overlay -->
+      <!-- Placeholder Overlay -->
         <div
           v-if="showPlaceholder"
           class="absolute inset-0 p-3 pointer-events-none text-base lg:text-sm text-base-content/40 select-none leading-relaxed overflow-hidden italic z-20 border border-transparent"
         >
           {{ editorPlaceholder }}
         </div>
-      </div>
-
-      <!-- Resize Handle -->
-      <div 
-        class="h-3 w-full flex items-center justify-center cursor-row-resize bg-base-200 hover:bg-base-300 active:bg-base-300 transition-colors group select-none border-t border-base-300 flex-shrink-0"
-        @mousedown="startResize"
-        title="Drag to resize editor vertically"
-      >
-        <div class="w-10 h-1 rounded-full bg-base-content/30 group-hover:bg-base-content/60 transition-colors"></div>
       </div>
     </div>
   </section>
