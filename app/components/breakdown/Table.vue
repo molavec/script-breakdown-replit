@@ -312,19 +312,22 @@ onUnmounted(() => {
                 
                 <!-- Number Cell (Inline Input) -->
                 <div v-if="col.cellType === 'number'">
-                  <div v-if="editingCellId === row.cells[col.id].id" class="flex items-center gap-2">
-                    <input 
-                      type="number" 
-                      class="input input-sm input-bordered w-full bg-base-200 border-base-300 text-base-content focus:outline-none focus:border-primary" 
-                      v-model="inlineEditValue"
-                      @keydown.enter="saveInlineEdit(row.cells[col.id], 'number')"
-                    />
-                    <button @click="saveInlineEdit(row.cells[col.id], 'number')" class="btn btn-xs btn-circle btn-success text-success-content">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                    </button>
-                    <button @click="cancelInlineEdit" class="btn btn-xs btn-circle btn-error text-error-content">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                    </button>
+                  <div v-if="editingCellId === row.cells[col.id].id" class="flex flex-col gap-2" @click.stop>
+                    <div class="flex items-center gap-2">
+                      <input 
+                        type="number" 
+                        class="input input-sm input-bordered w-full bg-base-200 border-base-300 text-base-content focus:outline-none focus:border-primary" 
+                        v-model="inlineEditValue"
+                        @keydown.enter="saveInlineEdit(row.cells[col.id], 'number')"
+                      />
+                      <button @click="saveInlineEdit(row.cells[col.id], 'number')" class="btn btn-xs btn-circle btn-success text-success-content">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                      </button>
+                      <button @click="cancelInlineEdit" class="btn btn-xs btn-circle btn-error text-error-content">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                      </button>
+                    </div>
+                    <span class="text-sm text-base-content/50">Only numbers are allowed.</span>
                   </div>
                   <div v-else class="group flex items-center justify-end gap-2 w-full text-right">
                     <div class="flex items-center gap-1.5 font-mono ml-auto">
@@ -339,7 +342,7 @@ onUnmounted(() => {
 
                 <!-- Tags Cell -->
                 <div v-else-if="col.cellType === 'tags'">
-                  <div v-if="editingCellId === row.cells[col.id].id" class="flex flex-col gap-2">
+                  <div v-if="editingCellId === row.cells[col.id].id" class="flex flex-col gap-2" @click.stop>
                     <input 
                       type="text" 
                       class="input input-sm input-bordered w-full bg-base-200 border-base-300 text-base-content focus:outline-none focus:border-primary" 
@@ -347,6 +350,7 @@ onUnmounted(() => {
                       placeholder="Item 1, Item 2, Item 3..."
                       @keydown.enter="saveInlineEdit(row.cells[col.id], 'tags')"
                     />
+                    <span class="text-sm text-base-content/50">Enter tags separated by commas.</span>
                     <div class="flex justify-end gap-1">
                       <button @click="cancelInlineEdit" class="btn btn-xs btn-error text-error-content px-2">
                         Cancel
