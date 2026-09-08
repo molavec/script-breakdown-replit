@@ -5,6 +5,10 @@ Fix: que al momento de presionar en la celda se active el cambio del estado del 
 Fix: En el modo de edición de tag colocar una leyenda que indique que se aceptan textos separados por comas en inglés.
 Fix: En el modo de edición de number colocar una leyenda que indique que solo se aceptan numeros.
 
+* En las celdas de tipo tag y number no funcionan los botones de cancelar en el modo edición
+
+* En el modo de edición de tag colocar una leyenda que indique que se aceptan textos separados por comas en inglés.
+* En el modo de edición de number colocar una leyenda que indique que solo se aceptan numeros.
 
 
 Fix: hablar que se parten con datos de prueba para que el usuario pueda probar inmediatamente, cosa que se cambiará en el futuro obteniendo datos desde importación de un script o desde la descripción del proyecto.

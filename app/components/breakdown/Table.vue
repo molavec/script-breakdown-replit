@@ -9,6 +9,26 @@ const { editingCellId, inlineEditValue, startInlineEdit, cancelInlineEdit, saveI
 
 const previewImageUrl = ref<string | null>(null);
 
+const handleCellClick = (row: any, col: any, rowIndex: number) => {
+  const cell = row.cells[col.id];
+  if (!cell) {
+    if (col.cellType !== 'number' && col.cellType !== 'tags') {
+      selectCell(rowIndex, col.id, undefined);
+    }
+    return;
+  }
+  
+  if (editingCellId.value === cell.id) return;
+
+  if (col.cellType === 'number') {
+    startInlineEdit(cell, 'number');
+  } else if (col.cellType === 'tags') {
+    startInlineEdit(cell, 'tags');
+  } else {
+    selectCell(rowIndex, col.id, cell.id);
+  }
+};
+
 const openImagePreview = (url: string) => {
   previewImageUrl.value = url;
 };
@@ -277,16 +297,15 @@ onUnmounted(() => {
               </div>
             </td>
             
-            <!-- Cells -->
             <td 
               v-for="col in columns" 
               :key="col.id"
               class="border align-top transition-all p-0"
               :class="[
                 activeCellId === row.cells[col.id]?.id && col.cellType !== 'number' && col.cellType !== 'tags' ? 'border-primary ring-1 ring-primary/50 bg-primary/10 z-10 relative' : 'border-base-300 hover:border-primary/40',
-                col.cellType !== 'number' && col.cellType !== 'tags' ? 'cursor-pointer' : ''
+                editingCellId !== row.cells[col.id]?.id ? 'cursor-pointer' : ''
               ]"
-              @click="col.cellType !== 'number' && col.cellType !== 'tags' ? selectCell(rowIndex, col.id, row.cells[col.id]?.id) : null"
+              @click="handleCellClick(row, col, rowIndex)"
             >
               <div class="w-full overflow-y-auto p-4" :style="{ height: `${getRowHeight(row.id)}px` }">
                 <div v-if="row.cells[col.id]">
@@ -307,7 +326,7 @@ onUnmounted(() => {
                       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
                     </button>
                   </div>
-                  <div v-else class="cursor-pointer group flex items-center justify-end gap-2 w-full text-right" @click="startInlineEdit(row.cells[col.id], 'number')">
+                  <div v-else class="group flex items-center justify-end gap-2 w-full text-right">
                     <div class="flex items-center gap-1.5 font-mono ml-auto">
                       <span v-if="getCellCurrency(col, row.cells[col.id])" class="text-base-content/60 select-none">
                         {{ getCellCurrency(col, row.cells[col.id]) }}
@@ -337,7 +356,7 @@ onUnmounted(() => {
                       </button>
                     </div>
                   </div>
-                  <div v-else class="cursor-pointer group relative min-h-[24px]" @click="startInlineEdit(row.cells[col.id], 'tags')">
+                  <div v-else class="group relative min-h-[24px]">
                     <div v-if="row.cells[col.id].blocks && row.cells[col.id].blocks.length > 0" class="flex flex-wrap gap-1 pr-6">
                       <template v-for="block in row.cells[col.id].blocks" :key="block.id">
                         <span v-if="block.type === 'entity_tag'" class="badge badge-sm badge-neutral border-base-300 text-base-content/90 font-medium">

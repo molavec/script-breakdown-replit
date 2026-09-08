@@ -9,9 +9,9 @@ export const useBreakdownCell = () => {
 
   const { rows } = useSceneTable();
 
-  const selectCell = (rowIndex: number, colId: string, cellId: string) => {
+  const selectCell = (rowIndex: number, colId: string, cellId?: string) => {
     lastSelectedRowIndex.value = rowIndex;
-    activeCellId.value = cellId;
+    activeCellId.value = cellId || null;
     activeCellColId.value = colId;
     isDrawerOpen.value = true;
   };
