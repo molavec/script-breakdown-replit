@@ -178,6 +178,7 @@ export const useSceneTable = () => {
   };
 
   const updateColumnsOrder = async (projectId: string, newOrderedColumns: BreakdownColumn[]) => {
+
     // 1. Update local state for immediate feedback
     newOrderedColumns.forEach((col, index) => {
       col.order = index + 1;

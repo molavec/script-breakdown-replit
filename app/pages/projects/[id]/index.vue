@@ -358,13 +358,13 @@ const handleDeleteProject = async () => {
             </div>
 
             <draggable 
-              v-model="columns" 
+              :list="columns" 
               tag="div"
               class="flex flex-col gap-2.5"
               item-key="id"
               handle=".card-drag-handle"
               ghost-class="opacity-40"
-              @end="updateColumnsOrder(projectId, columns)"
+              @end="updateColumnsOrder(projectId, [...columns])"
             >
               <template #item="{ element: col }">
                 <div 

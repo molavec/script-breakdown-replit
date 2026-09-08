@@ -37,12 +37,6 @@ const closeImagePreview = () => {
   previewImageUrl.value = null;
 };
 
-const tableRows = computed({
-  get: () => rows.value,
-  set: (newRows) => {
-    updateRowsOrder(newRows);
-  }
-});
 
 const openColumnConfig = (columnId: string) => {
   const projectId = project.value?.id || '1';
@@ -168,11 +162,11 @@ onUnmounted(() => {
       <!-- Table Header -->
       <thead class="sticky top-0 z-20 bg-base-200 text-base-content text-xs font-bold font-mono">
         <draggable
-          v-model="columns"
+          :list="columns"
           tag="tr"
           item-key="id"
           handle=".col-drag-handle"
-          @end="updateColumnsOrder(project?.id || '1', columns)"
+          @end="updateColumnsOrder(project?.id || '1', [...columns])"
         >
           <template #header>
             <th 
@@ -235,11 +229,12 @@ onUnmounted(() => {
       </thead>
       <!-- Table Body (Draggable) -->
       <draggable
-        v-model="tableRows"
+        :list="rows"
         tag="tbody"
         item-key="id"
         handle=".drag-handle"
         ghost-class="opacity-50"
+        @end="updateRowsOrder([...rows])"
       >
         <template #item="{ element: row, index: rowIndex }">
           <tr 
