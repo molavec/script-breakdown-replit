@@ -16,6 +16,10 @@
             <span class="text-base-content/80">Replit Track</span>
           </div>
 
+          <!-- Optimize for Google Chrome -->
+          <p class="mb-6 text-sm text-base-content/60">
+            Optimized for Google Chrome
+          </p>
 
           <!-- Brand Logo -->
           <div class="flex items-center gap-6 mb-2">
