@@ -17,9 +17,17 @@
           </div>
 
           <!-- Optimize for Google Chrome -->
-          <p class="mb-6 text-sm text-base-content/60">
-            Optimized for Google Chrome
-          </p>
+          <div class="mb-6">
+            <span class="badge badge-info badge-soft badge-lg gap-2 border border-info/30 px-4 py-3 font-semibold shadow-lg shadow-info/10">
+              <span class="grid size-5 place-items-center rounded-full bg-info text-info-content" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="size-3.5">
+                  <rect x="3" y="4" width="18" height="16" rx="2" />
+                  <path stroke-linecap="round" d="M3 9h18M7 6.5h.01M10 6.5h.01" />
+                </svg>
+              </span>
+              <span>Optimized for Google Chrome</span>
+            </span>
+          </div>
 
           <!-- Brand Logo -->
           <div class="flex items-center gap-6 mb-2">
